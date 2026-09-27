@@ -1,0 +1,54 @@
+=== BÀI TOÁN: linear_search ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 55.84s
+Kết quả cuối: PASS
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 4, Cột 0: a postcondition could not be proved on this return path
+Code:
+method LinearSearch(a: array<int>, target: int) returns (r: int)
+    ensures r >= 0 ==> r < a.Length && a[r] == target
+    ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target
+{
+    var i: int;
+    i := 0;
+    while (i < a.Length)
+        invariant 0 <= i <= a.Length
+        decreases a.Length - i
+    {
+        if (a[i] == target) {
+            r := i;
+            return;
+        }
+        i := i + 1;
+    }
+    r := -1;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: True
+Error Taxonomy: None
+Error Message: 
+Code:
+method LinearSearch(a: array<int>, target: int) returns (r: int)
+    ensures r >= 0 ==> r < a.Length && a[r] == target
+    ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target
+{
+    var i: int;
+    i := 0;
+    while (i < a.Length)
+        invariant 0 <= i <= a.Length
+        invariant forall k :: 0 <= k < i ==> a[k] != target
+        decreases a.Length - i
+    {
+        if (a[i] == target) {
+            r := i;
+            return;
+        }
+        i := i + 1;
+    }
+    r := -1;
+}
+

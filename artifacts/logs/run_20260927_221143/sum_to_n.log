@@ -1,0 +1,68 @@
+=== BÀI TOÁN: sum_to_n ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 58.13s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: LoopInvariantViolation
+Error Message: [LoopInvariantViolation] tại Dòng 8, Cột 25: this invariant could not be proved to be maintained by the loop
+Code:
+method SumToN(n: int) returns (s: int)
+    requires n >= 0
+    ensures s == n * (n + 1) / 2
+{
+    var i: int := 0;
+    s := 0;
+    while (i <= n)
+        invariant 0 <= i <= n
+        invariant s == i * (i - 1) / 2
+        decreases n - i
+    {
+        s := s + i;
+        i := i + 1;
+    }
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: LoopInvariantViolation
+Error Message: [LoopInvariantViolation] tại Dòng 8, Cột 25: this invariant could not be proved to be maintained by the loop
+Code:
+method SumToN(n: int) returns (s: int)
+    requires n >= 0
+    ensures s == n * (n + 1) / 2
+{
+    var i: int := 0;
+    s := 0;
+    while (i <= n)
+        invariant 0 <= i <= n
+        invariant s == i * (i - 1) / 2
+        decreases n - i
+    {
+        s := s + i;
+        i := i + 1;
+    }
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: LoopInvariantViolation
+Error Message: [LoopInvariantViolation] tại Dòng 8, Cột 25: this invariant could not be proved to be maintained by the loop
+Code:
+method SumToN(n: int) returns (s: int)
+    requires n >= 0
+    ensures s == n * (n + 1) / 2
+{
+    var i: int := 0;
+    s := 0;
+    while (i <= n)
+        invariant 0 <= i <= n
+        invariant s == i * (i - 1) / 2
+        decreases n - i
+    {
+        s := s + i;
+        i := i + 1;
+    }
+}
+
