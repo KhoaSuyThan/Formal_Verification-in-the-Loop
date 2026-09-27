@@ -1,0 +1,18 @@
+# Cấu hình thực nghiệm Formal Verification-in-the-Loop
+
+experiment:
+  max_iterations_k: 3         # Số vòng lặp tự sửa tối đa (Pass@K)
+  dafny_timeout_seconds: 15   # Giới hạn thời gian Z3 Solver trên mỗi bài toán (giây)
+  random_seed: 42
+
+models:
+  # Cấu hình sử dụng Ollama local mặc định
+  generator: "ollama/qwen2.5-coder:7b"
+  repairer: "ollama/qwen2.5-coder:7b"
+  api_base: "http://localhost:11434"
+  temperature: 0.2
+  top_p: 0.95
+
+dataset:
+  benchmark_suite: "clover"
+  sample_limit: null          # null: chạy toàn bộ, hoặc số nguyên (vd: 5)

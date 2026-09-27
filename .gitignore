@@ -25,3 +25,7 @@ ENV/
 artifacts/logs/*.log
 artifacts/logs/*.txt
 *.dfy.tmp
+
+# Thư mục chứa binaries công cụ bên thứ ba
+tools/
+

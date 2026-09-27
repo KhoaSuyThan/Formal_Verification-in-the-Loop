@@ -12,6 +12,13 @@ from pathlib import Path
 from typing import Optional
 
 
+# pyrefly: ignore [missing-import]
+from dotenv import load_dotenv
+
+# Tải cấu hình biến môi trường từ .env
+load_dotenv()
+
+
 @dataclass
 class VerifyResult:
     """Kết quả phản hồi từ trình kiểm định Dafny."""
@@ -27,7 +34,7 @@ class DafnyEngine:
     def __init__(self, timeout_sec: int = 15, dafny_path: Optional[str] = None):
         """Khởi tạo engine với thời gian timeout và đường dẫn thực thi Dafny.
 
-        Đường dẫn ưu tiên theo thứ tự: tham số truyền vào -> biến môi trường DAFNY_PATH -> PATH hệ thống.
+        Đường dẫn ưu tiên theo thứ tự: tham số truyền vào -> biến môi trường DAFNY_PATH -> PATH hệ thống -> thư mục tools/ nội bộ.
         """
         self.timeout = timeout_sec
         resolved_path = (
@@ -35,6 +42,19 @@ class DafnyEngine:
             or os.getenv("DAFNY_PATH")
             or shutil.which("dafny")
         )
+
+        # Nếu chưa tìm thấy, tự động tìm kiếm trong thư mục tools/dafny nội bộ của dự án
+        if not resolved_path or not (shutil.which(resolved_path) or Path(resolved_path).is_file()):
+            project_root = Path(__file__).resolve().parent.parent
+            for candidate in [
+                project_root / "tools" / "dafny" / "Dafny.exe",
+                project_root / "tools" / "dafny" / "dafny.exe",
+                project_root / "tools" / "dafny" / "dafny"
+            ]:
+                if candidate.is_file():
+                    resolved_path = str(candidate)
+                    break
+
         self.dafny_bin = resolved_path
 
     def is_available(self) -> bool:
@@ -57,7 +77,7 @@ class DafnyEngine:
             tmp.write(code)
 
         try:
-            cmd = [str(self.dafny_bin), "verify", f"--time-limit:{self.timeout}", str(tmp_path)]
+            cmd = [str(self.dafny_bin), "verify", "--verification-time-limit", str(self.timeout), str(tmp_path)]
             proc = subprocess.run(
                 cmd,
                 capture_output=True,
