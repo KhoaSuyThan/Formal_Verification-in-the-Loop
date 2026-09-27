@@ -25,13 +25,16 @@ class DiagnosticParser:
     # Từ điển ánh xạ từ khóa lỗi sang phân loại chuẩn của đề tài NCKH
     ERROR_TAXONOMY_MAP = {
         "postcondition might not hold": "PostconditionViolation",
+        "postcondition could not be proved": "PostconditionViolation",
         "invariant might not hold": "LoopInvariantViolation",
         "invariant could not be proved": "LoopInvariantViolation",
         "precondition might not hold": "PreconditionViolation",
+        "precondition could not be proved": "PreconditionViolation",
         "decreases expression might not decrease": "TerminationFailure",
         "cannot prove termination": "TerminationFailure",
         "index out of range": "OutOfBounds",
         "assertion might not hold": "AssertionViolation",
+        "assertion could not be proved": "AssertionViolation",
     }
 
     @classmethod

@@ -1,0 +1,62 @@
+=== BÀI TOÁN: sum_to_n ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 51.55s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 6, Cột 4: missing semicolon at end of statement
+Code:
+method SumToN(n: int) returns (s: int)
+    requires n >= 0
+    ensures s == n * (n + 1) / 2
+{
+    s := 0;
+    loop
+    {
+        if (n == 0) break;
+        s := s + n;
+        n := n - 1;
+        invariant s == n * (n + 1) / 2 + (n + 1);
+    }
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 6, Cột 4: missing semicolon at end of statement
+Code:
+method SumToN(n: int) returns (s: int)
+    requires n >= 0
+    ensures s == n * (n + 1) / 2
+{
+    s := 0;
+    loop
+    {
+        if (n == 0) break;
+        s := s + n;
+        n := n - 1;
+        invariant s == n * (n + 1) / 2 + (n + 1);
+    }
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 6, Cột 4: missing semicolon at end of statement
+Code:
+method SumToN(n: int) returns (s: int)
+    requires n >= 0
+    ensures s == n * (n + 1) / 2
+{
+    s := 0;
+    loop
+    {
+        if (n == 0) break;
+        s := s + n;
+        n := n - 1;
+        invariant s == n * (n + 1) / 2 + (n + 1);
+    }
+}
+
