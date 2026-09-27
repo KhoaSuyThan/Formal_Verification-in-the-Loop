@@ -1,0 +1,27 @@
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Môi trường ảo (Virtual environments)
+venv/
+env/
+ENV/
+.venv/
+
+# Biến môi trường chứa API Key
+.env
+.env.local
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# File log và kết quả thực nghiệm tạm thời
+artifacts/logs/*.log
+artifacts/logs/*.txt
+*.dfy.tmp
