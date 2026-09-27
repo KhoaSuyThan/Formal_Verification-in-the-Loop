@@ -6,6 +6,20 @@ Tất cả các thay đổi đáng chú ý của dự án sẽ được ghi nh�
 
 ---
 
+## [0.2.0] - 2026-09-27
+
+### Đã thêm (Added)
+- Tích hợp thành công bộ kiểm định hình thức [Dafny 4.11](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/tools/dafny/Dafny.exe) và bộ giải toán học Z3 SMT Solver vào đường ống Actor-Critic.
+- Tự động phát hiện binary Dafny trong thư mục `tools/dafny/` và cấu hình qua file `.env`.
+- Cập nhật cờ kiểm định `--verification-time-limit` chuẩn hóa cho Dafny 4.x.
+- Module [llm_agent.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/agents/llm_agent.py): Kết nối LiteLLM với mô hình local Ollama `qwen2.5-coder:7b` (và Cloud LLMs), xử lý prompt sinh mã và vá lỗi theo đặc tả hình thức Dafny.
+- Nâng cấp [llm_agent.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/agents/llm_agent.py): Bổ sung cơ chế bắt ngoại lệ Timeout (120s), giới hạn max_tokens (1024) và tự động bóc tách thẻ `<think>` cho các mô hình Reasoning (DeepSeek-R1).
+- Bổ sung `tools/` vào [.gitignore](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/.gitignore) để cách ly binary Dafny.
+- Module [pipeline_controller.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/pipeline_controller.py): Điều phối vòng lặp kiểm định khép kín Pass@K kết hợp Agent, SpecLocker, DafnyEngine và DiagnosticParser.
+- Cấu hình hệ thống: [experiment_config.yaml](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/configs/experiment_config.yaml) và [.env.example](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/.env.example) mặc định kích hoạt Ollama.
+- Script thực thi nhanh [run_single.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/run_single.py) tại thư mục gốc, cấu hình UTF-8 cho console Windows.
+- Thực nghiệm thành công với mô hình Qwen2.5 trên bài toán [sample_max.dfy](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/data/benchmarks/clover/sample_max.dfy), Z3 Solver chứng minh tính đúng đắn 100% tại Pass@1 (Zero-Hallucination).
+
 ## [0.1.0] - 2026-09-27
 
 ### Đã thêm (Added)
