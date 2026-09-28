@@ -1,0 +1,153 @@
+=== BÀI TOÁN: 000-has_close_elements ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 204.27s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 13, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures flag == (exists i: int, j: int :: i >= 0 && j >= 0 && i < |numbers| && j < |numbers| && i != j && abs(numbers[i] - numbers[j]) < threshold)`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CHỨA ĐỊNH LƯỢNG TỒN TẠI (EXISTS) BỊ VI PHẠM: `ensures flag == (exists i: int, j: int :: i >= 0 && j >= 0 && i < |numbers| && j < |numbers| && i != j && abs(numbers[i] - numbers[j]) < threshold)`.
+NGUYÊN LÝ QUY NẠP CHO EXISTS: Khi hậu điều kiện yêu cầu kết quả phải tồn tại trong danh sách (`exists x :: 0 <= x < |s| && s[x] == result`), vòng lặp BẮT BUỘC phải có bất biến chứng minh giá trị tích lũy hiện tại luôn là một phần tử hợp lệ đã duyệt: `invariant exists j :: 0 <= j < i && l[j] == max` (với vòng lặp bắt đầu từ `i := 1`).
+Code:
+function abs(val : real): real
+{
+  if (val < 0.0) then
+    -val
+  else
+    val
+}
+// pure-end
+
+method has_close_elements(numbers: seq<real>, threshold: real) returns (flag : bool)
+  requires threshold > 0.0
+  ensures flag == (exists i: int, j: int :: i >= 0 && j >= 0 && i < |numbers| && j < |numbers| && i != j && abs(numbers[i] - numbers[j]) < threshold)
+{
+  var n := |numbers|;
+  if n <= 1 {
+    flag := false;
+    return;
+  }
+
+  var i := 0;
+  while i < n - 1
+    invariant 0 <= i <= n - 1
+  {
+    var j := i + 1;
+    while j < n
+      invariant 0 <= j <= n
+      invariant 0 <= i <= j - 1
+    {
+      if abs(numbers[i] - numbers[j]) < threshold {
+        flag := true;
+        return;
+      }
+      j := j + 1;
+    }
+    i := i + 1;
+  }
+  flag := false;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 12, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures flag == (exists i: int, j: int :: i >= 0 && j >= 0 && i < |numbers| && j < |numbers| && i != j && abs(numbers[i] - numbers[j]) < threshold)`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CHỨA ĐỊNH LƯỢNG TỒN TẠI (EXISTS) BỊ VI PHẠM: `ensures flag == (exists i: int, j: int :: i >= 0 && j >= 0 && i < |numbers| && j < |numbers| && i != j && abs(numbers[i] - numbers[j]) < threshold)`.
+NGUYÊN LÝ QUY NẠP CHO EXISTS: Khi hậu điều kiện yêu cầu kết quả phải tồn tại trong danh sách (`exists x :: 0 <= x < |s| && s[x] == result`), vòng lặp BẮT BUỘC phải có bất biến chứng minh giá trị tích lũy hiện tại luôn là một phần tử hợp lệ đã duyệt: `invariant exists j :: 0 <= j < i && l[j] == max` (với vòng lặp bắt đầu từ `i := 1`).
+Code:
+function abs(val : real): real
+{
+  if (val < 0.0) then
+    -val
+  else
+    val
+}
+// pure-end
+method has_close_elements(numbers: seq<real>, threshold: real) returns (flag : bool)
+  requires threshold > 0.0
+  ensures flag == (exists i: int, j: int :: i >= 0 && j >= 0 && i < |numbers| && j < |numbers| && i != j && abs(numbers[i] - numbers[j]) < threshold)
+{
+  var n := |numbers|;
+  if n <= 1 {
+    flag := false;
+    return;
+  }
+
+  var i := 0;
+  while i < n - 1
+    invariant 0 <= i <= n - 1
+    invariant forall j :: 0 <= j < i ==> abs(numbers[j] - numbers[j]) < threshold
+  {
+    var j := i + 1;
+    while j < n
+      invariant 0 <= j <= n
+      invariant 0 <= i <= j - 1
+      invariant forall k :: 0 <= k < j ==> abs(numbers[k] - numbers[k]) < threshold
+    {
+      if abs(numbers[i] - numbers[j]) < threshold {
+        flag := true;
+        return;
+      }
+      j := j + 1;
+    }
+    i := i + 1;
+  }
+  flag := false;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 12, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures flag == (exists i: int, j: int :: i >= 0 && j >= 0 && i < |numbers| && j < |numbers| && i != j && abs(numbers[i] - numbers[j]) < threshold)`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CHỨA ĐỊNH LƯỢNG TỒN TẠI (EXISTS) BỊ VI PHẠM: `ensures flag == (exists i: int, j: int :: i >= 0 && j >= 0 && i < |numbers| && j < |numbers| && i != j && abs(numbers[i] - numbers[j]) < threshold)`.
+NGUYÊN LÝ QUY NẠP CHO EXISTS: Khi hậu điều kiện yêu cầu kết quả phải tồn tại trong danh sách (`exists x :: 0 <= x < |s| && s[x] == result`), vòng lặp BẮT BUỘC phải có bất biến chứng minh giá trị tích lũy hiện tại luôn là một phần tử hợp lệ đã duyệt: `invariant exists j :: 0 <= j < i && l[j] == max` (với vòng lặp bắt đầu từ `i := 1`).
+Code:
+function abs(val : real): real
+{
+  if (val < 0.0) then
+    -val
+  else
+    val
+}
+// pure-end
+method has_close_elements(numbers: seq<real>, threshold: real) returns (flag : bool)
+  requires threshold > 0.0
+  ensures flag == (exists i: int, j: int :: i >= 0 && j >= 0 && i < |numbers| && j < |numbers| && i != j && abs(numbers[i] - numbers[j]) < threshold)
+{
+  var n := |numbers|;
+  if n <= 1 {
+    flag := false;
+    return;
+  }
+
+  var i := 0;
+  while i < n - 1
+    invariant 0 <= i <= n - 1
+    invariant forall j :: 0 <= j < i ==> abs(numbers[j] - numbers[j]) < threshold
+    decreases n - i
+  {
+    var j := i + 1;
+    while j < n
+      invariant 0 <= j <= n
+      invariant 0 <= i <= j - 1
+      invariant forall k :: 0 <= k < j ==> abs(numbers[k] - numbers[k]) < threshold
+      decreases n - j
+    {
+      if abs(numbers[i] - numbers[j]) < threshold {
+        flag := true;
+        return;
+      }
+      j := j + 1;
+    }
+    i := i + 1;
+  }
+  flag := false;
+}
+

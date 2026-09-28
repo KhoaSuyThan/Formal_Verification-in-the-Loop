@@ -1,0 +1,287 @@
+=== BÀI TOÁN: 088-sort_array ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 574.83s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 9, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures |sorted| == |s|`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CỤ THỂ BỊ VI PHẠM: `ensures |sorted| == |s|`.
+SMT Solver không thể suy diễn được điều kiện này tại điểm return. Hãy kiểm tra xem vòng lặp có thiếu invariant quy nạp mô tả kết quả đang tích lũy hay không.
+Code:
+method sort_array(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures |sorted| == |s|
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 == 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] >= sorted[j]
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 != 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  // post-conditions-end
+{
+  var n := |s|;
+  var arr := s;
+  var i := 0;
+  while i < n
+    invariant 0 <= i <= n
+    decreases n - i
+  {
+    var j := i + 1;
+    while j < n
+      invariant 0 <= i <= j <= n
+      decreases n - j
+    {
+      if arr[i] > arr[j] {
+        var temp := arr[i];
+        arr := arr[i := arr[j]];
+        arr := arr[j := temp];
+      }
+      j := j + 1;
+    }
+    i := i + 1;
+  }
+  sorted := arr;
+}
+
+method reverse(s: seq<int>) returns (rev: seq<int>)
+  // post-conditions-start
+  ensures |rev| == |s|
+  ensures forall k :: 0 <= k < |s| ==> rev[k] == s[|s| - 1 - k]
+  // post-conditions-end
+{
+  var n := |s|;
+  var arr := s;
+  var i := 0;
+  while i < n / 2
+    invariant 0 <= i <= n / 2
+    decreases n - 2 * i
+  {
+    var temp := arr[i];
+    arr := arr[i := arr[n - 1 - i]];
+    arr := arr[n - 1 - i := temp];
+    i := i + 1;
+  }
+  rev := arr;
+}
+
+method SortSeq(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  ensures |sorted| == |s|
+  ensures multiset(s) == multiset(sorted)
+  // post-conditions-end
+{
+  var n := |s|;
+  var arr := s;
+  var i := 0;
+  while i < n
+    invariant 0 <= i <= n
+    decreases n - i
+  {
+    var j := i + 1;
+    while j < n
+      invariant 0 <= i <= j <= n
+      decreases n - j
+    {
+      if arr[i] > arr[j] {
+        var temp := arr[i];
+        arr := arr[i := arr[j]];
+        arr := arr[j := temp];
+      }
+      j := j + 1;
+    }
+    i := i + 1;
+  }
+  sorted := arr;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 9, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures |sorted| == |s|`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CỤ THỂ BỊ VI PHẠM: `ensures |sorted| == |s|`.
+SMT Solver không thể suy diễn được điều kiện này tại điểm return. Hãy kiểm tra xem vòng lặp có thiếu invariant quy nạp mô tả kết quả đang tích lũy hay không.
+Code:
+method sort_array(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures |sorted| == |s|
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 == 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] >= sorted[j]
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 != 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  // post-conditions-end
+{
+  var n := |s|;
+  var arr := s;
+  var i := 0;
+  while i < n
+    invariant 0 <= i <= n
+    decreases n - i
+  {
+    var j := i + 1;
+    while j < n
+      invariant 0 <= i <= j <= n
+      decreases n - j
+    {
+      if arr[i] > arr[j] {
+        var temp := arr[i];
+        arr := arr[i := arr[j]];
+        arr := arr[j := temp];
+      }
+      j := j + 1;
+    }
+    i := i + 1;
+  }
+  sorted := arr;
+}
+
+method reverse(s: seq<int>) returns (rev: seq<int>)
+  // post-conditions-start
+  ensures |rev| == |s|
+  ensures forall k :: 0 <= k < |s| ==> rev[k] == s[|s| - 1 - k]
+  // post-conditions-end
+{
+  var n := |s|;
+  var arr := s;
+  var i := 0;
+  while i < n / 2
+    invariant 0 <= i <= n / 2
+    decreases n - 2 * i
+  {
+    var temp := arr[i];
+    arr := arr[i := arr[n - 1 - i]];
+    arr := arr[n - 1 - i := temp];
+    i := i + 1;
+  }
+  rev := arr;
+}
+
+method SortSeq(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  ensures |sorted| == |s|
+  ensures multiset(s) == multiset(sorted)
+  // post-conditions-end
+{
+  var n := |s|;
+  var arr := s;
+  var i := 0;
+  while i < n
+    invariant 0 <= i <= n
+    decreases n - i
+  {
+    var j := i + 1;
+    while j < n
+      invariant 0 <= i <= j <= n
+      decreases n - j
+    {
+      if arr[i] > arr[j] {
+        var temp := arr[i];
+        arr := arr[i := arr[j]];
+        arr := arr[j := temp];
+      }
+      j := j + 1;
+    }
+    i := i + 1;
+  }
+  sorted := arr;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 9, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures |sorted| == |s|`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CỤ THỂ BỊ VI PHẠM: `ensures |sorted| == |s|`.
+SMT Solver không thể suy diễn được điều kiện này tại điểm return. Hãy kiểm tra xem vòng lặp có thiếu invariant quy nạp mô tả kết quả đang tích lũy hay không.
+Code:
+method sort_array(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures |sorted| == |s|
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 == 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] >= sorted[j]
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 != 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  // post-conditions-end
+{
+  var n := |s|;
+  var arr := s;
+  var i := 0;
+  while i < n
+    invariant 0 <= i <= n
+    decreases n - i
+  {
+    var j := i + 1;
+    while j < n
+      invariant 0 <= i <= j <= n
+      decreases n - j
+    {
+      if arr[i] > arr[j] {
+        var temp := arr[i];
+        arr := arr[i := arr[j]];
+        arr := arr[j := temp];
+      }
+      j := j + 1;
+    }
+    i := i + 1;
+  }
+  sorted := arr;
+}
+
+method reverse(s: seq<int>) returns (rev: seq<int>)
+  // post-conditions-start
+  ensures |rev| == |s|
+  ensures forall k :: 0 <= k < |s| ==> rev[k] == s[|s| - 1 - k]
+  // post-conditions-end
+{
+  var n := |s|;
+  var arr := s;
+  var i := 0;
+  while i < n / 2
+    invariant 0 <= i <= n / 2
+    decreases n - 2 * i
+  {
+    var temp := arr[i];
+    arr := arr[i := arr[n - 1 - i]];
+    arr := arr[n - 1 - i := temp];
+    i := i + 1;
+  }
+  rev := arr;
+}
+
+method SortSeq(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  ensures |sorted| == |s|
+  ensures multiset(s) == multiset(sorted)
+  // post-conditions-end
+{
+  var n := |s|;
+  var arr := s;
+  var i := 0;
+  while i < n
+    invariant 0 <= i <= n
+    decreases n - i
+  {
+    var j := i + 1;
+    while j < n
+      invariant 0 <= i <= j <= n
+      decreases n - j
+    {
+      if arr[i] > arr[j] {
+        var temp := arr[i];
+        arr := arr[i := arr[j]];
+        arr := arr[j := temp];
+      }
+      j := j + 1;
+    }
+    i := i + 1;
+  }
+  sorted := arr;
+}
+

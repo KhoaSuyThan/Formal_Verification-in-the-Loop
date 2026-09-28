@@ -1,0 +1,92 @@
+=== BÀI TOÁN: 035-max-element ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 94.02s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 9, Cột 0: a postcondition could not be proved on this return path
+Code:
+method max_element(l : seq<int>) returns (result : int)
+    // pre-conditions-start
+    requires |l| > 0
+    // pre-conditions-end
+    // post-conditions-start
+    ensures forall i : int :: i >= 0 && i < |l| ==> l[i] <= result
+    ensures exists i : int :: i >= 0 && i < |l| && l[i] == result
+    // post-conditions-end
+{
+    var max : int := l[0];
+    var i : int := 1;
+    while i < |l|
+        invariant 0 <= i <= |l|
+        invariant forall j : int :: 0 <= j < i ==> l[j] <= max
+        decreases |l| - i
+    {
+        if l[i] > max {
+            max := l[i];
+        }
+        i := i + 1;
+    }
+    result := max;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 9, Cột 0: a postcondition could not be proved on this return path
+Code:
+method max_element(l : seq<int>) returns (result : int)
+    // pre-conditions-start
+    requires |l| > 0
+    // pre-conditions-end
+    // post-conditions-start
+    ensures forall i : int :: i >= 0 && i < |l| ==> l[i] <= result
+    ensures exists i : int :: i >= 0 && i < |l| && l[i] == result
+    // post-conditions-end
+{
+    var max : int := l[0];
+    var i : int := 1;
+    while i < |l|
+        invariant 0 <= i <= |l|
+        invariant forall j : int :: 0 <= j < i ==> l[j] <= max
+        decreases |l| - i
+    {
+        if l[i] > max {
+            max := l[i];
+        }
+        i := i + 1;
+    }
+    result := max;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 9, Cột 0: a postcondition could not be proved on this return path
+Code:
+method max_element(l : seq<int>) returns (result : int)
+    // pre-conditions-start
+    requires |l| > 0
+    // pre-conditions-end
+    // post-conditions-start
+    ensures forall i : int :: i >= 0 && i < |l| ==> l[i] <= result
+    ensures exists i : int :: i >= 0 && i < |l| && l[i] == result
+    // post-conditions-end
+{
+    var max : int := l[0];
+    var i : int := 1;
+    while i < |l|
+        invariant 0 <= i <= |l|
+        invariant forall j : int :: 0 <= j < i ==> l[j] <= max
+        decreases |l| - i
+    {
+        if l[i] > max {
+            max := l[i];
+        }
+        i := i + 1;
+    }
+    result := max;
+}
+

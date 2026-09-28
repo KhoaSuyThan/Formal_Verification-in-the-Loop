@@ -1,0 +1,158 @@
+=== BÀI TOÁN: 077-iscube ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 183.24s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 37, Cột 16: invalid AssignStatement
+Code:
+method cube_root(N: nat) returns (r: nat)
+  // post-conditions-start
+  ensures cube(r) <= N < cube(r + 1)
+  ensures r <= N
+  // post-conditions-end
+{
+  var lower: nat := 0;
+  var upper: nat := N;
+  var current_res: nat := 0;
+
+  while lower <= upper
+    invariant exists j :: 0 <= j < lower && l[j] == current_res
+    decreases upper - lower
+  {
+    var mid: nat := (lower + upper) / 2;
+    if cube(mid) <= N < cube(mid + 1) {
+      current_res := mid;
+      lower := mid + 1;
+    } else {
+      upper := mid - 1;
+    }
+  }
+
+  r := current_res;
+}
+
+method iscube(n: int) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r && n >= 0 ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r && n >= 0 ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  ensures r && n < 0 ==> exists r :: 0 <= r <= -n && n == -cube(r)
+  ensures !r && n < 0 ==> forall r :: 0 <= r <= -n ==> n != -cube(r)
+  // post-conditions-end
+{
+    r := n >= 0 ? cube_root(n) * cube_root(n) * cube_root(n) == n : cube_root(-n) * cube_root(-n) * cube_root(-n) == -n;
+}
+
+function cube(n: int): int { n * n * n }
+// pure-end
+lemma cube_of_larger_is_larger()
+    ensures forall smaller : int, larger : int :: smaller <= larger ==> cube(smaller) <= cube(larger)
+{}
+// pure-end
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 37, Cột 16: invalid AssignStatement
+Code:
+method cube_root(N: nat) returns (r: nat)
+  // post-conditions-start
+  ensures cube(r) <= N < cube(r + 1)
+  ensures r <= N
+  // post-conditions-end
+{
+  var lower: nat := 0;
+  var upper: nat := N;
+  var current_res: nat := 0;
+
+  while lower <= upper
+    invariant exists j :: 0 <= j < lower && j == current_res
+    decreases upper - lower
+  {
+    var mid: nat := (lower + upper) / 2;
+    if cube(mid) <= N < cube(mid + 1) {
+      current_res := mid;
+      lower := mid + 1;
+    } else {
+      upper := mid - 1;
+    }
+  }
+
+  r := current_res;
+}
+
+method iscube(n: int) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r && n >= 0 ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r && n >= 0 ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  ensures r && n < 0 ==> exists r :: 0 <= r <= -n && n == -cube(r)
+  ensures !r && n < 0 ==> forall r :: 0 <= r <= -n ==> n != -cube(r)
+  // post-conditions-end
+{
+    r := n >= 0 ? cube_root(n) * cube_root(n) * cube_root(n) == n : cube_root(-n) * cube_root(-n) * cube_root(-n) == -n;
+}
+
+function cube(n: int): int { n * n * n }
+// pure-end
+lemma cube_of_larger_is_larger()
+    ensures forall smaller : int, larger : int :: smaller <= larger ==> cube(smaller) <= cube(larger)
+{}
+// pure-end
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 37, Cột 16: invalid AssignStatement
+Code:
+method cube_root(N: nat) returns (r: nat)
+  // post-conditions-start
+  ensures cube(r) <= N < cube(r + 1)
+  ensures r <= N
+  // post-conditions-end
+{
+  var lower: nat := 0;
+  var upper: nat := N;
+  var current_res: nat := 0;
+
+  while lower <= upper
+    invariant exists j :: 0 <= j < lower && j == current_res
+    decreases upper - lower
+  {
+    var mid: nat := (lower + upper) / 2;
+    if cube(mid) <= N < cube(mid + 1) {
+      current_res := mid;
+      lower := mid + 1;
+    } else {
+      upper := mid - 1;
+    }
+  }
+
+  r := current_res;
+}
+
+method iscube(n: int) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r && n >= 0 ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r && n >= 0 ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  ensures r && n < 0 ==> exists r :: 0 <= r <= -n && n == -cube(r)
+  ensures !r && n < 0 ==> forall r :: 0 <= r <= -n ==> n != -cube(r)
+  // post-conditions-end
+{
+    r := n >= 0 ? cube_root(n) * cube_root(n) * cube_root(n) == n : cube_root(-n) * cube_root(-n) * cube_root(-n) == -n;
+}
+
+function cube(n: int): int { n * n * n }
+// pure-end
+lemma cube_of_larger_is_larger()
+    ensures forall smaller : int, larger : int :: smaller <= larger ==> cube(smaller) <= cube(larger)
+{}
+// pure-end
+

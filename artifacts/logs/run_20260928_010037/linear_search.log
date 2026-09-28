@@ -1,0 +1,95 @@
+=== BÀI TOÁN: linear_search ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 83.56s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 4, Cột 0: a postcondition could not be proved on this return path
+Code:
+method LinearSearch(a: array<int>, target: int) returns (r: int)
+    ensures r >= 0 ==> r < a.Length && a[r] == target
+    ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target
+{
+    var i: int := 0;
+    var found: bool := false;
+    var result: int := -1;
+
+    while (i < a.Length) 
+        invariant 0 <= i <= a.Length
+        invariant !found ==> result == -1
+        invariant found ==> 0 <= result < a.Length && a[result] == target
+        decreases a.Length - i
+    {
+        if (a[i] == target) 
+        {
+            found := true;
+            result := i;
+        }
+        i := i + 1;
+    }
+
+    r := result;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 4, Cột 0: a postcondition could not be proved on this return path
+Code:
+method LinearSearch(a: array<int>, target: int) returns (r: int)
+    ensures r >= 0 ==> r < a.Length && a[r] == target
+    ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target
+{
+    var i: int := 0;
+    var found: bool := false;
+    var result: int := -1;
+
+    while (i < a.Length) 
+        invariant 0 <= i <= a.Length
+        invariant !found ==> result == -1
+        invariant found ==> 0 <= result < a.Length && a[result] == target
+        decreases a.Length - i
+    {
+        if (a[i] == target) 
+        {
+            found := true;
+            result := i;
+        }
+        i := i + 1;
+    }
+
+    r := result;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 4, Cột 0: a postcondition could not be proved on this return path
+Code:
+method LinearSearch(a: array<int>, target: int) returns (r: int)
+    ensures r >= 0 ==> r < a.Length && a[r] == target
+    ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target
+{
+    var i: int := 0;
+    var found: bool := false;
+    var result: int := -1;
+
+    while (i < a.Length) 
+        invariant 0 <= i <= a.Length
+        invariant !found ==> result == -1
+        invariant found ==> 0 <= result < a.Length && a[result] == target
+        decreases a.Length - i
+    {
+        if (a[i] == target) 
+        {
+            found := true;
+            result := i;
+        }
+        i := i + 1;
+    }
+
+    r := result;
+}
+

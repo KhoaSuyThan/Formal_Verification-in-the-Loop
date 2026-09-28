@@ -1,0 +1,230 @@
+=== BÀI TOÁN: 077-iscube ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 427.22s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 34, Cột 49: this symbol not expected in MethodSpec
+-> Dòng mã vi phạm: `method iscube_helper(n: int, low: int, high: int): bool`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method cube_root(N: nat) returns (r: nat)
+  // post-conditions-start
+  ensures cube(r) <= N < cube(r + 1)
+  ensures r <= N
+  // post-conditions-end
+{
+  var i: nat := 0;
+  while i * i * i <= N
+    invariant 0 <= i <= N
+    decreases N - i * i * i
+  {
+    i := i + 1;
+  }
+  r := i - 1;
+}
+
+method iscube(n: int) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r && n >= 0 ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r && n >= 0 ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  ensures r && n < 0 ==> exists r :: 0 <= r <= -n && n == -cube(r)
+  ensures !r && n < 0 ==> forall r :: 0 <= r <= -n ==> n != -cube(r)
+  // post-conditions-end
+{
+  if n >= 0 {
+    r := iscube_helper(n, 0, n);
+  } else {
+    r := iscube_helper(-n, 0, -n);
+  }
+}
+
+method iscube_helper(n: int, low: int, high: int): bool
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures low <= n <= high ==> result == (exists r :: low <= r <= high && n == cube(r))
+  ensures low > n || high < n ==> result == false
+  // post-conditions-end
+{
+  if low > high {
+    r := false;
+
+    return;
+  } else {
+    var mid: int := (low + high) / 2;
+    if cube(mid) == n {
+      r := true;
+
+      return;
+    } else if cube(mid) < n {
+      r := iscube_helper(n, mid + 1, high);
+
+      return;
+    } else {
+      r := iscube_helper(n, low, mid - 1);
+
+      return;
+    }
+  }
+}
+
+function cube(n: int): int { n * n * n }
+// pure-end
+lemma cube_of_larger_is_larger()
+    ensures forall smaller : int, larger : int :: smaller <= larger ==> cube(smaller) <= cube(larger)
+{}
+// pure-end
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 34, Cột 49: this symbol not expected in MethodSpec
+-> Dòng mã vi phạm: `method iscube_helper(n: int, low: int, high: int): bool`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method cube_root(N: nat) returns (r: nat)
+  // post-conditions-start
+  ensures cube(r) <= N < cube(r + 1)
+  ensures r <= N
+  // post-conditions-end
+{
+  var i: nat := 0;
+  while i * i * i <= N
+    invariant 0 <= i <= N
+    decreases N - i * i * i
+  {
+    i := i + 1;
+  }
+  r := i - 1;
+}
+
+method iscube(n: int) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r && n >= 0 ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r && n >= 0 ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  ensures r && n < 0 ==> exists r :: 0 <= r <= -n && n == -cube(r)
+  ensures !r && n < 0 ==> forall r :: 0 <= r <= -n ==> n != -cube(r)
+  // post-conditions-end
+{
+  if n >= 0 {
+    r := iscube_helper(n, 0, n);
+  } else {
+    r := iscube_helper(-n, 0, -n);
+  }
+}
+
+method iscube_helper(n: int, low: int, high: int): bool
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures low <= n <= high ==> result == (exists r :: low <= r <= high && n == cube(r))
+  ensures low > n || high < n ==> result == false
+  // post-conditions-end
+{
+  if low > high {
+    r := false;
+
+    return;
+  } else {
+    var mid: int := (low + high) / 2;
+    if cube(mid) == n {
+      r := true;
+
+      return;
+    } else if cube(mid) < n {
+      r := iscube_helper(n, mid + 1, high);
+
+      return;
+    } else {
+      r := iscube_helper(n, low, mid - 1);
+
+      return;
+    }
+  }
+}
+
+function cube(n: int): int { n * n * n }
+
+lemma cube_of_larger_is_larger()
+    ensures forall smaller : int, larger : int :: smaller <= larger ==> cube(smaller) <= cube(larger)
+{}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 34, Cột 49: this symbol not expected in MethodSpec
+-> Dòng mã vi phạm: `method iscube_helper(n: int, low: int, high: int): bool`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method cube_root(N: nat) returns (r: nat)
+  // post-conditions-start
+  ensures cube(r) <= N < cube(r + 1)
+  ensures r <= N
+  // post-conditions-end
+{
+  var i: nat := 0;
+  while i * i * i <= N
+    invariant 0 <= i <= N + 1
+    decreases N - i * i * i
+  {
+    i := i + 1;
+  }
+  r := i - 1;
+}
+
+method iscube(n: int) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r && n >= 0 ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r && n >= 0 ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  ensures r && n < 0 ==> exists r :: 0 <= r <= -n && n == -cube(r)
+  ensures !r && n < 0 ==> forall r :: 0 <= r <= -n ==> n != -cube(r)
+  // post-conditions-end
+{
+  if n >= 0 {
+    r := iscube_helper(n, 0, n);
+  } else {
+    r := iscube_helper(-n, 0, -n);
+  }
+}
+
+method iscube_helper(n: int, low: int, high: int): bool
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures low <= n <= high ==> result == (exists r :: low <= r <= high && n == cube(r))
+  ensures low > n || high < n ==> result == false
+  // post-conditions-end
+{
+  if low > high {
+    r := false;
+    return;
+  } else {
+    var mid: int := (low + high) / 2;
+    if cube(mid) == n {
+      r := true;
+      return;
+    } else if cube(mid) < n {
+      r := iscube_helper(n, mid + 1, high);
+      return;
+    } else {
+      r := iscube_helper(n, low, mid - 1);
+      return;
+    }
+  }
+}
+
+function cube(n: int): int { n * n * n }
+
+lemma cube_of_larger_is_larger()
+    ensures forall smaller : int, larger : int :: smaller <= larger ==> cube(smaller) <= cube(larger)
+{}
+

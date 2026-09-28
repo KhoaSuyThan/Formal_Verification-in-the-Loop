@@ -1,0 +1,86 @@
+=== BÀI TOÁN: 013-greatest_common_divisor ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 118.08s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: TerminationFailure
+Error Message: [TerminationFailure] tại Dòng 7, Cột 4: decreases expression might not decrease
+-> Dòng mã vi phạm: `while cur_a != cur_b`
+-> Hướng dẫn khắc phục: KHÔNG THỂ CHỨNG MINH VÒNG LẶP DỪNG: Hãy thêm mệnh đề `decreases <biểu_thức>` giảm nghiêm ngặt sau mỗi bước lặp và luôn >= 0.
+Code:
+method greatest_common_divisor(a: int, b: int) returns (gcd: int)
+    requires a != 0 || b != 0
+    ensures gcd != 0
+{
+    var cur_a := a;
+    var cur_b := b;
+    while cur_a != cur_b
+        invariant 0 <= cur_a && 0 <= cur_b
+        invariant cur_a != cur_b
+        decreases cur_a + cur_b
+    {
+        if cur_a > cur_b {
+            cur_a := cur_a - cur_b;
+        } else {
+            cur_b := cur_b - cur_a;
+        }
+    }
+    gcd := cur_a;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: TerminationFailure
+Error Message: [TerminationFailure] tại Dòng 7, Cột 4: decreases expression might not decrease
+-> Dòng mã vi phạm: `while cur_a != cur_b`
+-> Hướng dẫn khắc phục: KHÔNG THỂ CHỨNG MINH VÒNG LẶP DỪNG: Hãy thêm mệnh đề `decreases <biểu_thức>` giảm nghiêm ngặt sau mỗi bước lặp và luôn >= 0.
+Code:
+method greatest_common_divisor(a: int, b: int) returns (gcd: int)
+    requires a != 0 || b != 0
+    ensures gcd != 0
+{
+    var cur_a := a;
+    var cur_b := b;
+    while cur_a != cur_b
+        invariant 0 <= cur_a && 0 <= cur_b
+        invariant cur_a != cur_b
+        decreases cur_a + cur_b
+    {
+        if cur_a > cur_b {
+            cur_a := cur_a - cur_b;
+        } else {
+            cur_b := cur_b - cur_a;
+        }
+    }
+    gcd := cur_a;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: TerminationFailure
+Error Message: [TerminationFailure] tại Dòng 7, Cột 4: decreases expression might not decrease
+-> Dòng mã vi phạm: `while cur_a != cur_b`
+-> Hướng dẫn khắc phục: KHÔNG THỂ CHỨNG MINH VÒNG LẶP DỪNG: Hãy thêm mệnh đề `decreases <biểu_thức>` giảm nghiêm ngặt sau mỗi bước lặp và luôn >= 0.
+Code:
+method greatest_common_divisor(a: int, b: int) returns (gcd: int)
+    requires a != 0 || b != 0
+    ensures gcd != 0
+{
+    var cur_a := a;
+    var cur_b := b;
+    while cur_a != cur_b
+        invariant 0 <= cur_a && 0 <= cur_b
+        invariant cur_a != cur_b
+        decreases cur_a + cur_b
+    {
+        if cur_a > cur_b {
+            cur_a := cur_a - cur_b;
+        } else {
+            cur_b := cur_b - cur_a;
+        }
+    }
+    gcd := cur_a;
+}
+

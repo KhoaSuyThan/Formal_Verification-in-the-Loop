@@ -1,0 +1,215 @@
+=== BÀI TOÁN: 088-sort_array ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 238.03s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 9, Cột 0: a postcondition could not be proved on this return path
+Code:
+method sort_array(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures |sorted| == |s|
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 == 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] >= sorted[j]
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 != 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  // post-conditions-end
+{
+  var l := s;
+  var n := |l|;
+  var swapped := true;
+  while swapped
+    invariant 0 <= n <= |l|
+    invariant forall i :: 0 <= i < n ==> l[i] <= l[i + 1]
+    decreases n
+  {
+    swapped := false;
+    var i := 0;
+    while i < n - 1
+      invariant 0 <= i <= n - 1
+      invariant forall j :: 0 <= j < i ==> l[j] <= l[j + 1]
+      decreases n - i
+    {
+      if l[i] > l[i + 1]
+      {
+        var temp := l[i];
+        l := l[i := l[i + 1]];
+        l := l[i + 1 := temp];
+        swapped := true;
+      }
+      i := i + 1;
+    }
+    n := n - 1;
+  }
+  sorted := l;
+}
+
+method reverse(s: seq<int>) returns (rev: seq<int>)
+  // post-conditions-start
+  ensures |rev| == |s|
+  ensures forall k :: 0 <= k < |s| ==> rev[k] == s[|s| - 1 - k]
+  // post-conditions-end
+{
+  var n := |s|;
+  var i := 0;
+  while i < n
+    invariant 0 <= i <= n
+    decreases n - i
+  {
+    rev := rev + [s[n - 1 - i]];
+    i := i + 1;
+  }
+}
+
+method SortSeq(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  ensures |sorted| == |s|
+  ensures multiset(s) == multiset(sorted)
+  // post-conditions-end
+{
+  sorted := sort_array(s);
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 9, Cột 0: a postcondition could not be proved on this return path
+Code:
+method sort_array(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures |sorted| == |s|
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 == 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] >= sorted[j]
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 != 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  // post-conditions-end
+{
+  var l := s;
+  var n := |l|;
+  var swapped := true;
+  while swapped
+    invariant 0 <= n <= |l|
+    invariant forall i :: 0 <= i < n ==> l[i] <= l[i + 1]
+    decreases n
+  {
+    swapped := false;
+    var i := 0;
+    while i < n - 1
+      invariant 0 <= i <= n - 1
+      invariant forall j :: 0 <= j < i ==> l[j] <= l[j + 1]
+      decreases n - i
+    {
+      if l[i] > l[i + 1]
+      {
+        var temp := l[i];
+        l := l[i := l[i + 1]];
+        l := l[i + 1 := temp];
+        swapped := true;
+      }
+      i := i + 1;
+    }
+    n := n - 1;
+  }
+  sorted := l;
+}
+
+method reverse(s: seq<int>) returns (rev: seq<int>)
+  // post-conditions-start
+  ensures |rev| == |s|
+  ensures forall k :: 0 <= k < |s| ==> rev[k] == s[|s| - 1 - k]
+  // post-conditions-end
+{
+  var n := |s|;
+  var i := 0;
+  while i < n
+    invariant 0 <= i <= n
+    decreases n - i
+  {
+    rev := rev + [s[n - 1 - i]];
+    i := i + 1;
+  }
+}
+
+method SortSeq(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  ensures |sorted| == |s|
+  ensures multiset(s) == multiset(sorted)
+  // post-conditions-end
+{
+  sorted := sort_array(s);
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 9, Cột 0: a postcondition could not be proved on this return path
+Code:
+method sort_array(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures |sorted| == |s|
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 == 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] >= sorted[j]
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 != 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  // post-conditions-end
+{
+  var l := s;
+  var n := |l|;
+  var swapped := true;
+  while swapped
+    invariant 0 <= n <= |l|
+    invariant forall i :: 0 <= i < n ==> l[i] <= l[i + 1]
+    decreases n
+  {
+    swapped := false;
+    var i := 0;
+    while i < n - 1
+      invariant 0 <= i <= n - 1
+      invariant forall j :: 0 <= j < i ==> l[j] <= l[j + 1]
+      decreases n - i
+    {
+      if l[i] > l[i + 1]
+      {
+        var temp := l[i];
+        l := l[i := l[i + 1]];
+        l := l[i + 1 := temp];
+        swapped := true;
+      }
+      i := i + 1;
+    }
+    n := n - 1;
+  }
+  sorted := l;
+}
+
+method reverse(s: seq<int>) returns (rev: seq<int>)
+  // post-conditions-start
+  ensures |rev| == |s|
+  ensures forall k :: 0 <= k < |s| ==> rev[k] == s[|s| - 1 - k]
+  // post-conditions-end
+{
+  var n := |s|;
+  var i := 0;
+  while i < n
+    invariant 0 <= i <= n
+    decreases n - i
+  {
+    rev := rev + [s[n - 1 - i]];
+    i := i + 1;
+  }
+}
+
+method SortSeq(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  ensures |sorted| == |s|
+  ensures multiset(s) == multiset(sorted)
+  // post-conditions-end
+{
+  sorted := sort_array(s);
+}
+

@@ -1,0 +1,83 @@
+=== BÀI TOÁN: 013-greatest_common_divisor ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 58.93s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 11, Cột 8: LHS of assignment must denote a mutable variable
+Code:
+method greatest_common_divisor(a: int, b: int) returns (gcd: int)
+    requires a != 0 || b != 0
+    ensures gcd != 0
+{
+    if a == 0 {
+        gcd := b;
+    } else if b == 0 {
+        gcd := a;
+    } else {
+        var temp := a;
+        a := b;
+        b := temp % b;
+        while b != 0 decreases b {
+            temp := a;
+            a := b;
+            b := temp % b;
+        }
+        gcd := a;
+    }
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 11, Cột 8: LHS of assignment must denote a mutable variable
+Code:
+method greatest_common_divisor(a: int, b: int) returns (gcd: int)
+    requires a != 0 || b != 0
+    ensures gcd != 0
+{
+    if a == 0 {
+        gcd := b;
+    } else if b == 0 {
+        gcd := a;
+    } else {
+        var temp := a;
+        a := b;
+        b := temp % b;
+        while b != 0 decreases b {
+            temp := a;
+            a := b;
+            b := temp % b;
+        }
+        gcd := a;
+    }
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 11, Cột 8: LHS of assignment must denote a mutable variable
+Code:
+method greatest_common_divisor(a: int, b: int) returns (gcd: int)
+    requires a != 0 || b != 0
+    ensures gcd != 0
+{
+    if a == 0 {
+        gcd := b;
+    } else if b == 0 {
+        gcd := a;
+    } else {
+        var temp := a;
+        a := b;
+        b := temp % b;
+        while b != 0 decreases b {
+            temp := a;
+            a := b;
+            b := temp % b;
+        }
+        gcd := a;
+    }
+}
+

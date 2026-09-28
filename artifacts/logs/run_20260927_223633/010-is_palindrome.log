@@ -1,0 +1,119 @@
+=== BÀI TOÁN: 010-is_palindrome ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 102.13s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 10, Cột 4: invalid AssignStatement
+Code:
+method make_palindrome(s: string) returns (result: string)
+    // post-conditions-start
+    ensures |result| <= 2 * |s|
+    ensures is_palindrome(result)
+    ensures starts_with(result, s)
+    // post-conditions-end
+{
+    if |s| == 0 {
+        result := s
+    } else {
+        var rev := reverse(s)
+        result := s + rev[1 .. |rev|]
+    }
+}
+
+method reverse(str: string) returns (rev: string)
+    // post-conditions-start
+    ensures |rev| == |str|
+    ensures forall k :: 0 <= k < |str| ==> rev[k] == str[|str| - 1 - k]
+    // post-conditions-end
+{
+    var rev := ""
+    var i := 0
+    while i < |str|
+        invariant 0 <= i <= |str|
+        decreases |str| - i
+    {
+        rev := str[i] + rev
+        i := i + 1
+    }
+    result := rev
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 10, Cột 4: invalid AssignStatement
+Code:
+method make_palindrome(s: string) returns (result: string)
+    // post-conditions-start
+    ensures |result| <= 2 * |s|
+    ensures is_palindrome(result)
+    ensures starts_with(result, s)
+    // post-conditions-end
+{
+    if |s| == 0 {
+        result := s
+    } else {
+        var rev := reverse(s)
+        result := s + rev[1 .. |rev|]
+    }
+}
+
+method reverse(str: string) returns (rev: string)
+    // post-conditions-start
+    ensures |rev| == |str|
+    ensures forall k :: 0 <= k < |str| ==> rev[k] == str[|str| - 1 - k]
+    // post-conditions-end
+{
+    var rev := ""
+    var i := 0
+    while i < |str|
+        invariant 0 <= i <= |str|
+        decreases |str| - i
+    {
+        rev := str[i] + rev
+        i := i + 1
+    }
+    result := rev
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 10, Cột 4: invalid AssignStatement
+Code:
+method make_palindrome(s: string) returns (result: string)
+    // post-conditions-start
+    ensures |result| <= 2 * |s|
+    ensures is_palindrome(result)
+    ensures starts_with(result, s)
+    // post-conditions-end
+{
+    if |s| == 0 {
+        result := s
+    } else {
+        var rev := reverse(s)
+        result := s + rev[1 .. |rev|]
+    }
+}
+
+method reverse(str: string) returns (rev: string)
+    // post-conditions-start
+    ensures |rev| == |str|
+    ensures forall k :: 0 <= k < |str| ==> rev[k] == str[|str| - 1 - k]
+    // post-conditions-end
+{
+    var rev := ""
+    var i := 0
+    while i < |str|
+        invariant 0 <= i <= |str|
+        decreases |str| - i
+    {
+        rev := str[i] + rev
+        i := i + 1
+    }
+    result := rev
+}
+
