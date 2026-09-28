@@ -1,0 +1,89 @@
+=== BÀI TOÁN: 002-truncate ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 140.2s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: LoopInvariantViolation
+Error Message: [LoopInvariantViolation] tại Dòng 9, Cột 25: this invariant could not be proved to be maintained by the loop
+-> Dòng mã vi phạm: `invariant 0 <= i <= 1`
+-> Hướng dẫn khắc phục: BẤT BIẾN KHÔNG ĐƯỢC DUY TRÌ SAU THÂN VÒNG LẶP (maintained): Sau bước nhảy (ví dụ `i := i + 1`), biến có thể vượt qua biên của invariant. Lưu ý: Nếu duyệt mảng `while i < a.Length`, TUYỆT ĐỐI KHÔNG sửa thành `while i <= a.Length` (sẽ gây lỗi vượt biên). Hãy giữ nguyên điều kiện lặp hợp lệ và nới lỏng invariant cận trên thành `0 <= i <= a.Length`.
+Code:
+method truncate_number(x : real) returns (d : real)
+    requires x >= 0.0
+    ensures (0.0 <= d <= 1.0)
+    ensures (x - d) == (x.Floor as real)
+{
+    var acc := 0.0 as real;
+    var i := 0;
+    while i <= 1
+        invariant 0 <= i <= 1
+        decreases 1 - i
+    {
+        if i == 0 {
+            acc := x.Floor as real;
+        } else {
+            acc := acc;
+        }
+        i := i + 1;
+    }
+    d := acc;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: LoopInvariantViolation
+Error Message: [LoopInvariantViolation] tại Dòng 9, Cột 25: this invariant could not be proved to be maintained by the loop
+-> Dòng mã vi phạm: `invariant 0 <= i <= 1`
+-> Hướng dẫn khắc phục: BẤT BIẾN KHÔNG ĐƯỢC DUY TRÌ SAU THÂN VÒNG LẶP (maintained): Sau bước nhảy (ví dụ `i := i + 1`), biến có thể vượt qua biên của invariant. Lưu ý: Nếu duyệt mảng `while i < a.Length`, TUYỆT ĐỐI KHÔNG sửa thành `while i <= a.Length` (sẽ gây lỗi vượt biên). Hãy giữ nguyên điều kiện lặp hợp lệ và nới lỏng invariant cận trên thành `0 <= i <= a.Length`.
+Code:
+method truncate_number(x : real) returns (d : real)
+    requires x >= 0.0
+    ensures (0.0 <= d <= 1.0)
+    ensures (x - d) == (x.Floor as real)
+{
+    var acc := 0.0 as real;
+    var i := 0;
+    while i <= 1
+        invariant 0 <= i <= 1
+        decreases 1 - i
+    {
+        if i == 0 {
+            acc := x.Floor as real;
+        } else {
+            acc := acc;
+        }
+        i := i + 1;
+    }
+    d := acc;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: LoopInvariantViolation
+Error Message: [LoopInvariantViolation] tại Dòng 9, Cột 25: this invariant could not be proved to be maintained by the loop
+-> Dòng mã vi phạm: `invariant 0 <= i <= 1`
+-> Hướng dẫn khắc phục: BẤT BIẾN KHÔNG ĐƯỢC DUY TRÌ SAU THÂN VÒNG LẶP (maintained): Sau bước nhảy (ví dụ `i := i + 1`), biến có thể vượt qua biên của invariant. Lưu ý: Nếu duyệt mảng `while i < a.Length`, TUYỆT ĐỐI KHÔNG sửa thành `while i <= a.Length` (sẽ gây lỗi vượt biên). Hãy giữ nguyên điều kiện lặp hợp lệ và nới lỏng invariant cận trên thành `0 <= i <= a.Length`.
+Code:
+method truncate_number(x : real) returns (d : real)
+    requires x >= 0.0
+    ensures (0.0 <= d <= 1.0)
+    ensures (x - d) == (x.Floor as real)
+{
+    var acc := 0.0 as real;
+    var i := 0;
+    while i <= 1
+        invariant 0 <= i <= 1
+        decreases 1 - i
+    {
+        if i == 0 {
+            acc := x.Floor as real;
+        } else {
+            acc := acc;
+        }
+        i := i + 1;
+    }
+    d := acc;
+}
+

@@ -1,0 +1,196 @@
+=== BÀI TOÁN: 077-iscube ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 378.62s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 29, Cột 20: arguments to <= must have a common supertype (got bool and int)
+-> Dòng mã vi phạm: `while r * r * r <= n`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method cube_root(N: nat) returns (r: nat)
+  // post-conditions-start
+  ensures cube(r) <= N < cube(r + 1)
+  ensures r <= N
+  // post-conditions-end
+{
+  var i: nat := 0;
+  while i * i * i <= N
+    invariant 0 <= i <= N
+    decreases N - i * i * i
+  {
+    i := i + 1;
+  }
+  r := i - 1;
+}
+
+method iscube(n: int) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r && n >= 0 ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r && n >= 0 ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  ensures r && n < 0 ==> exists r :: 0 <= r <= -n && n == -cube(r)
+  ensures !r && n < 0 ==> forall r :: 0 <= r <= -n ==> n != -cube(r)
+  // post-conditions-end
+{
+  if n >= 0 {
+    r := 0;
+    while r * r * r <= n
+      invariant 0 <= r <= n
+      decreases n - r * r * r
+    {
+      r := r + 1;
+    }
+    r := r - 1;
+    r := r * r * r == n;
+
+    return;
+  } else {
+    r := 0;
+    while r * r * r <= -n
+      invariant 0 <= r <= -n
+      decreases -n - r * r * r
+    {
+      r := r + 1;
+    }
+    r := r - 1;
+    r := -r * r * r == n;
+
+    return;
+  }
+}
+
+function cube(n: int): int { n * n * n }
+// pure-end
+lemma cube_of_larger_is_larger()
+    ensures forall smaller : int, larger : int :: smaller <= larger ==> cube(smaller) <= cube(larger)
+{}
+// pure-end
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 35, Cột 6: RHS (of type int) not assignable to LHS (of type bool)
+-> Dòng mã vi phạm: `r := r_local - 1;`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method cube_root(N: nat) returns (r: nat)
+  // post-conditions-start
+  ensures cube(r) <= N < cube(r + 1)
+  ensures r <= N
+  // post-conditions-end
+{
+  var i: nat := 0;
+  while i * i * i <= N
+    invariant 0 <= i <= N
+    decreases N - i * i * i
+  {
+    i := i + 1;
+  }
+  r := i - 1;
+}
+
+method iscube(n: int) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r && n >= 0 ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r && n >= 0 ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  ensures r && n < 0 ==> exists r :: 0 <= r <= -n && n == -cube(r)
+  ensures !r && n < 0 ==> forall r :: 0 <= r <= -n ==> n != -cube(r)
+  // post-conditions-end
+{
+  if n >= 0 {
+    var r_local: nat := 0;
+    while r_local * r_local * r_local <= n
+      invariant 0 <= r_local <= n
+      decreases n - r_local * r_local * r_local
+    {
+      r_local := r_local + 1;
+    }
+    r := r_local - 1;
+    r := r_local * r_local * r_local == n;
+  } else {
+    var r_local: nat := 0;
+    while r_local * r_local * r_local <= -n
+      invariant 0 <= r_local <= -n
+      decreases -n - r_local * r_local * r_local
+    {
+      r_local := r_local + 1;
+    }
+    r := r_local - 1;
+    r := -r_local * r_local * r_local == n;
+  }
+}
+
+function cube(n: int): int { n * n * n }
+// pure-end
+lemma cube_of_larger_is_larger()
+    ensures forall smaller : int, larger : int :: smaller <= larger ==> cube(smaller) <= cube(larger)
+{}
+// pure-end
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 4, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures cube(r) <= N < cube(r + 1)`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN QUY NẠP TƯƠNG ĐƯƠNG HÀM ĐỆ QUY (FUNCTIONAL EQUIVALENCE): `ensures cube(r) <= N < cube(r + 1)`.
+[HÀNH ĐỘNG BẮT BUỘC - ĐỒNG BỘ BẤT BIẾN VỚI HÀM cube]:
+Phương thức đang tính toán để khớp với hàm thuần túy `cube(r)`.
+SMT Solver BẮT BUỘC cần các invariant quy nạp đồng bộ trực tiếp các biến trạng thái lặp với hàm `cube`:
+1. `invariant 0 <= i <= r`
+2. `invariant a == cube(i)` (biến tích lũy bước hiện tại)
+3. `invariant b == cube(i + 1)` (nếu là thuật toán đệ quy 2 bước như Fibonacci, biến tích lũy bước tiếp theo)
+Code:
+method cube_root(N: nat) returns (r: nat)
+  ensures cube(r) <= N < cube(r + 1)
+  ensures r <= N
+{
+  var i: nat := 0;
+  while i * i * i <= N
+    invariant 0 <= i <= N
+    decreases N - i * i * i
+  {
+    i := i + 1;
+  }
+  r := i - 1;
+}
+
+method iscube(n: int) returns (r: bool)
+  ensures r && n >= 0 ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r && n >= 0 ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  ensures r && n < 0 ==> exists r :: 0 <= r <= -n && n == -cube(r)
+  ensures !r && n < 0 ==> forall r :: 0 <= r <= -n ==> n != -cube(r)
+{
+  if n >= 0 {
+    var r_local: nat := 0;
+    while r_local * r_local * r_local <= n
+      invariant 0 <= r_local <= n
+      decreases n - r_local * r_local * r_local
+    {
+      r_local := r_local + 1;
+    }
+    r := exists r :: 0 <= r <= n && n == cube(r);
+  } else {
+    var r_local: nat := 0;
+    while r_local * r_local * r_local <= -n
+      invariant 0 <= r_local <= -n
+      decreases -n - r_local * r_local * r_local
+    {
+      r_local := r_local + 1;
+    }
+    r := exists r :: 0 <= r <= -n && n == -cube(r);
+  }
+}
+
+function cube(n: int): int { n * n * n }
+
+lemma cube_of_larger_is_larger()
+    ensures forall smaller : int, larger : int :: smaller <= larger ==> cube(smaller) <= cube(larger)
+{}
+

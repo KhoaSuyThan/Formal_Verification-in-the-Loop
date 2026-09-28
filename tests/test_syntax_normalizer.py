@@ -125,6 +125,64 @@ def test_fix_misplaced_loop_invariants():
     print("[OK] Test fix_misplaced_loop_invariants: PASS")
 
 
+def test_fix_if_then_in_method():
+    code = """function abs(val : real): real
+{
+  if (val < 0.0) then
+    -val
+  else
+    val
+}
+// pure-end
+
+method has_close_elements(numbers: seq<real>, threshold: real) returns (flag : bool)
+{
+  var n := |numbers|;
+  if n <= 1 then
+    flag := false;
+
+    return;
+
+  var i := 0;
+  while i < n
+  {
+    if abs(numbers[i]) < threshold then
+      flag := true;
+      return;
+    i := i + 1;
+  }
+}
+"""
+    result = SyntaxNormalizer.fix_if_then_in_method(code)
+    # Hàm function abs phải giữ nguyên biểu thức if ... then
+    assert "if (val < 0.0) then" in result, "Function pure expression không được bị thay đổi!"
+    # Method phải được chuyển sang khối ngoặc nhọn
+    assert "if n <= 1 {" in result, f"if n <= 1 then chưa được chuyển: {result}"
+    assert "if abs(numbers[i]) < threshold {" in result, f"if trong loop chưa được chuyển: {result}"
+    assert "if n <= 1 then" not in result
+    print("[OK] Test fix_if_then_in_method: PASS")
+
+
+def test_fix_missing_semicolon():
+    code = """method has_close_elements(numbers: seq<real>) returns (flag : bool)
+{
+  var n := |numbers|;
+  if n <= 1 {
+    flag := false
+  }
+  else {
+    var i := 0
+    return
+  }
+}
+"""
+    result = SyntaxNormalizer.fix_missing_semicolon(code)
+    assert "flag := false;" in result, f"flag := false; chưa có chấm phẩy: {result}"
+    assert "var i := 0;" in result, f"var i := 0; chưa có chấm phẩy: {result}"
+    assert "return;" in result, f"return; chưa có chấm phẩy: {result}"
+    print("[OK] Test fix_missing_semicolon: PASS")
+
+
 if __name__ == "__main__":
     test_fix_duplicate_out_param()
     test_fix_return_expr()
@@ -132,6 +190,9 @@ if __name__ == "__main__":
     test_fix_ternary()
     test_fix_seq_assignment()
     test_fix_misplaced_loop_invariants()
+    test_fix_if_then_in_method()
+    test_fix_missing_semicolon()
     test_normalize_combined()
     print("All SyntaxNormalizer tests passed!")
+
 

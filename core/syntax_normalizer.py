@@ -266,20 +266,209 @@ class SyntaxNormalizer:
         return pattern.sub(move_invariants, code)
 
     @classmethod
+    def _find_method_spans(cls, code: str) -> List[Tuple[int, int]]:
+        """Tìm vị trí bắt đầu và kết thúc của thân tất cả các method trong code."""
+        spans: List[Tuple[int, int]] = []
+        method_hdr = re.compile(r'\bmethod\b[^{]*\{')
+        for match in method_hdr.finditer(code):
+            start_brace = match.end() - 1
+            depth = 1
+            i = start_brace + 1
+            in_line_comment = False
+            in_block_comment = False
+            in_string = False
+
+            while i < len(code) and depth > 0:
+                c = code[i]
+                if in_line_comment:
+                    if c == '\n':
+                        in_line_comment = False
+                elif in_block_comment:
+                    if c == '*' and i + 1 < len(code) and code[i + 1] == '/':
+                        in_block_comment = False
+                        i += 1
+                elif in_string:
+                    if c == '\\' and i + 1 < len(code):
+                        i += 1
+                    elif c == '"':
+                        in_string = False
+                else:
+                    if c == '/' and i + 1 < len(code) and code[i + 1] == '/':
+                        in_line_comment = True
+                        i += 1
+                    elif c == '/' and i + 1 < len(code) and code[i + 1] == '*':
+                        in_block_comment = True
+                        i += 1
+                    elif c == '"':
+                        in_string = True
+                    elif c == '{':
+                        depth += 1
+                    elif c == '}':
+                        depth -= 1
+                        if depth == 0:
+                            spans.append((start_brace + 1, i))
+                            break
+                i += 1
+        return spans
+
+    @staticmethod
+    def _normalize_if_then_block(body: str) -> str:
+        """Chuẩn hóa các câu lệnh `if cond then` thành khối lệnh `if cond { ... }`."""
+        lines = body.splitlines()
+        result_lines: List[str] = []
+        unclosed_if_indents: List[int] = []
+
+        single_line_pat = re.compile(r'^(\s*)(?:(else\s+)?if\b\s*(.+?)\s*\bthen\b)\s*([^;{}\n]+(?:;.*)?)$')
+        multi_line_pat = re.compile(r'^(\s*)(?:(else\s+)?if\b\s*(.+?)\s*\bthen)\s*(?://.*)?$')
+
+        for line in lines:
+            stripped = line.strip()
+            if not stripped:
+                result_lines.append(line)
+                continue
+
+            line_indent = len(line) - len(line.lstrip())
+
+            # Đóng các khối if-then mở nếu dòng hiện tại lùi bằng hoặc thấp hơn thụt lề của if
+            while unclosed_if_indents and line_indent <= unclosed_if_indents[-1]:
+                closed_indent = unclosed_if_indents.pop()
+                result_lines.append(f"{' ' * closed_indent}}}")
+
+            # Khớp pattern nhiều dòng: `if <cond> then`
+            m_multi = multi_line_pat.match(line)
+            if m_multi:
+                indent_str = m_multi.group(1)
+                else_prefix = m_multi.group(2) or ""
+                cond = m_multi.group(3).strip()
+                result_lines.append(f"{indent_str}{else_prefix}if {cond} {{")
+                unclosed_if_indents.append(len(indent_str))
+                continue
+
+            # Khớp pattern một dòng: `if <cond> then <stmt>`
+            m_single = single_line_pat.match(line)
+            if m_single:
+                indent_str = m_single.group(1)
+                else_prefix = m_single.group(2) or ""
+                cond = m_single.group(3).strip()
+                stmt = m_single.group(4).strip()
+                if not stmt.endswith(";"):
+                    stmt += ";"
+                result_lines.append(f"{indent_str}{else_prefix}if {cond} {{ {stmt} }}")
+                continue
+
+            result_lines.append(line)
+
+        while unclosed_if_indents:
+            closed_indent = unclosed_if_indents.pop()
+            result_lines.append(f"{' ' * closed_indent}}}")
+
+        return "\n".join(result_lines)
+
+    @classmethod
+    def fix_if_then_in_method(cls, code: str) -> str:
+        """Phép biến đổi 7: Chuyển cú pháp `if <cond> then` trong thân method thành `if <cond> { ... }`.
+
+        Trong Dafny:
+        - Trong function: `if cond then expr else expr` là biểu thức hợp lệ.
+        - Trong method: BẮT BUỘC dùng khối ngoặc nhọn `{ ... }`, `if cond then` gây lỗi `lbrace expected`.
+        """
+        spans = cls._find_method_spans(code)
+        if not spans:
+            return code
+
+        result = code
+        for start, end in reversed(spans):
+            method_body = result[start:end]
+            normalized_body = cls._normalize_if_then_block(method_body)
+            if not normalized_body.endswith("\n"):
+                normalized_body += "\n"
+            result = result[:start] + normalized_body + result[end:]
+        return result
+
+    @classmethod
+    def fix_missing_semicolon(cls, code: str) -> str:
+        """Phép biến đổi 8: Tự động bổ sung dấu chấm phẩy ';' cho các câu lệnh gán và return trong method.
+
+        Trong Dafny method:
+        - Các câu lệnh `:=` và `return` BẮT BUỘC phải kết thúc bằng dấu `;`.
+        - Không áp dụng cho `invariant`, `decreases`, `if`, `while`, hoặc `function`.
+        """
+        spans = cls._find_method_spans(code)
+        if not spans:
+            return code
+
+        result = code
+        for start, end in reversed(spans):
+            method_body = result[start:end]
+            lines = method_body.splitlines()
+            norm_lines: List[str] = []
+            for line in lines:
+                stripped = line.strip()
+                # Bỏ qua dòng trống, comment, hoặc dòng kết thúc bằng dấu ; { }
+                if (not stripped or 
+                    stripped.startswith("//") or 
+                    stripped.startswith("/*") or
+                    stripped.endswith(";") or 
+                    stripped.endswith("{") or 
+                    stripped.endswith("}") or
+                    stripped.endswith(",") or
+                    stripped.endswith("+") or
+                    stripped.endswith("-") or
+                    stripped.endswith("*") or
+                    stripped.endswith("&&") or
+                    stripped.endswith("||")):
+                    norm_lines.append(line)
+                    continue
+
+                # Bỏ qua từ khóa cấu trúc điều khiển và bất biến
+                if (stripped.startswith("while ") or 
+                    stripped.startswith("if ") or 
+                    stripped.startswith("else") or
+                    stripped.startswith("invariant ") or 
+                    stripped.startswith("decreases ") or
+                    stripped.startswith("assert ") or
+                    stripped.startswith("assume ")):
+                    norm_lines.append(line)
+                    continue
+
+                # Bổ sung ; cho return đứng một mình
+                if stripped == "return":
+                    norm_lines.append(line + ";")
+                    continue
+
+                # Bổ sung ; cho câu lệnh gán := (kể cả có var hoặc không)
+                if ":=" in stripped:
+                    norm_lines.append(line + ";")
+                    continue
+
+                norm_lines.append(line)
+
+            normalized_body = "\n".join(norm_lines)
+            if not normalized_body.endswith("\n"):
+                normalized_body += "\n"
+            result = result[:start] + normalized_body + result[end:]
+
+        return result
+
+    @classmethod
     def normalize(cls, code: str) -> str:
         """Áp dụng toàn bộ các phép chuẩn hóa cú pháp theo thứ tự an toàn.
 
         Thứ tự áp dụng:
-        1. Sửa vị trí đặt invariant/decreases bên trong thân while
-        2. Loại bỏ khai báo trùng biến ngõ ra
-        3. Chuyển đổi toán tử ternary
-        4. Chuyển đổi return <expr>
-        5. Chuyển đổi phép gán trên seq
+        1. Sửa cú pháp if-then bên trong thân method thành khối ngoặc nhọn { }
+        2. Tự động bổ sung dấu chấm phẩy thiếu cho câu lệnh gán / return
+        3. Sửa vị trí đặt invariant/decreases bên trong thân while
+        4. Loại bỏ khai báo trùng biến ngõ ra
+        5. Chuyển đổi toán tử ternary
+        6. Chuyển đổi return <expr>
+        7. Chuyển đổi phép gán trên seq
         """
         if not code or not code.strip():
             return code
 
         result = code
+        result = cls.fix_if_then_in_method(result)
+        result = cls.fix_missing_semicolon(result)
         result = cls.fix_misplaced_loop_invariants(result)
         result = cls.fix_duplicate_out_params(result)
         result = cls.fix_ternary_operator(result)

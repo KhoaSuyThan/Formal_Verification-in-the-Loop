@@ -185,10 +185,10 @@ class PipelineController:
                         f"⚠️ CẢNH BÁO NGHẼN MÃ NGUỒN (STAGNATION DETECTED):\n"
                         f"Bạn vừa sinh ra đoạn mã gần như trùng khớp 100% với mã đã bị Z3 bác bỏ trước đó.\n"
                         f"Lịch sử lỗi các lượt trước:\n{failed_attempts}\n\n"
-                        f"YÊU CẦU BẮT BUỘC:\n"
-                        f"- TUYỆT ĐỐI KHÔNG lặp lại cấu trúc mã nguồn cũ.\n"
-                        f"- Hãy thay đổi cách tiếp cận thuật toán: điều chỉnh lại cấu trúc vòng lặp, "
-                        f"thay đổi biến phụ trợ, nới lỏng hoặc thắt chặt các điều kiện invariant/decreases phù hợp."
+                        f"YÊU CẦU BẮT BUỘC ĐỂ PHÁ NGHẼN:\n"
+                        f"1. BẠN ĐÃ QUÊN THÊM INVARIANT: Đọc kỹ phần '[HÀNH ĐỘNG BẮT BUỘC]' trong hướng dẫn chẩn đoán ở trên.\n"
+                        f"2. BẮT BUỘC chèn ít nhất một mệnh đề `invariant` cụ thể tương ứng vào sau từ khóa `while`.\n"
+                        f"3. TUYỆT ĐỐI KHÔNG gửi lại mã nguồn cũ mà không bổ sung mệnh đề invariant mới."
                     )
                     repaired_code = self.agent.repair_code(current_code, enriched_feedback, raw_spec)
                     repaired_code = self._postprocess_code(raw_spec, repaired_code)

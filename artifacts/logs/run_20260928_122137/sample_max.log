@@ -1,0 +1,21 @@
+=== BÀI TOÁN: sample_max ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 11.62s
+Kết quả cuối: PASS
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: True
+Error Taxonomy: None
+Error Message: 
+Code:
+method Max(a: int, b: int) returns (m: int)
+    ensures m >= a && m >= b
+    ensures m == a || m == b
+{
+    if a >= b {
+        m := a;
+    } else {
+        m := b;
+    }
+}
+

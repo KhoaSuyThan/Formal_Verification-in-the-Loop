@@ -1,0 +1,152 @@
+=== BÀI TOÁN: 077-iscube ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 279.78s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 28, Cột 18: incorrect return type for method out-parameter 'r' (expected nat, got bool)
+-> Dòng mã vi phạm: `r := cube_root(n as nat);`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method cube_root(N: nat) returns (r: nat)
+  // post-conditions-start
+  ensures cube(r) <= N < cube(r + 1)
+  ensures r <= N
+  // post-conditions-end
+{
+  var i: nat := 0;
+  while i * i * i <= N
+    invariant 0 <= i <= N
+    decreases N - i * i * i
+  {
+    i := i + 1;
+  }
+  r := i - 1;
+}
+
+method iscube(n: int) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r && n >= 0 ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r && n >= 0 ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  ensures r && n < 0 ==> exists r :: 0 <= r <= -n && n == -cube(r)
+  ensures !r && n < 0 ==> forall r :: 0 <= r <= -n ==> n != -cube(r)
+  // post-conditions-end
+{
+  if n >= 0 {
+    r := cube_root(n as nat);
+    r := n == cube(r);
+
+    return;
+  } else {
+    r := cube_root(-n as nat);
+    r := n == -cube(r);
+
+    return;
+  }
+}
+
+function cube(n: int): int { n * n * n }
+// pure-end
+lemma cube_of_larger_is_larger()
+    ensures forall smaller : int, larger : int :: smaller <= larger ==> cube(smaller) <= cube(larger)
+{}
+// pure-end
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 6, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures cube(r) <= N < cube(r + 1)`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN QUY NẠP TƯƠNG ĐƯƠNG HÀM ĐỆ QUY (FUNCTIONAL EQUIVALENCE): `ensures cube(r) <= N < cube(r + 1)`.
+Phương thức lặp đang tính toán để khớp với một hàm toán học thuần túy (pure function). SMT Solver bắt buộc cần các invariant quy nạp đồng bộ trực tiếp các biến trạng thái lặp với giá trị của hàm đệ quy tại bước lặp hiện tại (ví dụ: `invariant acc == f(i)` và `invariant next_acc == f(i + 1)`).
+Code:
+method cube_root(N: nat) returns (r: nat)
+  // post-conditions-start
+  ensures cube(r) <= N < cube(r + 1)
+  ensures r <= N
+  // post-conditions-end
+{
+  var i: nat := 0;
+  while i * i * i <= N
+    invariant 0 <= i <= N
+    decreases N - i * i * i
+  {
+    i := i + 1;
+  }
+  r := i - 1;
+}
+
+method iscube(n: int) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r && n >= 0 ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r && n >= 0 ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  ensures r && n < 0 ==> exists r :: 0 <= r <= -n && n == -cube(r)
+  ensures !r && n < 0 ==> forall r :: 0 <= r <= -n ==> n != -cube(r)
+  // post-conditions-end
+{
+  if n >= 0 {
+    var r_nat: nat := cube_root(n as nat);
+    r := n == cube(r_nat);
+  } else {
+    var r_nat: nat := cube_root(-n as nat);
+    r := n == -cube(r_nat);
+  }
+}
+
+function cube(n: int): int { n * n * n }
+
+lemma cube_of_larger_is_larger()
+    ensures forall smaller : int, larger : int :: smaller <= larger ==> cube(smaller) <= cube(larger)
+{}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 4, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures cube(r) <= N < cube(r + 1)`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN QUY NẠP TƯƠNG ĐƯƠNG HÀM ĐỆ QUY (FUNCTIONAL EQUIVALENCE): `ensures cube(r) <= N < cube(r + 1)`.
+Phương thức lặp đang tính toán để khớp với một hàm toán học thuần túy (pure function). SMT Solver bắt buộc cần các invariant quy nạp đồng bộ trực tiếp các biến trạng thái lặp với giá trị của hàm đệ quy tại bước lặp hiện tại (ví dụ: `invariant acc == f(i)` và `invariant next_acc == f(i + 1)`).
+Code:
+method cube_root(N: nat) returns (r: nat)
+  ensures cube(r) <= N < cube(r + 1)
+  ensures r <= N
+{
+  var i: nat := 0;
+  while i * i * i <= N
+    invariant 0 <= i <= N
+    decreases N - i * i * i
+  {
+    i := i + 1;
+  }
+  r := i - 1;
+}
+
+method iscube(n: int) returns (r: bool)
+  ensures r && n >= 0 ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r && n >= 0 ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  ensures r && n < 0 ==> exists r :: 0 <= r <= -n && n == -cube(r)
+  ensures !r && n < 0 ==> forall r :: 0 <= r <= -n ==> n != -cube(r)
+{
+  if n >= 0 {
+    var r_nat: nat := cube_root(n as nat);
+    r := n == cube(r_nat);
+  } else {
+    var r_nat: nat := cube_root(-n as nat);
+    r := n == -cube(r_nat);
+  }
+}
+
+function cube(n: int): int { n * n * n }
+
+lemma cube_of_larger_is_larger()
+    ensures forall smaller : int, larger : int :: smaller <= larger ==> cube(smaller) <= cube(larger)
+{}
+
