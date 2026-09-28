@@ -1,0 +1,106 @@
+=== BÀI TOÁN: 031-is-prime ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 162.58s
+Kết quả cuối: PASS
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 5, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures result ==> forall i :: 2 <= i < k ==> k % i != 0`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CHỨA ĐỊNH LƯỢNG TOÀN THỂ (FORALL) BỊ VI PHẠM: `ensures result ==> forall i :: 2 <= i < k ==> k % i != 0`.
+NGUYÊN LÝ BẤT BIẾN TIỀN TỐ (PREFIX INDUCTIVE INVARIANT): Để Z3 suy diễn được hậu điều kiện toàn thể, vòng lặp BẮT BUỘC phải duy trì bất biến tiền tố cho các phần tử đã duyệt:
+-> [HÀNH ĐỘNG BẮT BUỘC]: Bổ sung mệnh đề sau vào ngay dưới từ khóa while:
+   `invariant forall j :: 0 <= j < i ==> k % j != 0`
+Code:
+method is_prime(k: int) returns (result: bool)
+  requires k >= 1
+  ensures result ==> forall i :: 2 <= i < k ==> k % i != 0
+  ensures (k > 1 && !result) ==> exists j :: 2 <= j < k && k % j == 0
+{
+  result := true;
+  if k <= 1 {
+    result := false;
+  } else {
+    var i := 2;
+    while i < k
+      invariant 2 <= i <= k
+      decreases k - i
+    {
+      if k % i == 0 {
+        result := false;
+        break;
+      }
+      i := i + 1;
+    }
+  }
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: LoopInvariantViolation
+Error Message: [LoopInvariantViolation] tại Dòng 13, Cột 16: this loop invariant could not be proved on entry
+-> Dòng mã vi phạm: `invariant forall j :: 0 <= j < i ==> k % j != 0`
+-> Hướng dẫn khắc phục: BẤT BIẾN KHÔNG ĐÚNG KHI BẮT ĐẦU VÒNG LẶP (on entry): `invariant forall j :: 0 <= j < i ==> k % j != 0`.
+NGUYÊN NHÂN: Giá trị khởi tạo của các biến trước khi vào vòng lặp không thỏa mãn bất biến.
+[HÀNH ĐỘNG BẮT BUỘC - XỬ LÝ SỐ ÂM / TRƯỜNG HỢP BIÊN]:
+1. Nếu tham số đầu vào có thể là số âm (ví dụ: requires a != 0 || b != 0 trong GCD/Euclid), BẮT BUỘC phải lấy giá trị không âm trước khi vào vòng lặp:
+   `var cur_a := if a < 0 then -a else a;`
+   `var cur_b := if b < 0 then -b else b;`
+2. Khởi tạo biến lặp khớp chính xác với cận dưới của invariant (ví dụ: `var i := 0;` hoặc `var i := 1;`).
+3. TUYỆT ĐỐI KHÔNG sửa đổi hoặc nới lỏng các mệnh đề requires/ensures của đề bài.
+Code:
+method is_prime(k: int) returns (result: bool)
+  requires k >= 1
+  ensures result ==> forall i :: 2 <= i < k ==> k % i != 0
+  ensures (k > 1 && !result) ==> exists j :: 2 <= j < k && k % j == 0
+{
+  result := true;
+  if k <= 1 {
+    result := false;
+  } else {
+    var i := 2;
+    while i < k
+      invariant 2 <= i <= k
+      invariant forall j :: 0 <= j < i ==> k % j != 0
+      decreases k - i
+    {
+      if k % i == 0 {
+        result := false;
+        break;
+      }
+      i := i + 1;
+    }
+  }
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: True
+Error Taxonomy: None
+Error Message: 
+Code:
+method is_prime(k: int) returns (result: bool)
+  requires k >= 1
+  ensures result ==> forall i :: 2 <= i < k ==> k % i != 0
+  ensures (k > 1 && !result) ==> exists j :: 2 <= j < k && k % j == 0
+{
+  result := true;
+  if k <= 1 {
+    result := false;
+  } else {
+    var i := 2;
+    while i < k
+      invariant 2 <= i <= k
+      invariant forall j :: 2 <= j < i ==> k % j != 0
+      decreases k - i
+    {
+      if k % i == 0 {
+        result := false;
+        break;
+      }
+      i := i + 1;
+    }
+  }
+}
+

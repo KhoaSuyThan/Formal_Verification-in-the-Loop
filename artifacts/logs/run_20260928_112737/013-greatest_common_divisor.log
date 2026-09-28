@@ -1,0 +1,85 @@
+=== BÀI TOÁN: 013-greatest_common_divisor ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 112.72s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 9, Cột 18: unresolved identifier: max
+-> Dòng mã vi phạm: `decreases max(cur_a, cur_b)`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method greatest_common_divisor(a: int, b: int) returns (gcd: int)
+    requires a != 0 || b != 0
+    ensures gcd != 0
+{
+    var cur_a := a;
+    var cur_b := b;
+    while cur_a != cur_b
+        invariant 0 <= cur_a && 0 <= cur_b
+        decreases max(cur_a, cur_b)
+    {
+        if cur_a > cur_b {
+            cur_a := cur_a - cur_b;
+        } else {
+            cur_b := cur_b - cur_a;
+        }
+    }
+    gcd := cur_a;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 9, Cột 18: size operator expects a collection argument (instead got int)
+-> Dòng mã vi phạm: `decreases |cur_a - cur_b|`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method greatest_common_divisor(a: int, b: int) returns (gcd: int)
+    requires a != 0 || b != 0
+    ensures gcd != 0
+{
+    var cur_a := a;
+    var cur_b := b;
+    while cur_a != cur_b
+        invariant 0 <= cur_a && 0 <= cur_b
+        decreases |cur_a - cur_b|
+    {
+        if cur_a > cur_b {
+            cur_a := cur_a - cur_b;
+        } else {
+            cur_b := cur_b - cur_a;
+        }
+    }
+    gcd := cur_a;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 4, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures gcd != 0`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CỤ THỂ BỊ VI PHẠM: `ensures gcd != 0`.
+SMT Solver không thể suy diễn được điều kiện này tại điểm return. Hãy kiểm tra xem vòng lặp có thiếu invariant quy nạp mô tả kết quả đang tích lũy hay không.
+Code:
+method greatest_common_divisor(a: int, b: int) returns (gcd: int)
+    requires a != 0 || b != 0
+    ensures gcd != 0
+{
+    var cur_a := a;
+    var cur_b := b;
+    while cur_a != cur_b
+        invariant 0 <= cur_a && 0 <= cur_b
+        decreases cur_a - cur_b
+    {
+        if cur_a > cur_b {
+            cur_a := cur_a - cur_b;
+        } else {
+            cur_b := cur_b - cur_a;
+        }
+    }
+    gcd := cur_a;
+}
+

@@ -1,0 +1,97 @@
+=== BÀI TOÁN: 035-max-element ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 154.1s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: LoopInvariantViolation
+Error Message: [LoopInvariantViolation] tại Dòng 11, Cột 18: this loop invariant could not be proved on entry
+-> Dòng mã vi phạm: `invariant exists j :: 0 <= j < i && l[j] == result`
+-> Hướng dẫn khắc phục: BẤT BIẾN KHÔNG ĐÚNG KHI BẮT ĐẦU VÒNG LẶP (on entry): `invariant exists j :: 0 <= j < i && l[j] == result`.
+NGUYÊN NHÂN: Giá trị khởi tạo của các biến trước khi vào vòng lặp không thỏa mãn bất biến.
+[HÀNH ĐỘNG BẮT BUỘC - XỬ LÝ SỐ ÂM / TRƯỜNG HỢP BIÊN]:
+1. Nếu tham số đầu vào có thể là số âm (ví dụ: requires a != 0 || b != 0 trong GCD/Euclid), BẮT BUỘC phải lấy giá trị không âm trước khi vào vòng lặp:
+   `var cur_a := if a < 0 then -a else a;`
+   `var cur_b := if b < 0 then -b else b;`
+2. Khởi tạo biến lặp khớp chính xác với cận dưới của invariant (ví dụ: `var i := 0;` hoặc `var i := 1;`).
+3. TUYỆT ĐỐI KHÔNG sửa đổi hoặc nới lỏng các mệnh đề requires/ensures của đề bài.
+Code:
+method max_element(l : seq<int>) returns (result : int)
+    requires |l| > 0
+    ensures forall i : int :: i >= 0 && i < |l| ==> l[i] <= result
+    ensures exists i : int :: i >= 0 && i < |l| && l[i] == result
+{
+    var i := 0;
+    result := l[0];
+    while i < |l|
+        invariant 0 <= i <= |l|
+        invariant forall j :: 0 <= j < i ==> l[j] <= result
+        invariant exists j :: 0 <= j < i && l[j] == result
+    {
+        if l[i] > result {
+            result := l[i];
+        }
+        i := i + 1;
+    }
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: LoopInvariantViolation
+Error Message: [LoopInvariantViolation] tại Dòng 11, Cột 18: this loop invariant could not be proved on entry
+-> Dòng mã vi phạm: `invariant exists j :: 0 <= j < i && l[j] == result`
+-> Hướng dẫn khắc phục: BẤT BIẾN KHÔNG ĐÚNG KHI BẮT ĐẦU VÒNG LẶP (on entry): `invariant exists j :: 0 <= j < i && l[j] == result`.
+NGUYÊN NHÂN: Giá trị khởi tạo của các biến trước khi vào vòng lặp không thỏa mãn bất biến.
+[HÀNH ĐỘNG BẮT BUỘC - XỬ LÝ SỐ ÂM / TRƯỜNG HỢP BIÊN]:
+1. Nếu tham số đầu vào có thể là số âm (ví dụ: requires a != 0 || b != 0 trong GCD/Euclid), BẮT BUỘC phải lấy giá trị không âm trước khi vào vòng lặp:
+   `var cur_a := if a < 0 then -a else a;`
+   `var cur_b := if b < 0 then -b else b;`
+2. Khởi tạo biến lặp khớp chính xác với cận dưới của invariant (ví dụ: `var i := 0;` hoặc `var i := 1;`).
+3. TUYỆT ĐỐI KHÔNG sửa đổi hoặc nới lỏng các mệnh đề requires/ensures của đề bài.
+Code:
+method max_element(l : seq<int>) returns (result : int)
+    requires |l| > 0
+    ensures forall i : int :: i >= 0 && i < |l| ==> l[i] <= result
+    ensures exists i : int :: i >= 0 && i < |l| && l[i] == result
+{
+    var i := 0;
+    result := l[0];
+    while i < |l|
+        invariant 0 <= i <= |l|
+        invariant forall j :: 0 <= j < i ==> l[j] <= result
+        invariant exists j :: 0 <= j < i && l[j] == result
+    {
+        if l[i] > result {
+            result := l[i];
+        }
+        i := i + 1;
+    }
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: LoopInvariantViolation
+Error Message: [LoopInvariantViolation] tại Dòng 11, Cột 28: this invariant could not be proved to be maintained by the loop
+-> Dòng mã vi phạm: `invariant i > 0 ==> exists j :: 0 <= j < i && l[j] == result`
+-> Hướng dẫn khắc phục: BẤT BIẾN KHÔNG ĐƯỢC DUY TRÌ SAU THÂN VÒNG LẶP (maintained): Sau bước nhảy (ví dụ `i := i + 1`), biến có thể vượt qua biên của invariant. Lưu ý: Nếu duyệt mảng `while i < a.Length`, TUYỆT ĐỐI KHÔNG sửa thành `while i <= a.Length` (sẽ gây lỗi vượt biên). Hãy giữ nguyên điều kiện lặp hợp lệ và nới lỏng invariant cận trên thành `0 <= i <= a.Length`.
+Code:
+method max_element(l : seq<int>) returns (result : int)
+    requires |l| > 0
+    ensures forall i : int :: i >= 0 && i < |l| ==> l[i] <= result
+    ensures exists i : int :: i >= 0 && i < |l| && l[i] == result
+{
+    var i := 0;
+    result := l[0];
+    while i < |l|
+        invariant 0 <= i <= |l|
+        invariant forall j :: 0 <= j < i ==> l[j] <= result
+        invariant i > 0 ==> exists j :: 0 <= j < i && l[j] == result
+    {
+        if l[i] > result {
+            result := l[i];
+        }
+        i := i + 1;
+    }
+}
+

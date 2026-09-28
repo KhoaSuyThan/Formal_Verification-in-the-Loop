@@ -1,0 +1,120 @@
+=== BÀI TOÁN: 055-fib ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 163.38s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 13, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures result == fib(n)`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN QUY NẠP TƯƠNG ĐƯƠNG HÀM ĐỆ QUY (FUNCTIONAL EQUIVALENCE): `ensures result == fib(n)`.
+Phương thức lặp đang tính toán để khớp với một hàm toán học thuần túy (pure function). SMT Solver bắt buộc cần các invariant quy nạp đồng bộ trực tiếp các biến trạng thái lặp với giá trị của hàm đệ quy tại bước lặp hiện tại (ví dụ: `invariant acc == f(i)` và `invariant next_acc == f(i + 1)`).
+Code:
+function fib(n: nat): nat
+  decreases n
+{
+  if n == 0 then 0
+  else if n == 1 then 1
+  else fib(n - 1) + fib(n - 2)
+}
+// pure-end
+method ComputeFib(n: nat) returns (result: nat)
+  // post-conditions-start
+  ensures result == fib(n)
+  // post-conditions-end
+{
+  // impl-start
+  var a := 0;
+  var b := 1;
+  var i := 0;
+  while i < n
+    decreases n - i
+  {
+    var temp := a + b;
+    a := b;
+    b := temp;
+    i := i + 1;
+  }
+  result := a;
+  // impl-end
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 13, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures result == fib(n)`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN QUY NẠP TƯƠNG ĐƯƠNG HÀM ĐỆ QUY (FUNCTIONAL EQUIVALENCE): `ensures result == fib(n)`.
+Phương thức lặp đang tính toán để khớp với một hàm toán học thuần túy (pure function). SMT Solver bắt buộc cần các invariant quy nạp đồng bộ trực tiếp các biến trạng thái lặp với giá trị của hàm đệ quy tại bước lặp hiện tại (ví dụ: `invariant acc == f(i)` và `invariant next_acc == f(i + 1)`).
+Code:
+function fib(n: nat): nat
+  decreases n
+{
+  if n == 0 then 0
+  else if n == 1 then 1
+  else fib(n - 1) + fib(n - 2)
+}
+// pure-end
+method ComputeFib(n: nat) returns (result: nat)
+  // post-conditions-start
+  ensures result == fib(n)
+  // post-conditions-end
+{
+  // impl-start
+  var a := 0;
+  var b := 1;
+  var i := 0;
+  while i < n
+    decreases n - i
+  {
+    var temp := a + b;
+    a := b;
+    b := temp;
+    i := i + 1;
+  }
+  result := a;
+  // impl-end
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 21, Cột 14: lbrace expected
+-> Dòng mã vi phạm: `if i == 0 then result := a`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+function fib(n: nat): nat
+  decreases n
+{
+  if n == 0 then 0
+  else if n == 1 then 1
+  else fib(n - 1) + fib(n - 2)
+}
+// pure-end
+method ComputeFib(n: nat) returns (result: nat)
+  // post-conditions-start
+  ensures result == fib(n)
+  // post-conditions-end
+{
+  var a := 0;
+  var b := 1;
+  var i := 0;
+  result := 0;
+  while i <= n
+    decreases n - i
+  {
+    if i == 0 then result := a
+    else if i == 1 then result := b
+    else {
+      var temp := a + b;
+      a := b;
+      b := temp;
+      result := temp;
+    }
+    i := i + 1;
+  }
+}
+

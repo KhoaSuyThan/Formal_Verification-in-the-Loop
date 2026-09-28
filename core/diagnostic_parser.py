@@ -58,6 +58,25 @@ class DiagnosticParser:
             return "GeneralVerificationFailure"
         return "GeneralVerificationFailure"
 
+    @staticmethod
+    def extract_forall_prefix_invariant(ensures_clause: str) -> Optional[str]:
+        """Tự động phân tích mệnh đề ensures có forall để sinh biểu thức bất biến tiền tố (Prefix Invariant).
+
+        Áp dụng thuật toán biến đổi công thức logic hình thức tổng quát:
+        Từ 'forall x ... :: ... ==> Pred(x)', trích xuất vị từ mục tiêu sau dấu '==>'
+        và sinh ra 'invariant forall j :: 0 <= j < i ==> Pred(j)'.
+        """
+        match = re.search(r'forall\s+([a-zA-Z0-9_]+).*?::\s*(.+)', ensures_clause)
+        if match:
+            var_name = match.group(1).strip()
+            body = match.group(2).strip()
+            if '==>' in body:
+                predicate = body.split('==>')[-1].strip().rstrip(')')
+                # Thay thế biến định lượng bằng biến cục bộ j
+                pred_with_j = re.sub(rf'\b{re.escape(var_name)}\b', 'j', predicate)
+                return f"invariant forall j :: 0 <= j < i ==> {pred_with_j}"
+        return None
+
     @classmethod
     def generate_semantic_hint(
         cls,
@@ -72,18 +91,32 @@ class DiagnosticParser:
 
         if category == "LoopInvariantViolation":
             if "on entry" in msg_lower:
+                if faulty_line and "exists" in faulty_line:
+                    return (
+                        f"BẤT BIẾN TỒN TẠI KHÔNG ĐÚNG KHI BẮT ĐẦU VÒNG LẶP (on entry): `{faulty_line}`.\n"
+                        "[LỖI TOÁN HỌC KHỞI TẠO BIẾN LẶP]:\n"
+                        "Khoảng `0 <= j < i` khi bắt đầu là KHOẢNG RỖNG nếu `i == 0` (không có giá trị j nào thỏa mãn 0 <= j < 0)!\n"
+                        "-> NGUYÊN TẮC: Khi biến kết quả đã được gán phần tử đầu tiên (như `result := l[0];`), "
+                        "biến lặp `i` BẮT BUỘC phải khởi tạo từ `1` (`var i := 1;`), "
+                        "và cận dưới của invariant BẮT BUỘC phải là: `invariant 1 <= i <= |s|`."
+                    )
                 return (
-                    "BẤT BIẾN KHÔNG ĐÚNG KHI BẮT ĐẦU VÒNG LẶP (on entry): "
-                    "Giá trị khởi tạo trước vòng lặp không thỏa mãn bất biến này. "
-                    "Nếu dùng định lượng tồn tại `exists j :: 0 <= j < i`, khi i = 0 miền rỗng sẽ gây lỗi; "
-                    "hãy đổi thành điều kiện bảo vệ `(i > 0 ==> exists ...)` hoặc bắt đầu biến đếm từ `i := 1`."
+                    f"BẤT BIẾN KHÔNG ĐÚNG KHI BẮT ĐẦU VÒNG LẶP (on entry): `{faulty_line}`.\n"
+                    "NGUYÊN NHÂN: Giá trị khởi tạo của các biến trước khi vào vòng lặp không thỏa mãn bất biến.\n"
+                    "[HÀNH ĐỘNG BẮT BUỘC - XỬ LÝ SỐ ÂM / TRƯỜNG HỢP BIÊN]:\n"
+                    "1. Nếu tham số đầu vào có thể là số âm (ví dụ: requires a != 0 || b != 0 trong GCD/Euclid), "
+                    "BẮT BUỘC phải lấy giá trị không âm trước khi vào vòng lặp:\n"
+                    "   `var cur_a := if a < 0 then -a else a;`\n"
+                    "   `var cur_b := if b < 0 then -b else b;`\n"
+                    "2. Khởi tạo biến lặp khớp chính xác với cận dưới của invariant (ví dụ: `var i := 0;` hoặc `var i := 1;`).\n"
+                    "3. TUYỆT ĐỐI KHÔNG sửa đổi hoặc nới lỏng các mệnh đề requires/ensures của đề bài."
                 )
             elif "maintained" in msg_lower:
                 return (
                     "BẤT BIẾN KHÔNG ĐƯỢC DUY TRÌ SAU THÂN VÒNG LẶP (maintained): "
                     "Sau bước nhảy (ví dụ `i := i + 1`), biến có thể vượt qua biên của invariant. "
-                    "Ví dụ: Với vòng lặp `while i <= n`, sau bước lặp `i` sẽ đạt tới `n + 1`, "
-                    "do đó invariant cận trên cần nới lỏng thành `i <= n + 1` thay vì `i <= n`."
+                    "Lưu ý: Nếu duyệt mảng `while i < a.Length`, TUYỆT ĐỐI KHÔNG sửa thành `while i <= a.Length` (sẽ gây lỗi vượt biên). "
+                    "Hãy giữ nguyên điều kiện lặp hợp lệ và nới lỏng invariant cận trên thành `0 <= i <= a.Length`."
                 )
             return (
                 "BẤT BIẾN VÒNG LẶP KHÔNG THỎA MÃN: "
@@ -92,20 +125,43 @@ class DiagnosticParser:
 
         if category == "PostconditionViolation":
             if related_content and "forall" in related_content:
+                prefix_inv = cls.extract_forall_prefix_invariant(related_content)
+                inv_suggestion = f"`{prefix_inv}`" if prefix_inv else "`invariant forall j :: 0 <= j < i ==> P(j)`"
                 return (
-                    f"HẬU ĐIỀU KIỆN CHỨA ĐỊNH LƯỢNG FORALL BỊ VI PHẠM: `{related_content}`.\n"
-                    "NGUYÊN LÝ QUY NẠP (INDUCTIVE INVARIANT): Khi hậu điều kiện đòi hỏi tính chất đúng cho toàn bộ tập hợp "
-                    "(`forall x :: 0 <= x < |s| ==> P(x)`), vòng lặp duyệt đến biến đếm `i` BẮT BUỘC phải có bất biến tiền tố "
-                    "mô tả tính chất đúng cho các phần tử đã duyệt: `invariant forall j :: 0 <= j < i ==> P(j)` "
-                    "(trong đó P(j) phản ánh đúng điều kiện ensures, ví dụ: `l[j] <= max`, `l[j] < t`, hoặc `a[j] != target`)."
+                    f"HẬU ĐIỀU KIỆN CHỨA ĐỊNH LƯỢNG TOÀN THỂ (FORALL) BỊ VI PHẠM: `{related_content}`.\n"
+                    f"NGUYÊN LÝ BẤT BIẾN TIỀN TỐ (PREFIX INDUCTIVE INVARIANT): Để Z3 suy diễn được hậu điều kiện toàn thể, "
+                    f"vòng lặp BẮT BUỘC phải duy trì bất biến tiền tố cho các phần tử đã duyệt:\n"
+                    f"-> [HÀNH ĐỘNG BẮT BUỘC]: Bổ sung mệnh đề sau vào ngay dưới từ khóa while:\n"
+                    f"   {inv_suggestion}"
                 )
             if related_content and "exists" in related_content:
+                seq_match = re.search(r'\|\s*(\w+)\s*\|', related_content)
+                seq_var = seq_match.group(1) if seq_match else "s"
+                elem_match = re.search(r'\b\w+\[\w+\]\s*==\s*(\w+)', related_content)
+                target_var = elem_match.group(1) if elem_match else "result"
                 return (
                     f"HẬU ĐIỀU KIỆN CHỨA ĐỊNH LƯỢNG TỒN TẠI (EXISTS) BỊ VI PHẠM: `{related_content}`.\n"
-                    "NGUYÊN LÝ QUY NẠP CHO EXISTS: Khi hậu điều kiện yêu cầu kết quả phải tồn tại trong danh sách "
-                    "(`exists x :: 0 <= x < |s| && s[x] == result`), vòng lặp BẮT BUỘC phải có bất biến chứng minh "
-                    "giá trị tích lũy hiện tại luôn là một phần tử hợp lệ đã duyệt: "
-                    "`invariant exists j :: 0 <= j < i && l[j] == max` (với vòng lặp bắt đầu từ `i := 1`)."
+                    f"[HÀNH ĐỘNG BẮT BUỘC - CHÈN INVARIANT TỒN TẠI]:\n"
+                    f"Hậu điều kiện yêu cầu kết quả `{target_var}` phải là một phần tử có thật trong `{seq_var}`.\n"
+                    f"1. Gán phần tử đầu tiên cho biến tích lũy: `{target_var} := {seq_var}[0];`\n"
+                    f"2. BẮT BUỘC khởi tạo `var i := 1;` (TUYỆT ĐỐI KHÔNG để `i := 0` vì khoảng 0 <= j < 0 rỗng sẽ gây lỗi 'could not be proved on entry')!\n"
+                    f"3. Thêm các invariant sau vào ngay dưới từ khóa while:\n"
+                    f"   `invariant 1 <= i <= |{seq_var}|`\n"
+                    f"   `invariant forall j :: 0 <= j < i ==> {seq_var}[j] <= {target_var}` (nếu tìm max)\n"
+                    f"   `invariant exists j :: 0 <= j < i && {seq_var}[j] == {target_var}`"
+                )
+            if related_content and re.search(r'\b\w+\s*\([^)]*\)', related_content):
+                func_match = re.search(r'\b([a-zA-Z_]\w*)\s*\(([^)]*)\)', related_content)
+                func_name = func_match.group(1) if func_match else "f"
+                arg_name = func_match.group(2).strip() if func_match else "n"
+                return (
+                    f"HẬU ĐIỀU KIỆN QUY NẠP TƯƠNG ĐƯƠNG HÀM ĐỆ QUY (FUNCTIONAL EQUIVALENCE): `{related_content}`.\n"
+                    f"[HÀNH ĐỘNG BẮT BUỘC - ĐỒNG BỘ BẤT BIẾN VỚI HÀM {func_name}]:\n"
+                    f"Phương thức đang tính toán để khớp với hàm thuần túy `{func_name}({arg_name})`.\n"
+                    f"SMT Solver BẮT BUỘC cần các invariant quy nạp đồng bộ trực tiếp các biến trạng thái lặp với hàm `{func_name}`:\n"
+                    f"1. `invariant 0 <= i <= {arg_name}`\n"
+                    f"2. `invariant a == {func_name}(i)` (biến tích lũy bước hiện tại)\n"
+                    f"3. `invariant b == {func_name}(i + 1)` (nếu là thuật toán đệ quy 2 bước như Fibonacci, biến tích lũy bước tiếp theo)"
                 )
             if related_content:
                 return (
@@ -146,14 +202,15 @@ class DiagnosticParser:
             return (
                 "KIỂU SEQ KHÔNG CÓ METHOD .max() / .min(): "
                 "Trong Dafny, kiểu `seq<T>` không có phương thức built-in `.max()` hay `.min()`. "
-                "BẮT BUỘC phải dùng định lượng toán học: "
-                "`invariant forall j :: 0 <= j < i ==> l[j] <= max` (và `invariant exists j :: 0 <= j < i && l[j] == max`)."
+                "BẮT BUỘC phải dùng định lượng toán học tổng quát: `invariant forall j :: 0 <= j < i ==> s[j] <= acc`."
             )
 
         if category == "TerminationFailure":
             return (
-                "KHÔNG THỂ CHỨNG MINH VÒNG LẶP DỪNG: "
-                "Hãy thêm mệnh đề `decreases <biểu_thức>` giảm nghiêm ngặt sau mỗi bước lặp và luôn >= 0."
+                "KHÔNG THỂ CHỨNG MINH VÒNG LẶP DỪNG (Termination Failure): "
+                "Biểu thức trong mệnh đề `decreases <biểu_thức>` phải luôn bị chặn dưới (>= 0) và giảm nghiêm ngặt sau mỗi bước lặp. "
+                "Nếu các biến lặp có thể nhận giá trị âm từ tham số đầu vào (ví dụ trong thuật toán GCD/Euclid), "
+                "BẮT BUỘC phải chuyển đổi biến về số không âm (lấy giá trị tuyệt đối nếu âm) trước khi vào vòng lặp."
             )
 
         return "Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny."
