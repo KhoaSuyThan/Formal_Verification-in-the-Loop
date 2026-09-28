@@ -1,0 +1,54 @@
+=== BÀI TOÁN: 052-below-threshold ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 43.87s
+Kết quả cuối: PASS
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 5, Cột 0: a postcondition could not be proved on this return path
+Code:
+method below_threshold(l : seq<int>, t : int) returns (b : bool)
+    // post-conditions-start
+    ensures b == (forall i : int :: i >= 0 && i < |l| ==> l[i] < t)
+    // post-conditions-end
+{
+    var i : int := 0;
+    b := true;
+    while (i < |l|)
+        invariant 0 <= i <= |l|
+        decreases |l| - i
+    {
+        if l[i] >= t {
+            b := false;
+            break;
+        }
+        i := i + 1;
+    }
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: True
+Error Taxonomy: None
+Error Message: 
+Code:
+method below_threshold(l : seq<int>, t : int) returns (b : bool)
+    // post-conditions-start
+    ensures b == (forall i : int :: i >= 0 && i < |l| ==> l[i] < t)
+    // post-conditions-end
+{
+    var i : int := 0;
+    b := true;
+    while (i < |l|)
+        invariant 0 <= i <= |l|
+        invariant forall k :: 0 <= k < i ==> l[k] < t
+        decreases |l| - i
+    {
+        if l[i] >= t {
+            b := false;
+            break;
+        }
+        i := i + 1;
+    }
+}
+

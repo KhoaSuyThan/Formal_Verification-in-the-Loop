@@ -1,0 +1,128 @@
+=== BÀI TOÁN: 000-has_close_elements ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 119.75s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 13, Cột 6: Duplicate local-variable name: flag
+Code:
+function abs(val : real): real
+{
+  if (val < 0.0) then
+    -val
+  else
+    val
+}
+
+method has_close_elements(numbers: seq<real>, threshold: real) returns (flag : bool)
+  requires threshold > 0.0
+  ensures flag == (exists i: int, j: int :: i >= 0 && j >= 0 && i < |numbers| && j < |numbers| && i != j && abs(numbers[i] - numbers[j]) < threshold)
+{
+  var flag := false;
+  var i := 0;
+  while (i < |numbers|)
+    invariant exists j: int :: 0 <= j < i && numbers[j] == numbers[j]
+    decreases |numbers| - i
+  {
+    var j := 0;
+    while (j < |numbers|)
+      invariant exists k: int :: 0 <= k < j && numbers[k] == numbers[k]
+      decreases |numbers| - j
+    {
+      if (i != j && abs(numbers[i] - numbers[j]) < threshold) {
+        flag := true;
+        break;
+      }
+      j := j + 1;
+    }
+    if (flag) {
+      break;
+    }
+    i := i + 1;
+  }
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 13, Cột 6: Duplicate local-variable name: flag
+Code:
+function abs(val : real): real
+{
+  if (val < 0.0) then
+    -val
+  else
+    val
+}
+
+method has_close_elements(numbers: seq<real>, threshold: real) returns (flag : bool)
+  requires threshold > 0.0
+  ensures flag == (exists i: int, j: int :: i >= 0 && j >= 0 && i < |numbers| && j < |numbers| && i != j && abs(numbers[i] - numbers[j]) < threshold)
+{
+  var flag := false;
+  var i := 0;
+  while (i < |numbers|)
+    invariant exists j: int :: 0 <= j < i && numbers[j] == numbers[j]
+    decreases |numbers| - i
+  {
+    var j := 0;
+    while (j < |numbers|)
+      invariant exists k: int :: 0 <= k < j && numbers[k] == numbers[k]
+      decreases |numbers| - j
+    {
+      if (i != j && abs(numbers[i] - numbers[j]) < threshold) {
+        flag := true;
+        break;
+      }
+      j := j + 1;
+    }
+    if (flag) {
+      break;
+    }
+    i := i + 1;
+  }
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 13, Cột 6: Duplicate local-variable name: flag
+Code:
+function abs(val : real): real
+{
+  if (val < 0.0) then
+    -val
+  else
+    val
+}
+
+method has_close_elements(numbers: seq<real>, threshold: real) returns (flag : bool)
+  requires threshold > 0.0
+  ensures flag == (exists i: int, j: int :: i >= 0 && j >= 0 && i < |numbers| && j < |numbers| && i != j && abs(numbers[i] - numbers[j]) < threshold)
+{
+  var flag := false;
+  var i := 0;
+  while (i < |numbers|)
+    invariant exists j: int :: 0 <= j < i && numbers[j] == numbers[j]
+    decreases |numbers| - i
+  {
+    var j := 0;
+    while (j < |numbers|)
+      invariant exists k: int :: 0 <= k < j && numbers[k] == numbers[k]
+      decreases |numbers| - j
+    {
+      if (i != j && abs(numbers[i] - numbers[j]) < threshold) {
+        flag := true;
+        break;
+      }
+      j := j + 1;
+    }
+    if (flag) {
+      break;
+    }
+    i := i + 1;
+  }
+}
+

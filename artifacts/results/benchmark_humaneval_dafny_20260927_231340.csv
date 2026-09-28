@@ -1,0 +1,11 @@
+task_name,model,is_success,total_iterations,pass_at_1,pass_at_k,error_taxonomy,execution_time_sec,timestamp
+000-has_close_elements,ollama/qwen2.5-coder:7b,False,3,0,0,GeneralVerificationFailure,119.75,20260927_231340
+002-truncate,ollama/qwen2.5-coder:7b,False,3,0,0,GeneralVerificationFailure,58.28,20260927_231340
+010-is_palindrome,ollama/qwen2.5-coder:7b,False,3,0,0,GeneralVerificationFailure,134.78,20260927_231340
+013-greatest_common_divisor,ollama/qwen2.5-coder:7b,False,3,0,0,GeneralVerificationFailure,63.35,20260927_231340
+031-is-prime,ollama/qwen2.5-coder:7b,True,2,0,1,None,51.93,20260927_231340
+035-max-element,ollama/qwen2.5-coder:7b,False,3,0,0,LoopInvariantViolation,84.77,20260927_231340
+052-below-threshold,ollama/qwen2.5-coder:7b,False,3,0,0,GeneralVerificationFailure,67.61,20260927_231340
+055-fib,ollama/qwen2.5-coder:7b,False,3,0,0,PostconditionViolation,95.18,20260927_231340
+077-iscube,ollama/qwen2.5-coder:7b,False,1,0,0,SpecTamperingViolation,75.35,20260927_231340
+088-sort_array,ollama/qwen2.5-coder:7b,False,2,0,0,SpecTamperingViolation,237.71,20260927_231340

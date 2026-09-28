@@ -1,0 +1,87 @@
+=== BÀI TOÁN: linear_search ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 125.69s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 4, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CHỨA ĐỊNH LƯỢNG FORALL BỊ VI PHẠM: `ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target`.
+NGUYÊN LÝ QUY NẠP (INDUCTIVE INVARIANT): Khi hậu điều kiện đòi hỏi tính chất đúng cho toàn bộ tập hợp (`forall x :: 0 <= x < |s| ==> P(x)`), vòng lặp duyệt đến biến đếm `i` BẮT BUỘC phải có bất biến tiền tố mô tả tính chất đúng cho các phần tử đã duyệt: `invariant forall j :: 0 <= j < i ==> P(j)` (trong đó P(j) phản ánh đúng điều kiện ensures, ví dụ: `l[j] <= max`, `l[j] < t`, hoặc `a[j] != target`).
+Code:
+method LinearSearch(a: array<int>, target: int) returns (r: int)
+    ensures r >= 0 ==> r < a.Length && a[r] == target
+    ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target
+{
+    var i := 0;
+    while i < a.Length
+        invariant 0 <= i <= a.Length
+        decreases a.Length - i
+    {
+        if a[i] == target
+        {
+            r := i;
+            return;
+        }
+        i := i + 1;
+    }
+    r := -1;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: LoopInvariantViolation
+Error Message: [LoopInvariantViolation] tại Dòng 7, Cột 25: this invariant could not be proved to be maintained by the loop
+-> Dòng mã vi phạm: `invariant 0 <= i <= a.Length`
+-> Hướng dẫn khắc phục: BẤT BIẾN KHÔNG ĐƯỢC DUY TRÌ SAU THÂN VÒNG LẶP (maintained): Sau bước nhảy (ví dụ `i := i + 1`), biến có thể vượt qua biên của invariant. Ví dụ: Với vòng lặp `while i <= n`, sau bước lặp `i` sẽ đạt tới `n + 1`, do đó invariant cận trên cần nới lỏng thành `i <= n + 1` thay vì `i <= n`.
+Code:
+method LinearSearch(a: array<int>, target: int) returns (r: int)
+    ensures r >= 0 ==> r < a.Length && a[r] == target
+    ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target
+{
+    var i := 0;
+    while i <= a.Length
+        invariant 0 <= i <= a.Length
+        decreases a.Length - i
+    {
+        if i < a.Length && a[i] == target
+        {
+            r := i;
+            return;
+        }
+        i := i + 1;
+    }
+    r := -1;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 4, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CHỨA ĐỊNH LƯỢNG FORALL BỊ VI PHẠM: `ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target`.
+NGUYÊN LÝ QUY NẠP (INDUCTIVE INVARIANT): Khi hậu điều kiện đòi hỏi tính chất đúng cho toàn bộ tập hợp (`forall x :: 0 <= x < |s| ==> P(x)`), vòng lặp duyệt đến biến đếm `i` BẮT BUỘC phải có bất biến tiền tố mô tả tính chất đúng cho các phần tử đã duyệt: `invariant forall j :: 0 <= j < i ==> P(j)` (trong đó P(j) phản ánh đúng điều kiện ensures, ví dụ: `l[j] <= max`, `l[j] < t`, hoặc `a[j] != target`).
+Code:
+method LinearSearch(a: array<int>, target: int) returns (r: int)
+    ensures r >= 0 ==> r < a.Length && a[r] == target
+    ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target
+{
+    var i := 0;
+    while i <= a.Length - 1
+        invariant 0 <= i <= a.Length
+        decreases a.Length - i
+    {
+        if i < a.Length && a[i] == target
+        {
+            r := i;
+            return;
+        }
+        i := i + 1;
+    }
+    r := -1;
+}
+

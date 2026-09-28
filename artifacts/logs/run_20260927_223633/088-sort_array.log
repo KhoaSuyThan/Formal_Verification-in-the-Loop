@@ -1,0 +1,311 @@
+=== BÀI TOÁN: 088-sort_array ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 338.47s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 28, Cột 8: LHS of array assignment must denote an array element (found seq<int>)
+Code:
+method sort_array(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures |sorted| == |s|
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 == 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] >= sorted[j]
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 != 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  // post-conditions-end
+{
+  var a := s;
+  var n := |a|;
+  var swapped := true;
+  while swapped
+    invariant 0 <= n <= |a|
+    invariant forall i :: 0 <= i < n ==> a[i] <= a[i + 1]
+    decreases n
+  {
+    swapped := false;
+    var i := 0;
+    while i < n - 1
+      invariant 0 <= i <= n - 1
+      invariant forall j :: 0 <= j < i ==> a[j] <= a[j + 1]
+      decreases n - i
+    {
+      if a[i] > a[i + 1]
+      {
+        var temp := a[i];
+        a[i] := a[i + 1];
+        a[i + 1] := temp;
+        swapped := true;
+      }
+      i := i + 1;
+    }
+    n := n - 1;
+  }
+  sorted := a;
+}
+
+method reverse(s: seq<int>) returns (rev: seq<int>)
+  // post-conditions-start
+  ensures |rev| == |s|
+  ensures forall k :: 0 <= k < |s| ==> rev[k] == s[|s| - 1 - k]
+  // post-conditions-end
+{
+  var a := s;
+  var n := |a|;
+  var i := 0;
+  var j := n - 1;
+  while i < j
+    invariant 0 <= i <= j < n
+    decreases j - i
+  {
+    var temp := a[i];
+    a[i] := a[j];
+    a[j] := temp;
+    i := i + 1;
+    j := j - 1;
+  }
+  rev := a;
+}
+
+method SortSeq(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  ensures |sorted| == |s|
+  ensures multiset(s) == multiset(sorted)
+  // post-conditions-end
+{
+  var a := s;
+  var n := |a|;
+  var swapped := true;
+  while swapped
+    invariant 0 <= n <= |a|
+    invariant forall i :: 0 <= i < n ==> a[i] <= a[i + 1]
+    decreases n
+  {
+    swapped := false;
+    var i := 0;
+    while i < n - 1
+      invariant 0 <= i <= n - 1
+      invariant forall j :: 0 <= j < i ==> a[j] <= a[j + 1]
+      decreases n - i
+    {
+      if a[i] > a[i + 1]
+      {
+        var temp := a[i];
+        a[i] := a[i + 1];
+        a[i + 1] := temp;
+        swapped := true;
+      }
+      i := i + 1;
+    }
+    n := n - 1;
+  }
+  sorted := a;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 28, Cột 8: LHS of array assignment must denote an array element (found seq<int>)
+Code:
+method sort_array(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures |sorted| == |s|
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 == 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] >= sorted[j]
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 != 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  // post-conditions-end
+{
+  var a := s;
+  var n := |a|;
+  var swapped := true;
+  while swapped
+    invariant 0 <= n <= |a|
+    invariant forall i :: 0 <= i < n ==> a[i] <= a[i + 1]
+    decreases n
+  {
+    swapped := false;
+    var i := 0;
+    while i < n - 1
+      invariant 0 <= i <= n - 1
+      invariant forall j :: 0 <= j < i ==> a[j] <= a[j + 1]
+      decreases n - i
+    {
+      if a[i] > a[i + 1]
+      {
+        var temp := a[i];
+        a[i] := a[i + 1];
+        a[i + 1] := temp;
+        swapped := true;
+      }
+      i := i + 1;
+    }
+    n := n - 1;
+  }
+  sorted := a;
+}
+
+method reverse(s: seq<int>) returns (rev: seq<int>)
+  // post-conditions-start
+  ensures |rev| == |s|
+  ensures forall k :: 0 <= k < |s| ==> rev[k] == s[|s| - 1 - k]
+  // post-conditions-end
+{
+  var a := s;
+  var n := |a|;
+  var i := 0;
+  var j := n - 1;
+  while i < j
+    invariant 0 <= i <= j < n
+    decreases j - i
+  {
+    var temp := a[i];
+    a[i] := a[j];
+    a[j] := temp;
+    i := i + 1;
+    j := j - 1;
+  }
+  rev := a;
+}
+
+method SortSeq(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  ensures |sorted| == |s|
+  ensures multiset(s) == multiset(sorted)
+  // post-conditions-end
+{
+  var a := s;
+  var n := |a|;
+  var swapped := true;
+  while swapped
+    invariant 0 <= n <= |a|
+    invariant forall i :: 0 <= i < n ==> a[i] <= a[i + 1]
+    decreases n
+  {
+    swapped := false;
+    var i := 0;
+    while i < n - 1
+      invariant 0 <= i <= n - 1
+      invariant forall j :: 0 <= j < i ==> a[j] <= a[j + 1]
+      decreases n - i
+    {
+      if a[i] > a[i + 1]
+      {
+        var temp := a[i];
+        a[i] := a[i + 1];
+        a[i + 1] := temp;
+        swapped := true;
+      }
+      i := i + 1;
+    }
+    n := n - 1;
+  }
+  sorted := a;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 28, Cột 8: LHS of array assignment must denote an array element (found seq<int>)
+Code:
+method sort_array(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures |sorted| == |s|
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 == 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] >= sorted[j]
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 != 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  // post-conditions-end
+{
+  var a := s;
+  var n := |a|;
+  var swapped := true;
+  while swapped
+    invariant 0 <= n <= |a|
+    invariant forall i :: 0 <= i < n ==> a[i] <= a[i + 1]
+    decreases n
+  {
+    swapped := false;
+    var i := 0;
+    while i < n - 1
+      invariant 0 <= i <= n - 1
+      invariant forall j :: 0 <= j < i ==> a[j] <= a[j + 1]
+      decreases n - i
+    {
+      if a[i] > a[i + 1]
+      {
+        var temp := a[i];
+        a[i] := a[i + 1];
+        a[i + 1] := temp;
+        swapped := true;
+      }
+      i := i + 1;
+    }
+    n := n - 1;
+  }
+  sorted := a;
+}
+
+method reverse(s: seq<int>) returns (rev: seq<int>)
+  // post-conditions-start
+  ensures |rev| == |s|
+  ensures forall k :: 0 <= k < |s| ==> rev[k] == s[|s| - 1 - k]
+  // post-conditions-end
+{
+  var a := s;
+  var n := |a|;
+  var i := 0;
+  var j := n - 1;
+  while i < j
+    invariant 0 <= i <= j < n
+    decreases j - i
+  {
+    var temp := a[i];
+    a[i] := a[j];
+    a[j] := temp;
+    i := i + 1;
+    j := j - 1;
+  }
+  rev := a;
+}
+
+method SortSeq(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  ensures |sorted| == |s|
+  ensures multiset(s) == multiset(sorted)
+  // post-conditions-end
+{
+  var a := s;
+  var n := |a|;
+  var swapped := true;
+  while swapped
+    invariant 0 <= n <= |a|
+    invariant forall i :: 0 <= i < n ==> a[i] <= a[i + 1]
+    decreases n
+  {
+    swapped := false;
+    var i := 0;
+    while i < n - 1
+      invariant 0 <= i <= n - 1
+      invariant forall j :: 0 <= j < i ==> a[j] <= a[j + 1]
+      decreases n - i
+    {
+      if a[i] > a[i + 1]
+      {
+        var temp := a[i];
+        a[i] := a[i + 1];
+        a[i + 1] := temp;
+        swapped := true;
+      }
+      i := i + 1;
+    }
+    n := n - 1;
+  }
+  sorted := a;
+}
+

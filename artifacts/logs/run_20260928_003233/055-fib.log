@@ -1,0 +1,109 @@
+=== BÀI TOÁN: 055-fib ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 98.86s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 13, Cột 0: a postcondition could not be proved on this return path
+Code:
+function fib(n: nat): nat
+  decreases n
+{
+  if n == 0 then 0
+  else if n == 1 then 1
+  else fib(n - 1) + fib(n - 2)
+}
+// pure-end
+method ComputeFib(n: nat) returns (result: nat)
+  // post-conditions-start
+  ensures result == fib(n)
+  // post-conditions-end
+{
+  // impl-start
+  var a: nat := 0;
+  var b: nat := 1;
+  var i: nat := 0;
+  while i < n
+    decreases n - i
+  {
+    var temp: nat := a + b;
+    a := b;
+    b := temp;
+    i := i + 1;
+  }
+  result := a;
+  // impl-end
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 13, Cột 0: a postcondition could not be proved on this return path
+Code:
+function fib(n: nat): nat
+  decreases n
+{
+  if n == 0 then 0
+  else if n == 1 then 1
+  else fib(n - 1) + fib(n - 2)
+}
+// pure-end
+method ComputeFib(n: nat) returns (result: nat)
+  // post-conditions-start
+  ensures result == fib(n)
+  // post-conditions-end
+{
+  // impl-start
+  var a: nat := 0;
+  var b: nat := 1;
+  var i: nat := 0;
+  while i < n
+    decreases n - i
+    invariant 0 <= a && 0 <= b && 0 <= i && i <= n
+  {
+    var temp: nat := a + b;
+    a := b;
+    b := temp;
+    i := i + 1;
+  }
+  result := a;
+  // impl-end
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 13, Cột 0: a postcondition could not be proved on this return path
+Code:
+function fib(n: nat): nat
+  decreases n
+{
+  if n == 0 then 0
+  else if n == 1 then 1
+  else fib(n - 1) + fib(n - 2)
+}
+// pure-end
+method ComputeFib(n: nat) returns (result: nat)
+  // post-conditions-start
+  ensures result == fib(n)
+  // post-conditions-end
+{
+  // impl-start
+  var a: nat := 0;
+  var b: nat := 1;
+  var i: nat := 0;
+  while i < n
+    decreases n - i
+    invariant 0 <= a && 0 <= b && 0 <= i && i <= n
+  {
+    var temp: nat := a + b;
+    a := b;
+    b := temp;
+    i := i + 1;
+  }
+  result := a;
+  // impl-end
+}
+

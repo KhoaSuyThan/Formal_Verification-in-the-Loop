@@ -1,0 +1,18 @@
+=== BÀI TOÁN: 002-truncate ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 13.35s
+Kết quả cuối: PASS
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: True
+Error Taxonomy: None
+Error Message: 
+Code:
+method truncate_number(x : real) returns (d : real)
+    requires x >= 0.0
+    ensures (0.0 <= d <= 1.0)
+    ensures (x - d) == (x.Floor as real)
+{
+    d := x - (x.Floor as real);
+}
+

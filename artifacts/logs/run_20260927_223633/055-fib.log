@@ -1,0 +1,107 @@
+=== BÀI TOÁN: 055-fib ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 93.43s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 15, Cột 14: this symbol not expected in VarDeclStatement
+Code:
+function fib(n: nat): nat
+  decreases n
+{
+  if n == 0 then 0
+  else if n == 1 then 1
+  else fib(n - 1) + fib(n - 2)
+}
+// pure-end
+method ComputeFib(n: nat) returns (result: nat)
+  // post-conditions-start
+  ensures result == fib(n)
+  // post-conditions-end
+{
+  // impl-start
+  var a: array[nat] := new nat[n + 1];
+  a[0] := 0;
+  a[1] := 1;
+  var i: nat := 2;
+  while i <= n
+    invariant 0 <= i <= n + 1
+    decreases n - i
+  {
+    a[i] := a[i - 1] + a[i - 2];
+    i := i + 1;
+  }
+  result := a[n];
+  // impl-end
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 15, Cột 14: this symbol not expected in VarDeclStatement
+Code:
+function fib(n: nat): nat
+  decreases n
+{
+  if n == 0 then 0
+  else if n == 1 then 1
+  else fib(n - 1) + fib(n - 2)
+}
+// pure-end
+method ComputeFib(n: nat) returns (result: nat)
+  // post-conditions-start
+  ensures result == fib(n)
+  // post-conditions-end
+{
+  // impl-start
+  var a: array[nat] := new nat[n + 1];
+  a[0] := 0;
+  a[1] := 1;
+  var i: nat := 2;
+  while i <= n
+    invariant 0 <= i <= n + 1
+    decreases n - i
+  {
+    a[i] := a[i - 1] + a[i - 2];
+    i := i + 1;
+  }
+  result := a[n];
+  // impl-end
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 15, Cột 14: this symbol not expected in VarDeclStatement
+Code:
+function fib(n: nat): nat
+  decreases n
+{
+  if n == 0 then 0
+  else if n == 1 then 1
+  else fib(n - 1) + fib(n - 2)
+}
+// pure-end
+method ComputeFib(n: nat) returns (result: nat)
+  // post-conditions-start
+  ensures result == fib(n)
+  // post-conditions-end
+{
+  // impl-start
+  var a: array[nat] := new nat[n + 1];
+  a[0] := 0;
+  a[1] := 1;
+  var i: nat := 2;
+  while i <= n
+    invariant 0 <= i <= n + 1
+    decreases n - i
+  {
+    a[i] := a[i - 1] + a[i - 2];
+    i := i + 1;
+  }
+  result := a[n];
+  // impl-end
+}
+

@@ -1,0 +1,65 @@
+=== BÀI TOÁN: 002-truncate ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 58.28s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 7, Cột 8: Duplicate local-variable name: d
+Code:
+method truncate_number(x : real) returns (d : real)
+    requires x >= 0.0
+    ensures (0.0 <= d <= 1.0)
+    ensures (x - d) == (x.Floor as real)
+{
+    var floor_x : int := x.Floor;
+    var d : real := x - floor_x;
+    if d < 0.0 {
+        d := 0.0;
+    } else if d > 1.0 {
+        d := 1.0;
+    }
+    return d;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 7, Cột 8: Duplicate local-variable name: d
+Code:
+method truncate_number(x : real) returns (d : real)
+    requires x >= 0.0
+    ensures (0.0 <= d <= 1.0)
+    ensures (x - d) == (x.Floor as real)
+{
+    var floor_x : int := x.Floor;
+    var d : real := x - floor_x as real;
+    if d < 0.0 {
+        d := 0.0;
+    } else if d > 1.0 {
+        d := 1.0;
+    }
+    return d;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 7, Cột 8: Duplicate local-variable name: d
+Code:
+method truncate_number(x : real) returns (d : real)
+    requires x >= 0.0
+    ensures (0.0 <= d <= 1.0)
+    ensures (x - d) == (x.Floor as real)
+{
+    var floor_x : int := x.Floor;
+    var d : real := x - floor_x as real;
+    if d < 0.0 {
+        d := 0.0;
+    } else if d > 1.0 {
+        d := 1.0;
+    }
+    return d;
+}
+

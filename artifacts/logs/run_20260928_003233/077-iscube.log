@@ -1,0 +1,192 @@
+=== BÀI TOÁN: 077-iscube ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 196.64s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 39, Cột 13: expression is not allowed to invoke a method (cube_root)
+Code:
+method cube_root(N: nat) returns (r: nat)
+  // post-conditions-start
+  ensures cube(r) <= N < cube(r + 1)
+  ensures r <= N
+  // post-conditions-end
+{
+  var low: nat := 0;
+  var high: nat := N;
+  var result: nat := 0;
+
+  while low <= high
+    invariant 0 <= low <= high
+    invariant cube(result) <= N < cube(result + 1)
+    decreases high - low
+  {
+    var mid: nat := (low + high) / 2;
+    if cube(mid) <= N < cube(mid + 1) {
+      result := mid;
+      break;
+    } else if cube(mid) > N {
+      high := mid - 1;
+    } else {
+      low := mid + 1;
+    }
+  }
+}
+
+method iscube(n: int) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r && n >= 0 ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r && n >= 0 ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  ensures r && n < 0 ==> exists r :: 0 <= r <= -n && n == -cube(r)
+  ensures !r && n < 0 ==> forall r :: 0 <= r <= -n ==> n != -cube(r)
+  // post-conditions-end
+{
+    if n >= 0 {
+        r := cube_root(n) * cube_root(n) * cube_root(n) == n;
+
+        return;
+    } else {
+        r := cube_root(-n) * cube_root(-n) * cube_root(-n) == -n;
+
+        return;
+    }
+}
+
+function cube(n: int): int { n * n * n }
+// pure-end
+
+lemma cube_of_larger_is_larger()
+    ensures forall smaller : int, larger : int :: smaller <= larger ==> cube(smaller) <= cube(larger)
+{}
+// pure-end
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 42, Cột 13: expression is not allowed to invoke a method (cube_root)
+Code:
+method cube_root(N: nat) returns (r: nat)
+  // post-conditions-start
+  ensures cube(r) <= N < cube(r + 1)
+  ensures r <= N
+  // post-conditions-end
+{
+  var low: nat := 0;
+  var high: nat := N;
+  var result: nat := 0;
+
+  while low <= high
+    invariant 0 <= low <= high
+    invariant cube(result) <= N < cube(result + 1)
+    decreases high - low
+  {
+    var mid: nat := (low + high) / 2;
+    if cube(mid) <= N < cube(mid + 1) {
+      result := mid;
+      break;
+    } else if cube(mid) > N {
+      high := mid - 1;
+    } else {
+      low := mid + 1;
+    }
+  }
+  r := result;
+
+  return;
+}
+
+method iscube(n: int) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r && n >= 0 ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r && n >= 0 ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  ensures r && n < 0 ==> exists r :: 0 <= r <= -n && n == -cube(r)
+  ensures !r && n < 0 ==> forall r :: 0 <= r <= -n ==> n != -cube(r)
+  // post-conditions-end
+{
+    if n >= 0 {
+        r := cube_root(n) * cube_root(n) * cube_root(n) == n;
+        return;
+    } else {
+        r := cube_root(-n) * cube_root(-n) * cube_root(-n) == -n;
+        return;
+    }
+}
+
+function cube(n: int): int { n * n * n }
+// pure-end
+
+lemma cube_of_larger_is_larger()
+    ensures forall smaller : int, larger : int :: smaller <= larger ==> cube(smaller) <= cube(larger)
+{}
+// pure-end
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: LoopInvariantViolation
+Error Message: [LoopInvariantViolation] tại Dòng 12, Cột 23: this invariant could not be proved to be maintained by the loop
+Code:
+method cube_root(N: nat) returns (r: nat)
+  // post-conditions-start
+  ensures cube(r) <= N < cube(r + 1)
+  ensures r <= N
+  // post-conditions-end
+{
+  var low: nat := 0;
+  var high: nat := N;
+  var result: nat := 0;
+
+  while low <= high
+    invariant 0 <= low <= high
+    invariant cube(result) <= N < cube(result + 1)
+    decreases high - low
+  {
+    var mid: nat := (low + high) / 2;
+    if cube(mid) <= N < cube(mid + 1) {
+      result := mid;
+      break;
+    } else if cube(mid) > N {
+      high := mid - 1;
+    } else {
+      low := mid + 1;
+    }
+  }
+  r := result;
+
+  return;
+}
+
+method iscube(n: int) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r && n >= 0 ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r && n >= 0 ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  ensures r && n < 0 ==> exists r :: 0 <= r <= -n && n == -cube(r)
+  ensures !r && n < 0 ==> forall r :: 0 <= r <= -n ==> n != -cube(r)
+  // post-conditions-end
+{
+    if n >= 0 {
+        var root: nat := cube_root(n);
+        r := root * root * root == n;
+        return;
+    } else {
+        var root: nat := cube_root(-n);
+        r := root * root * root == -n;
+        return;
+    }
+}
+
+function cube(n: int): int { n * n * n }
+// pure-end
+
+lemma cube_of_larger_is_larger()
+    ensures forall smaller : int, larger : int :: smaller <= larger ==> cube(smaller) <= cube(larger)
+{}
+// pure-end
+

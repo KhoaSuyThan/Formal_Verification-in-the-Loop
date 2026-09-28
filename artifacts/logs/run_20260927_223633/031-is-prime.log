@@ -1,0 +1,89 @@
+=== BÀI TOÁN: 031-is-prime ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 72.42s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 5, Cột 0: a postcondition could not be proved on this return path
+Code:
+method is_prime(k: int) returns (result: bool)
+  requires k >= 1
+  ensures result ==> forall i :: 2 <= i < k ==> k % i != 0
+  ensures (k > 1 && !result) ==> exists j :: 2 <= j < k && k % j == 0
+{
+  if k <= 1 {
+    result := false;
+  } else {
+    result := true;
+    var i: int := 2;
+    while i < k
+      invariant 2 <= i <= k
+      decreases k - i
+    {
+      if k % i == 0 {
+        result := false;
+        break;
+      }
+      i := i + 1;
+    }
+  }
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 5, Cột 0: a postcondition could not be proved on this return path
+Code:
+method is_prime(k: int) returns (result: bool)
+  requires k >= 1
+  ensures result ==> forall i :: 2 <= i < k ==> k % i != 0
+  ensures (k > 1 && !result) ==> exists j :: 2 <= j < k && k % j == 0
+{
+  if k <= 1 {
+    result := false;
+  } else {
+    result := true;
+    var i: int := 2;
+    while i < k
+      invariant 2 <= i <= k
+      decreases k - i
+    {
+      if k % i == 0 {
+        result := false;
+        break;
+      }
+      i := i + 1;
+    }
+  }
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 5, Cột 0: a postcondition could not be proved on this return path
+Code:
+method is_prime(k: int) returns (result: bool)
+  requires k >= 1
+  ensures result ==> forall i :: 2 <= i < k ==> k % i != 0
+  ensures (k > 1 && !result) ==> exists j :: 2 <= j < k && k % j == 0
+{
+  if k <= 1 {
+    result := false;
+  } else {
+    result := true;
+    var i: int := 2;
+    while i < k
+      invariant 2 <= i <= k
+      decreases k - i
+    {
+      if k % i == 0 {
+        result := false;
+        break;
+      }
+      i := i + 1;
+    }
+  }
+}
+

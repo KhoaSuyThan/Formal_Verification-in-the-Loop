@@ -1,0 +1,24 @@
+=== BÀI TOÁN: sign_function ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 15.83s
+Kết quả cuối: PASS
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: True
+Error Taxonomy: None
+Error Message: 
+Code:
+method Sign(x: int) returns (s: int)
+    ensures x < 0 ==> s == -1
+    ensures x == 0 ==> s == 0
+    ensures x > 0 ==> s == 1
+{
+    if x < 0 {
+        s := -1;
+    } else if x == 0 {
+        s := 0;
+    } else {
+        s := 1;
+    }
+}
+

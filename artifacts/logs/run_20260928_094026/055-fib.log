@@ -1,0 +1,119 @@
+=== BÀI TOÁN: 055-fib ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 144.63s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 13, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures result == fib(n)`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CỤ THỂ BỊ VI PHẠM: `ensures result == fib(n)`.
+SMT Solver không thể suy diễn được điều kiện này tại điểm return. Hãy kiểm tra xem vòng lặp có thiếu invariant quy nạp mô tả kết quả đang tích lũy hay không.
+Code:
+function fib(n: nat): nat
+  decreases n
+{
+  if n == 0 then 0
+  else if n == 1 then 1
+  else fib(n - 1) + fib(n - 2)
+}
+// pure-end
+method ComputeFib(n: nat) returns (result: nat)
+  // post-conditions-start
+  ensures result == fib(n)
+  // post-conditions-end
+{
+  // impl-start
+  var a := 0;
+  var b := 1;
+  var i := 0;
+  while i < n
+    decreases n - i
+  {
+    var temp := a + b;
+    a := b;
+    b := temp;
+    i := i + 1;
+  }
+  result := a;
+  // impl-end
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 13, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures result == fib(n)`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CỤ THỂ BỊ VI PHẠM: `ensures result == fib(n)`.
+SMT Solver không thể suy diễn được điều kiện này tại điểm return. Hãy kiểm tra xem vòng lặp có thiếu invariant quy nạp mô tả kết quả đang tích lũy hay không.
+Code:
+function fib(n: nat): nat
+  decreases n
+{
+  if n == 0 then 0
+  else if n == 1 then 1
+  else fib(n - 1) + fib(n - 2)
+}
+
+method ComputeFib(n: nat) returns (result: nat)
+  // post-conditions-start
+  ensures result == fib(n)
+  // post-conditions-end
+{
+  // impl-start
+  var a := 0;
+  var b := 1;
+  var i := 0;
+  while i <= n
+    decreases n - i
+  {
+    var temp := a + b;
+    a := b;
+    b := temp;
+    i := i + 1;
+  }
+  result := a;
+  // impl-end
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 13, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures result == fib(n)`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CỤ THỂ BỊ VI PHẠM: `ensures result == fib(n)`.
+SMT Solver không thể suy diễn được điều kiện này tại điểm return. Hãy kiểm tra xem vòng lặp có thiếu invariant quy nạp mô tả kết quả đang tích lũy hay không.
+Code:
+function fib(n: nat): nat
+  decreases n
+{
+  if n == 0 then 0
+  else if n == 1 then 1
+  else fib(n - 1) + fib(n - 2)
+}
+
+method ComputeFib(n: nat) returns (result: nat)
+  // post-conditions-start
+  ensures result == fib(n)
+  // post-conditions-end
+{
+  // impl-start
+  var a := 0;
+  var b := 1;
+  var i := 0;
+  while i <= n
+    decreases n - i
+  {
+    var temp := a + b;
+    a := b;
+    b := temp;
+    i := i + 1;
+  }
+  result := a;
+  // impl-end
+}
+
