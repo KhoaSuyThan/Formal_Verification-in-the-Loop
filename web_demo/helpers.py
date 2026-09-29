@@ -1,0 +1,172 @@
+"""Module tiện ích hỗ trợ giao diện Web Demo Streamlit.
+
+Cung cấp các hàm tải bài toán mẫu, tạo hiển thị so sánh mã nguồn (code diff)
+và trích xuất dữ liệu khoa học từ các file kết quả thực nghiệm.
+"""
+
+import difflib
+import json
+import os
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
+
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+
+def get_benchmark_tasks() -> Dict[str, Dict[str, str]]:
+    """Trả về danh mục các bài toán benchmark phân loại theo nhóm."""
+    tasks = {
+        "Clover Benchmark (Stanford)": {
+            "abs_val - Tìm giá trị tuyệt đối": "data/benchmarks/clover/abs_val.dfy",
+            "find_min - Tìm giá trị nhỏ nhất trong mảng": "data/benchmarks/clover/find_min.dfy",
+            "linear_search - Tìm kiếm phần tử tuyến tính": "data/benchmarks/clover/linear_search.dfy",
+            "sample_max - Tìm cực đại trong 3 số": "data/benchmarks/clover/sample_max.dfy",
+            "sign_function - Hàm dấu số nguyên": "data/benchmarks/clover/sign_function.dfy",
+            "sum_to_n - Tính tổng cấp số cộng 0..n": "data/benchmarks/clover/sum_to_n.dfy",
+        },
+        "HumanEval-Dafny (JetBrains)": {
+            "002-truncate - Tách phần thập phân số thực": "data/benchmarks/humaneval_dafny/002-truncate.dfy",
+            "013-greatest_common_divisor - Thuật toán Euclid tìm GCD": "data/benchmarks/humaneval_dafny/013-greatest_common_divisor.dfy",
+            "031-is-prime - Kiểm tra số nguyên tố tuyến tính": "data/benchmarks/humaneval_dafny/031-is-prime.dfy",
+            "035-max-element - Cực đại mảng với bất biến song hành": "data/benchmarks/humaneval_dafny/035-max-element.dfy",
+            "052-below-threshold - Kiểm tra ngưỡng toàn thể của mảng": "data/benchmarks/humaneval_dafny/052-below-threshold.dfy",
+            "055-fib - Thuật toán lặp đồng bộ đệ quy Fibonacci": "data/benchmarks/humaneval_dafny/055-fib.dfy",
+            "000-has_close_elements - Kiểm tra khoảng cách 2 phần tử": "data/benchmarks/humaneval_dafny/000-has_close_elements.dfy",
+            "010-is_palindrome - Kiểm tra chuỗi đối xứng": "data/benchmarks/humaneval_dafny/010-is_palindrome.dfy",
+            "077-iscube - Kiểm tra số lập phương": "data/benchmarks/humaneval_dafny/077-iscube.dfy",
+            "088-sort_array - Sắp xếp mảng": "data/benchmarks/humaneval_dafny/088-sort_array.dfy",
+        }
+    }
+    return tasks
+
+
+# Danh sách 12 bài toán mục tiêu khoa học cốt lõi đã đạt chứng minh 100%
+TARGET_12_TASK_NAMES = {
+    # Clover Benchmark (6/6)
+    "abs_val",
+    "find_min",
+    "linear_search",
+    "sample_max",
+    "sign_function",
+    "sum_to_n",
+    # HumanEval-Dafny (6/10)
+    "002-truncate",
+    "013-greatest_common_divisor",
+    "031-is-prime",
+    "035-max-element",
+    "052-below-threshold",
+    "055-fib",
+}
+
+
+def get_flat_task_registry() -> Dict[str, dict]:
+    """Trả về bảng danh mục phẳng của toàn bộ 16 bài toán thuộc 2 tập benchmark.
+    
+    Khóa (Key) là chuỗi hiển thị có gắn thẻ tập dữ liệu để người dùng dễ chọn,
+    Giá trị (Value) chứa metadata của bài toán: tên mã, đường dẫn, tập dữ liệu, cờ target.
+    """
+    groups = get_benchmark_tasks()
+    registry = {}
+
+    for group_name, tasks in groups.items():
+        tag = "Clover" if "Clover" in group_name else "HumanEval"
+        for label, rel_path in tasks.items():
+            short_name = label.split(" - ")[0].strip()
+            display_label = f"[{tag}] {label}"
+            is_target = short_name in TARGET_12_TASK_NAMES
+            registry[display_label] = {
+                "display_label": display_label,
+                "short_name": short_name,
+                "label": label,
+                "rel_path": rel_path,
+                "group": tag,
+                "group_full": group_name,
+                "is_target": is_target,
+            }
+    return registry
+
+
+def get_preset_labels(preset_type: str = "target_12") -> List[str]:
+    """Lấy danh sách các nhãn bài toán theo bộ thiết lập sẵn (preset).
+    
+    Tham số preset_type:
+    - 'target_12': 12 bài toán mục tiêu đạt chứng nhận 100% (6 Clover + 6 HumanEval)
+    - 'clover': Toàn bộ 6 bài toán tập Clover
+    - 'humaneval': Toàn bộ 10 bài toán tập HumanEval
+    - 'all': Toàn bộ 16 bài toán trong kho benchmark
+    """
+    registry = get_flat_task_registry()
+    if preset_type == "target_12":
+        return [k for k, v in registry.items() if v["is_target"]]
+    elif preset_type == "clover":
+        return [k for k, v in registry.items() if v["group"] == "Clover"]
+    elif preset_type == "humaneval":
+        return [k for k, v in registry.items() if v["group"] == "HumanEval"]
+    elif preset_type == "all":
+        return list(registry.keys())
+    return []
+
+
+def load_task_spec(rel_path: str) -> str:
+    """Đọc nội dung tệp đặc tả Dafny."""
+    full_path = PROJECT_ROOT / rel_path
+    if not full_path.is_file():
+        return ""
+    with open(full_path, "r", encoding="utf-8") as f:
+        return f.read()
+
+
+def generate_code_diff_html(original_code: str, repaired_code: str) -> str:
+    """Tạo bảng HTML trực quan hóa sự khác biệt giữa mã lỗi và mã đã sửa."""
+    orig_lines = original_code.splitlines()
+    repaired_lines = repaired_code.splitlines()
+
+    diff = list(difflib.ndiff(orig_lines, repaired_lines))
+
+    html = [
+        '<div style="font-family: Consolas, monospace; font-size: 13px; line-height: 1.5; '
+        'background-color: #0d1117; color: #c9d1d9; padding: 12px; border-radius: 8px; '
+        'border: 1px solid #30363d; overflow-x: auto; max-height: 480px;">'
+    ]
+
+    for line in diff:
+        marker = line[:2]
+        content = line[2:]
+        safe_content = content.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+        if marker == "- ":
+            html.append(
+                f'<div style="background-color: rgba(248, 81, 73, 0.18); color: #ff7b72; '
+                f'padding: 1px 6px; border-radius: 3px;">- {safe_content}</div>'
+            )
+        elif marker == "+ ":
+            html.append(
+                f'<div style="background-color: rgba(63, 185, 80, 0.18); color: #7ee787; '
+                f'padding: 1px 6px; border-radius: 3px;">+ {safe_content}</div>'
+            )
+        elif marker == "? ":
+            continue
+        else:
+            html.append(f'<div style="padding: 1px 6px; color: #8b949e;">&nbsp;&nbsp;{safe_content}</div>')
+
+    html.append("</div>")
+    return "\n".join(html)
+
+
+def load_latest_summary_metrics() -> Optional[dict]:
+    """Tải số liệu thống kê khoa học mới nhất từ thư mục artifacts/results."""
+    results_dir = PROJECT_ROOT / "artifacts" / "results"
+    if not results_dir.is_dir():
+        return None
+
+    # Tìm file JSON tổng hợp mới nhất
+    json_files = sorted(results_dir.glob("metrics_summary_*.json"), key=os.path.getmtime, reverse=True)
+    if not json_files:
+        return None
+
+    try:
+        with open(json_files[0], "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return None

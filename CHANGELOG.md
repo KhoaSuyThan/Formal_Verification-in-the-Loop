@@ -6,6 +6,13 @@ Tất cả các thay đổi đáng chú ý của dự án sẽ được ghi nh�
 
 ---
 
+## [0.7.0] - 2026-09-29: Web Demo Streamlit Tương Tác & Chạy Hàng Loạt
+- **Giao Diện Streamlit ([app.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/app.py))**:
+  - Hỗ trợ chế độ chạy Đơn Lẻ & Hàng Loạt (Batch Mode) với bảng tiến trình thời gian thực.
+  - Tối ưu UX Sidebar: Bộ chọn nhanh tự tính số lượng, hộp thoại Modal Dialog (`@st.dialog`) lọc tìm bài theo tên file `.dfy`, khóa nhập phím trên selectbox.
+  - Trực quan hóa Actor-Critic Live Studio, khóa đặc tả SHA-256, Code Diff trực quan và Scientific Metrics Dashboard.
+- **Tiện Ích Web Demo ([web_demo/helpers.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/web_demo/helpers.py))**: Quản lý danh mục bài toán phẳng (`get_flat_task_registry()`) và bộ so sánh diff mã nguồn HTML.
+
 ## [0.6.0] - 2026-09-28 đến 2026-09-29: Đạt Mốc 12/16 Bài PASS (75.0%)
 - **Kết Quả Thực Nghiệm**: Đạt **12/16 bài PASS (75.0%)** trên mô hình `qwen2.5-coder:7b`:
   - Clover Benchmark: **6/6 bài PASS (100.0%)**.
