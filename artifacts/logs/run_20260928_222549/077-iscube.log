@@ -1,0 +1,181 @@
+=== BÀI TOÁN: 077-iscube ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 356.62s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 36, Cột 14: expression is not allowed to invoke a method (cube_root)
+-> Dòng mã vi phạm: `r := -cube_root(-n);`
+-> Hướng dẫn khắc phục: KHÔNG ĐƯỢC GỌI METHOD TRONG BIỂU THỨC: Trong Dafny, method không thể gọi lồng vào biểu thức tính toán. Hãy gọi method bằng câu lệnh riêng: `var res := TenMethod(args);` trước khi sử dụng kết quả.
+Code:
+method cube_root(N: nat) returns (r: nat)
+  // post-conditions-start
+  ensures cube(r) <= N < cube(r + 1)
+  ensures r <= N
+  // post-conditions-end
+{
+  var i: nat := 0;
+  while i <= N
+    invariant 0 <= i <= N + 1
+    decreases N - i
+  {
+    if cube(i) <= N < cube(i + 1) {
+      r := i;
+      break;
+    }
+    i := i + 1;
+  }
+}
+
+method iscube(n: int) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r && n >= 0 ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r && n >= 0 ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  ensures r && n < 0 ==> exists r :: 0 <= r <= -n && n == -cube(r)
+  ensures !r && n < 0 ==> forall r :: 0 <= r <= -n ==> n != -cube(r)
+  // post-conditions-end
+{
+    if n >= 0 {
+
+        r := cube_root(n);
+
+    } else {
+
+        r := -cube_root(-n);
+
+    }
+    r := r * r * r == n;
+}
+
+function cube(n: int): int { n * n * n }
+// pure-end
+lemma cube_of_larger_is_larger()
+    ensures forall smaller : int, larger : int :: smaller <= larger ==> cube(smaller) <= cube(larger)
+{}
+// pure-end
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 6, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures cube(r) <= N < cube(r + 1)`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN QUY NẠP TƯƠNG ĐƯƠNG HÀM ĐỆ QUY (FUNCTIONAL EQUIVALENCE): `ensures cube(r) <= N < cube(r + 1)`.
+[HÀNH ĐỘNG BẮT BUỘC - ĐỒNG BỘ BẤT BIẾN VỚI HÀM cube]:
+Phương thức đang tính toán để khớp với hàm thuần túy `cube(r)`.
+SMT Solver BẮT BUỘC cần các invariant quy nạp đồng bộ trực tiếp các biến trạng thái lặp với hàm `cube`:
+1. `invariant 0 <= i <= r`
+2. `invariant a == cube(i)` (biến tích lũy bước hiện tại)
+3. `invariant b == cube(i + 1)` (nếu là thuật toán đệ quy 2 bước như Fibonacci, biến tích lũy bước tiếp theo)
+Code:
+method cube_root(N: nat) returns (r: nat)
+  // post-conditions-start
+  ensures cube(r) <= N < cube(r + 1)
+  ensures r <= N
+  // post-conditions-end
+{
+  var i: nat := 0;
+  while i <= N
+    invariant 0 <= i <= N + 1
+    decreases N - i
+  {
+    if cube(i) <= N < cube(i + 1) {
+      r := i;
+      break;
+    }
+    i := i + 1;
+  }
+}
+
+method iscube(n: int) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r && n >= 0 ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r && n >= 0 ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  ensures r && n < 0 ==> exists r :: 0 <= r <= -n && n == -cube(r)
+  ensures !r && n < 0 ==> forall r :: 0 <= r <= -n ==> n != -cube(r)
+  // post-conditions-end
+{
+  if n >= 0 {
+    var res := cube_root(n);
+    r := res * res * res == n;
+  } else {
+    var res := cube_root(-n);
+    r := res * res * res == -n;
+  }
+}
+
+function cube(n: int): int { n * n * n }
+
+lemma cube_of_larger_is_larger()
+    ensures forall smaller : int, larger : int :: smaller <= larger ==> cube(smaller) <= cube(larger)
+{}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: LoopInvariantViolation
+Error Message: [LoopInvariantViolation] tại Dòng 12, Cột 27: this loop invariant could not be proved on entry
+-> Dòng mã vi phạm: `invariant cube(i) <= N < cube(i + 1)`
+-> Hướng dẫn khắc phục: BẤT BIẾN KHÔNG ĐÚNG KHI BẮT ĐẦU VÒNG LẶP (on entry): `invariant cube(i) <= N < cube(i + 1)`.
+NGUYÊN NHÂN: Giá trị khởi tạo của các biến trước khi vào vòng lặp không thỏa mãn bất biến.
+[HÀNH ĐỘNG BẮT BUỘC - XỬ LÝ SỐ ÂM / TRƯỜNG HỢP BIÊN]:
+1. Nếu tham số đầu vào có thể là số âm (ví dụ: requires a != 0 || b != 0 trong GCD/Euclid), BẮT BUỘC phải lấy giá trị không âm trước khi vào vòng lặp:
+   `var cur_a := if a < 0 then -a else a;`
+   `var cur_b := if b < 0 then -b else b;`
+2. Khởi tạo biến lặp khớp chính xác với cận dưới của invariant (ví dụ: `var i := 0;` hoặc `var i := 1;`).
+3. TUYỆT ĐỐI KHÔNG sửa đổi hoặc nới lỏng các mệnh đề requires/ensures của đề bài.
+Code:
+method cube_root(N: nat) returns (r: nat)
+  // post-conditions-start
+  ensures cube(r) <= N < cube(r + 1)
+  ensures r <= N
+  // post-conditions-end
+{
+  var i: nat := 0;
+  var a: nat := 0;
+  var b: nat := cube(i + 1);
+  while i <= N
+    invariant 0 <= i <= N + 1
+    invariant cube(i) <= N < cube(i + 1)
+    decreases N - i
+  {
+    if cube(i) <= N < cube(i + 1) {
+      r := i;
+      break;
+    }
+    i := i + 1;
+    a := cube(i);
+    b := cube(i + 1);
+  }
+}
+
+method iscube(n: int) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r && n >= 0 ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r && n >= 0 ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  ensures r && n < 0 ==> exists r :: 0 <= r <= -n && n == -cube(r)
+  ensures !r && n < 0 ==> forall r :: 0 <= r <= -n ==> n != -cube(r)
+  // post-conditions-end
+{
+  if n >= 0 {
+    var res := cube_root(n);
+    r := res * res * res == n;
+  } else {
+    var res := cube_root(-n);
+    r := res * res * res == -n;
+  }
+}
+
+function cube(n: int): int { n * n * n }
+
+lemma cube_of_larger_is_larger()
+    ensures forall smaller : int, larger : int :: smaller <= larger ==> cube(smaller) <= cube(larger)
+{}
+

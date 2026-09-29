@@ -1,0 +1,7 @@
+task_name,model,is_success,total_iterations,pass_at_1,pass_at_k,error_taxonomy,execution_time_sec,timestamp
+002-truncate,ollama/qwen2.5-coder:7b,True,1,1,1,None,15.22,20260929_111357
+013-greatest_common_divisor,ollama/qwen2.5-coder:7b,True,1,1,1,None,19.79,20260929_111357
+031-is-prime,ollama/qwen2.5-coder:7b,False,3,0,0,GeneralVerificationFailure,129.87,20260929_111357
+035-max-element,ollama/qwen2.5-coder:7b,True,3,0,1,None,115.66,20260929_111357
+052-below-threshold,ollama/qwen2.5-coder:7b,True,1,1,1,None,22.05,20260929_111357
+055-fib,ollama/qwen2.5-coder:7b,True,1,1,1,None,28.75,20260929_111357

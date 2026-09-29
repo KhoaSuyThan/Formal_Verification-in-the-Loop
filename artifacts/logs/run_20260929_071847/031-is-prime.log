@@ -1,0 +1,76 @@
+=== BÀI TOÁN: 031-is-prime ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 89.51s
+Kết quả cuối: PASS
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 5, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures result ==> forall i :: 2 <= i < k ==> k % i != 0`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CHỨA ĐỊNH LƯỢNG TOÀN THỂ (FORALL) BỊ VI PHẠM: `ensures result ==> forall i :: 2 <= i < k ==> k % i != 0`.
+NGUYÊN LÝ BẤT BIẾN TIỀN TỐ (PREFIX INDUCTIVE INVARIANT): Để Z3 suy diễn được hậu điều kiện toàn thể, vòng lặp BẮT BUỘC phải duy trì bất biến tiền tố cho các phần tử đã duyệt:
+-> [HÀNH ĐỘNG BẮT BUỘC]: Bổ sung đầy đủ các mệnh đề invariant sau vào ngay dưới từ khóa while (theo đúng thứ tự):
+   `invariant forall j :: 2 <= j < i ==> k % j != 0`
+-> [LƯU Ý VÒNG LẶP SỐ NGUYÊN TỐ]: Z3 SMT Solver không thể suy diễn quy nạp qua căn bậc hai nếu thiếu bổ đề phi tuyến. Vòng lặp BẮT BUỘC phải duyệt tuyến tính `while i < k` (TUYỆT ĐỐI KHÔNG dùng `while i * i <= k`) kèm `decreases k - i`.
+Code:
+method is_prime(k: int) returns (result: bool)
+  requires k >= 1
+  ensures result ==> forall i :: 2 <= i < k ==> k % i != 0
+  ensures (k > 1 && !result) ==> exists j :: 2 <= j < k && k % j == 0
+{
+  if k <= 1 {
+    result := false;
+    return;
+  }
+
+  var i := 2;
+  var is_prime := true;
+  while i * i <= k
+    invariant 2 <= i <= k
+    invariant is_prime ==> forall j :: 2 <= j < i ==> k % j != 0
+    decreases k - i
+  {
+    if k % i == 0 {
+      is_prime := false;
+      break;
+    }
+    i := i + 1;
+  }
+
+  result := is_prime;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: True
+Error Taxonomy: None
+Error Message: 
+Code:
+method is_prime(k: int) returns (result: bool)
+  requires k >= 1
+  ensures result ==> forall i :: 2 <= i < k ==> k % i != 0
+  ensures (k > 1 && !result) ==> exists j :: 2 <= j < k && k % j == 0
+{
+  if k <= 1 {
+    result := false;
+    return;
+  }
+
+  var i := 2;
+  var is_prime := true;
+  while i < k
+    invariant 2 <= i <= k
+    invariant is_prime ==> forall j :: 2 <= j < i ==> k % j != 0
+    decreases k - i
+  {
+    if k % i == 0 {
+      is_prime := false;
+      break;
+    }
+    i := i + 1;
+  }
+
+  result := is_prime;
+}
+

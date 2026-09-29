@@ -1,0 +1,140 @@
+=== BÀI TOÁN: 055-fib ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 112.02s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: LoopInvariantViolation
+Error Message: [LoopInvariantViolation] tại Dòng 20, Cột 16: this invariant could not be proved to be maintained by the loop
+-> Dòng mã vi phạm: `invariant a == fib(i)`
+-> Hướng dẫn khắc phục: BẤT BIẾN KHÔNG ĐƯỢC DUY TRÌ SAU THÂN VÒNG LẶP (maintained): `invariant a == fib(i)`.
+[LỖI CẬN TRÊN BIẾN LẶP]:
+Khi vòng lặp có điều kiện `while i <= n`, sau bước tăng `i := i + 1;`, biến `i` sẽ đạt giá trị `n + 1` trước khi thoát lặp.
+-> [HÀNH ĐỘNG BẮT BUỘC]:
+1. BẮT BUỘC giữ nguyên invariant tính toán kết quả hiện có (ví dụ `invariant s == i * (i - 1) / 2` hoặc tương đương).
+2. CHỈ thay thế/nới lỏng invariant cận trên thành: `invariant 0 <= i <= n + 1`.
+Code:
+function fib(n: nat): nat
+  decreases n
+{
+  if n == 0 then 0
+  else if n == 1 then 1
+  else fib(n - 1) + fib(n - 2)
+}
+// pure-end
+method ComputeFib(n: nat) returns (result: nat)
+  // post-conditions-start
+  ensures result == fib(n)
+  // post-conditions-end
+{
+  // impl-start
+  var a := 0;
+  var b := 1;
+  var i := 0;
+  while i < n
+    invariant 0 <= i <= n
+    invariant a == fib(i)
+    decreases n - i
+  {
+    var temp := a;
+    a := b;
+    b := temp + b;
+    i := i + 1;
+  }
+  result := a;
+  // impl-end
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 13, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures result == fib(n)`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN QUY NẠP TƯƠNG ĐƯƠNG HÀM ĐỆ QUY (FUNCTIONAL EQUIVALENCE): `ensures result == fib(n)`.
+[HÀNH ĐỘNG BẮT BUỘC - ĐỒNG BỘ BẤT BIẾN VỚI HÀM fib]:
+Phương thức đang tính toán để khớp với hàm thuần túy `fib(n)`.
+1. Cấu trúc lặp chuẩn: duyệt `while i < n` kèm `decreases n - i`, và sau khi kết thúc vòng lặp gán biến kết quả (`result := a;`).
+2. BẮT BUỘC đặt các invariant sau ngay trước dấu ngoặc mở `{` của while:
+   - `invariant 0 <= i <= n`
+   - `invariant a == fib(i)` (biến tích lũy bước hiện tại)
+   - `invariant b == fib(i + 1)` (nếu là thuật toán đệ quy 2 bước như Fibonacci, biến tích lũy bước tiếp theo)
+Code:
+function fib(n: nat): nat
+  decreases n
+{
+  if n == 0 then 0
+  else if n == 1 then 1
+  else fib(n - 1) + fib(n - 2)
+}
+// pure-end
+method ComputeFib(n: nat) returns (result: nat)
+  // post-conditions-start
+  ensures result == fib(n)
+  // post-conditions-end
+{
+  // impl-start
+  var a := 0;
+  var b := 1;
+  var i := 0;
+  while i <= n
+    invariant 0 <= i <= n + 1 + 1
+    invariant a == fib(i)
+    decreases n - i
+  {
+    var temp := a;
+    a := b;
+    b := temp + b;
+    i := i + 1;
+  }
+  result := a;
+  // impl-end
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 13, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures result == fib(n)`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN QUY NẠP TƯƠNG ĐƯƠNG HÀM ĐỆ QUY (FUNCTIONAL EQUIVALENCE): `ensures result == fib(n)`.
+[HÀNH ĐỘNG BẮT BUỘC - ĐỒNG BỘ BẤT BIẾN VỚI HÀM fib]:
+Phương thức đang tính toán để khớp với hàm thuần túy `fib(n)`.
+1. Cấu trúc lặp chuẩn: duyệt `while i < n` kèm `decreases n - i`, và sau khi kết thúc vòng lặp gán biến kết quả (`result := a;`).
+2. BẮT BUỘC đặt các invariant sau ngay trước dấu ngoặc mở `{` của while:
+   - `invariant 0 <= i <= n`
+   - `invariant a == fib(i)` (biến tích lũy bước hiện tại)
+   - `invariant b == fib(i + 1)` (nếu là thuật toán đệ quy 2 bước như Fibonacci, biến tích lũy bước tiếp theo)
+Code:
+function fib(n: nat): nat
+  decreases n
+{
+  if n == 0 then 0
+  else if n == 1 then 1
+  else fib(n - 1) + fib(n - 2)
+}
+// pure-end
+method ComputeFib(n: nat) returns (result: nat)
+  // post-conditions-start
+  ensures result == fib(n)
+  // post-conditions-end
+{
+  // impl-start
+  var a := 0;
+  var b := 1;
+  var i := 0;
+  while i <= n
+    invariant 0 <= i <= n + 1
+    invariant a == fib(i)
+    decreases n - i
+  {
+    var temp := a;
+    a := b;
+    b := temp + b;
+    i := i + 1;
+  }
+  result := a;
+  // impl-end
+}
+

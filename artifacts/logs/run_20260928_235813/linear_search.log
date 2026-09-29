@@ -1,0 +1,104 @@
+=== BÀI TOÁN: linear_search ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 178.55s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 4, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CHỨA ĐỊNH LƯỢNG TOÀN THỂ (FORALL) BỊ VI PHẠM: `ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target`.
+NGUYÊN LÝ BẤT BIẾN TIỀN TỐ (PREFIX INDUCTIVE INVARIANT): Để Z3 suy diễn được hậu điều kiện toàn thể, vòng lặp BẮT BUỘC phải duy trì bất biến tiền tố cho các phần tử đã duyệt:
+-> [HÀNH ĐỘNG BẮT BUỘC]: Bổ sung đầy đủ các mệnh đề invariant sau vào ngay dưới từ khóa while (theo đúng thứ tự):
+   `invariant forall j :: 0 <= j < i ==> a[j] != target`
+Code:
+method LinearSearch(a: array<int>, target: int) returns (r: int)
+    ensures r >= 0 ==> r < a.Length && a[r] == target
+    ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target
+{
+    var i := 0;
+    var found := false;
+    var result := -1;
+
+    while i < a.Length
+        invariant 0 <= i <= a.Length
+        invariant !found ==> result == -1
+        invariant found ==> result >= 0 && result < a.Length && a[result] == target
+        decreases a.Length - i
+    {
+        if a[i] == target {
+            found := true;
+            result := i;
+        }
+        i := i + 1;
+    }
+
+    r := result;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: LoopInvariantViolation
+Error Message: [LoopInvariantViolation] tại Dòng 13, Cột 18: this invariant could not be proved to be maintained by the loop
+-> Dòng mã vi phạm: `invariant forall j :: 0 <= j < i ==> a[j] != target`
+-> Hướng dẫn khắc phục: BẤT BIẾN KHÔNG ĐƯỢC DUY TRÌ SAU THÂN VÒNG LẶP (maintained): Sau bước nhảy (ví dụ `i := i + 1`), biến có thể vượt qua biên của invariant. Lưu ý: Nếu duyệt mảng `while i < a.Length`, TUYỆT ĐỐI KHÔNG sửa thành `while i <= a.Length` (sẽ gây lỗi vượt biên). Hãy giữ nguyên điều kiện lặp hợp lệ và nới lỏng invariant cận trên thành `0 <= i <= a.Length`.
+Code:
+method LinearSearch(a: array<int>, target: int) returns (r: int)
+    ensures r >= 0 ==> r < a.Length && a[r] == target
+    ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target
+{
+    var i := 0;
+    var found := false;
+    var result := -1;
+
+    while i < a.Length
+        invariant 0 <= i <= a.Length
+        invariant !found ==> result == -1
+        invariant found ==> result >= 0 && result < a.Length && a[result] == target
+        invariant forall j :: 0 <= j < i ==> a[j] != target
+        decreases a.Length - i
+    {
+        if a[i] == target {
+            found := true;
+            result := i;
+        }
+        i := i + 1;
+    }
+
+    r := result;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: LoopInvariantViolation
+Error Message: [LoopInvariantViolation] tại Dòng 10, Cột 25: this invariant could not be proved to be maintained by the loop
+-> Dòng mã vi phạm: `invariant 0 <= i <= a.Length`
+-> Hướng dẫn khắc phục: BẤT BIẾN KHÔNG ĐƯỢC DUY TRÌ SAU THÂN VÒNG LẶP (maintained): Sau bước nhảy (ví dụ `i := i + 1`), biến có thể vượt qua biên của invariant. Lưu ý: Nếu duyệt mảng `while i < a.Length`, TUYỆT ĐỐI KHÔNG sửa thành `while i <= a.Length` (sẽ gây lỗi vượt biên). Hãy giữ nguyên điều kiện lặp hợp lệ và nới lỏng invariant cận trên thành `0 <= i <= a.Length`.
+Code:
+method LinearSearch(a: array<int>, target: int) returns (r: int)
+    ensures r >= 0 ==> r < a.Length && a[r] == target
+    ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target
+{
+    var i := 0;
+    var found := false;
+    var result := -1;
+
+    while i <= a.Length
+        invariant 0 <= i <= a.Length
+        invariant !found ==> result == -1
+        invariant found ==> result >= 0 && result < a.Length && a[result] == target
+        invariant forall j :: 0 <= j < i ==> a[j] != target
+        decreases a.Length - i
+    {
+        if i < a.Length && a[i] == target {
+            found := true;
+            result := i;
+        }
+        i := i + 1;
+    }
+
+    r := result;
+}
+

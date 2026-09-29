@@ -65,7 +65,7 @@ def test_extract_forall_prefix_invariant():
 
     clause2 = "ensures b == (forall i : int :: i >= 0 && i < |l| ==> l[i] < t)"
     inv2 = DiagnosticParser.extract_forall_prefix_invariant(clause2)
-    assert inv2 == "invariant forall j :: 0 <= j < i ==> l[j] < t"
+    assert inv2 == "invariant b == (forall j :: 0 <= j < i ==> l[j] < t)"
 
     clause3 = "ensures forall i : int :: i >= 0 && i < |l| ==> l[i] <= result"
     inv3 = DiagnosticParser.extract_forall_prefix_invariant(clause3)
@@ -86,11 +86,12 @@ def test_actionable_directives():
     assert "invariant exists j :: 0 <= j < i && l[j] ==" in hint_exists
 
     # 2. Test pure function directive
+    fib_code = "function fib(n: nat): nat { if n == 0 then 0 else 1 }"
     hint_pure = DiagnosticParser.generate_semantic_hint(
         "PostconditionViolation",
         "a postcondition could not be proved on this return path",
         "{",
-        "",
+        fib_code,
         "ensures result == fib(n)"
     )
     assert "ĐỒNG BỘ BẤT BIẾN VỚI HÀM fib" in hint_pure

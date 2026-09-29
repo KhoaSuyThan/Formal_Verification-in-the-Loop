@@ -1,0 +1,115 @@
+=== BÀI TOÁN: 031-is-prime ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 154.78s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 5, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures result ==> forall i :: 2 <= i < k ==> k % i != 0`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CHỨA ĐỊNH LƯỢNG TOÀN THỂ (FORALL) BỊ VI PHẠM: `ensures result ==> forall i :: 2 <= i < k ==> k % i != 0`.
+NGUYÊN LÝ BẤT BIẾN TIỀN TỐ (PREFIX INDUCTIVE INVARIANT): Để Z3 suy diễn được hậu điều kiện toàn thể, vòng lặp BẮT BUỘC phải duy trì bất biến tiền tố cho các phần tử đã duyệt:
+-> [HÀNH ĐỘNG BẮT BUỘC]: Bổ sung mệnh đề sau vào ngay dưới từ khóa while:
+   `invariant forall j :: 0 <= j < i ==> k % j != 0`
+Code:
+method is_prime(k: int) returns (result: bool)
+  requires k >= 1
+  ensures result ==> forall i :: 2 <= i < k ==> k % i != 0
+  ensures (k > 1 && !result) ==> exists j :: 2 <= j < k && k % j == 0
+{
+  var abs_k := k; // Bắt buộc lấy giá trị tuyệt đối trước khi bước vào vòng lặp;
+  if abs_k < 0 {
+    abs_k := -abs_k;
+  }
+
+  var i := 2;
+  var is_prime := true;
+  while i * i <= abs_k
+    decreases abs_k - i
+  {
+    if abs_k % i == 0 {
+      is_prime := false;
+      break;
+    }
+    i := i + 1;
+  }
+
+  result := is_prime;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 5, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures result ==> forall i :: 2 <= i < k ==> k % i != 0`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CHỨA ĐỊNH LƯỢNG TOÀN THỂ (FORALL) BỊ VI PHẠM: `ensures result ==> forall i :: 2 <= i < k ==> k % i != 0`.
+NGUYÊN LÝ BẤT BIẾN TIỀN TỐ (PREFIX INDUCTIVE INVARIANT): Để Z3 suy diễn được hậu điều kiện toàn thể, vòng lặp BẮT BUỘC phải duy trì bất biến tiền tố cho các phần tử đã duyệt:
+-> [HÀNH ĐỘNG BẮT BUỘC]: Bổ sung mệnh đề sau vào ngay dưới từ khóa while:
+   `invariant forall j :: 0 <= j < i ==> k % j != 0`
+Code:
+method is_prime(k: int) returns (result: bool)
+  requires k >= 1
+  ensures result ==> forall i :: 2 <= i < k ==> k % i != 0
+  ensures (k > 1 && !result) ==> exists j :: 2 <= j < k && k % j == 0
+{
+  var abs_k := k; // Bắt buộc lấy giá trị tuyệt đối trước khi bước vào vòng lặp;
+  if abs_k < 0 {
+    abs_k := -abs_k;
+  }
+
+  var i := 2;
+  var is_prime := true;
+  while i * i <= abs_k
+    decreases abs_k - i
+    invariant forall j :: 0 <= j < i ==> abs_k % j != 0
+  {
+    if abs_k % i == 0 {
+      is_prime := false;
+      break;
+    }
+    i := i + 1;
+  }
+
+  result := is_prime;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 5, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures result ==> forall i :: 2 <= i < k ==> k % i != 0`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CHỨA ĐỊNH LƯỢNG TOÀN THỂ (FORALL) BỊ VI PHẠM: `ensures result ==> forall i :: 2 <= i < k ==> k % i != 0`.
+NGUYÊN LÝ BẤT BIẾN TIỀN TỐ (PREFIX INDUCTIVE INVARIANT): Để Z3 suy diễn được hậu điều kiện toàn thể, vòng lặp BẮT BUỘC phải duy trì bất biến tiền tố cho các phần tử đã duyệt:
+-> [HÀNH ĐỘNG BẮT BUỘC]: Bổ sung mệnh đề sau vào ngay dưới từ khóa while:
+   `invariant forall j :: 0 <= j < i ==> k % j != 0`
+Code:
+method is_prime(k: int) returns (result: bool)
+  requires k >= 1
+  ensures result ==> forall i :: 2 <= i < k ==> k % i != 0
+  ensures (k > 1 && !result) ==> exists j :: 2 <= j < k && k % j == 0
+{
+  var abs_k := k; // Bắt buộc lấy giá trị tuyệt đối trước khi bước vào vòng lặp;
+  if abs_k < 0 {
+    abs_k := -abs_k;
+  }
+
+  var i := 2;
+  var is_prime := true;
+  while i * i <= abs_k
+    decreases abs_k - i
+    invariant forall j :: 0 <= j < i ==> k % j != 0
+  {
+    if abs_k % i == 0 {
+      is_prime := false;
+      break;
+    }
+    i := i + 1;
+  }
+
+  result := is_prime;
+}
+

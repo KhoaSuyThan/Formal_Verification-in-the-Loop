@@ -1,0 +1,59 @@
+=== BÀI TOÁN: 035-max-element ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 88.54s
+Kết quả cuối: PASS
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: LoopInvariantViolation
+Error Message: [LoopInvariantViolation] tại Dòng 11, Cột 18: this loop invariant could not be proved on entry
+-> Dòng mã vi phạm: `invariant exists j :: 0 <= j < i && l[j] == max`
+-> Hướng dẫn khắc phục: BẤT BIẾN TỒN TẠI KHÔNG ĐÚNG KHI BẮT ĐẦU VÒNG LẶP (on entry): `invariant exists j :: 0 <= j < i && l[j] == max`.
+[LỖI TOÁN HỌC KHỞI TẠO BIẾN LẶP]:
+Khoảng `0 <= j < i` khi bắt đầu là KHOẢNG RỖNG nếu `i == 0` (không có giá trị j nào thỏa mãn 0 <= j < 0)!
+-> NGUYÊN TẮC: Khi biến kết quả đã được gán phần tử đầu tiên (như `result := l[0];`), biến lặp `i` BẮT BUỘC phải khởi tạo từ `1` (`var i := 1;`), và cận dưới của invariant BẮT BUỘC phải là: `invariant 1 <= i <= |s|`.
+Code:
+method max_element(l : seq<int>) returns (result : int)
+    requires |l| > 0
+    ensures forall i : int :: i >= 0 && i < |l| ==> l[i] <= result
+    ensures exists i : int :: i >= 0 && i < |l| && l[i] == result
+{
+    var i := 0;
+    var max := l[0];
+    while i < |l|
+        invariant 0 <= i <= |l|
+        invariant forall j :: 0 <= j < i ==> l[j] <= max
+        invariant exists j :: 0 <= j < i && l[j] == max
+    {if l[i] > max {
+            max := l[i];
+        }
+        i := i + 1;
+    }
+    result := max;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: True
+Error Taxonomy: None
+Error Message: 
+Code:
+method max_element(l : seq<int>) returns (result : int)
+    requires |l| > 0
+    ensures forall i : int :: i >= 0 && i < |l| ==> l[i] <= result
+    ensures exists i : int :: i >= 0 && i < |l| && l[i] == result
+{
+    var i := 1;
+    var max := l[0];
+    while i < |l|
+        invariant 1 <= i <= |l|
+        invariant forall j :: 0 <= j < i ==> l[j] <= max
+        invariant exists j :: 0 <= j < i && l[j] == max
+    {
+        if l[i] > max {
+            max := l[i];
+        }
+        i := i + 1;
+    }
+    result := max;
+}
+

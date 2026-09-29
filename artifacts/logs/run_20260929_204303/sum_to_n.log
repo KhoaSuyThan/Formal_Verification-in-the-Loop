@@ -1,0 +1,50 @@
+=== BÀI TOÁN: sum_to_n ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 64.32s
+Kết quả cuối: PASS
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 14, Cột 4: out-parameter 's', which is subject to definite-assignment rules, might be uninitialized at this return point
+-> Dòng mã vi phạm: `return;`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method SumToN(n: int) returns (s: int)
+    requires n >= 0
+    ensures s == n * (n + 1) / 2
+{
+    var i := 0;
+    var result := 0;
+    while i <= n
+        invariant 0 <= i <= n + 1
+        invariant result == i * (i - 1) / 2
+    {
+        result := result + i;
+        i := i + 1;
+    }
+    return;
+  s := result;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: True
+Error Taxonomy: None
+Error Message: 
+Code:
+method SumToN(n: int) returns (s: int)
+    requires n >= 0
+    ensures s == n * (n + 1) / 2
+{
+    var i := 0;
+    var result := 0;
+    while i <= n
+        invariant 0 <= i <= n + 1
+        invariant result == i * (i - 1) / 2
+    {
+        result := result + i;
+        i := i + 1;
+    }
+    s := result;
+}
+

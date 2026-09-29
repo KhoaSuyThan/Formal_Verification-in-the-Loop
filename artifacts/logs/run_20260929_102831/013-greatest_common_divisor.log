@@ -1,0 +1,99 @@
+=== BÀI TOÁN: 013-greatest_common_divisor ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 109.55s
+Kết quả cuối: PASS
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: LoopInvariantViolation
+Error Message: [LoopInvariantViolation] tại Dòng 12, Cột 29: this invariant could not be proved to be maintained by the loop
+-> Dòng mã vi phạm: `invariant 0 < x && 0 < y`
+-> Hướng dẫn khắc phục: BẤT BIẾN KHÔNG ĐƯỢC DUY TRÌ SAU THÂN VÒNG LẶP (maintained): Sau bước nhảy (ví dụ `i := i + 1`), biến có thể vượt qua biên của invariant. Lưu ý: Nếu duyệt mảng `while i < a.Length`, TUYỆT ĐỐI KHÔNG sửa thành `while i <= a.Length` (sẽ gây lỗi vượt biên). Hãy giữ nguyên điều kiện lặp hợp lệ và nới lỏng invariant cận trên thành `0 <= i <= a.Length`.
+Code:
+method greatest_common_divisor(a: int, b: int) returns (gcd: int)
+    requires a != 0 || b != 0
+    ensures gcd != 0
+{
+    var x := if a < 0 then -a else a;
+    var y := if b < 0 then -b else b;
+    if x == 0 { gcd := y;
+ return; }
+    if y == 0 { gcd := x;
+ return; }
+    while y > 0
+        invariant 0 < x && 0 < y
+        decreases y
+    {
+        var temp := y;
+        y := x % y;
+        x := temp;
+    }
+    gcd := x;
+
+    return;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: LoopInvariantViolation
+Error Message: [LoopInvariantViolation] tại Dòng 10, Cột 40: this loop invariant could not be proved on entry
+-> Dòng mã vi phạm: `invariant 0 <= x && 0 <= y && x >= y`
+-> Hướng dẫn khắc phục: BẤT BIẾN KHÔNG ĐÚNG KHI BẮT ĐẦU VÒNG LẶP (on entry): `invariant 0 <= x && 0 <= y && x >= y`.
+[HÀNH ĐỘNG BẮT BUỘC - XỬ LÝ SỐ ÂM VÀ TRƯỜNG HỢP BIÊN BẰNG 0 TRONG THUẬT TOÁN GCD / EUCLID]:
+Khi tiền điều kiện là `requires a != 0 || b != 0`, một trong hai số CÓ THỂ BẰNG 0 (ví dụ a == 0 hoặc b == 0)!
+-> Do đó bất biến `0 < cur_a && 0 < cur_b` BỊ SAI ngay khi bắt đầu nếu một số bằng 0.
+1. Lấy giá trị không âm: `var cur_a := if a < 0 then -a else a; var cur_b := if b < 0 then -b else b;`
+2. BẮT BUỘC rẽ nhánh xử lý khi một trong hai số bằng 0 trước khi vào vòng lặp:
+   `if cur_a == 0 { return cur_b; }`
+   `if cur_b == 0 { return cur_a; }`
+3. Áp dụng vòng lặp Euclid chuẩn xác:
+   `while cur_b > 0 invariant cur_a > 0 invariant cur_b >= 0 decreases cur_b { var temp := cur_b; cur_b := cur_a % cur_b; cur_a := temp; } return cur_a;`
+Code:
+method greatest_common_divisor(a: int, b: int) returns (gcd: int)
+    requires a != 0 || b != 0
+    ensures gcd != 0
+{
+    var x := if a < 0 then -a else a;
+    var y := if b < 0 then -b else b;
+    if x == 0 { gcd := y; return; }
+    if y == 0 { gcd := x; return; }
+    while y > 0
+        invariant 0 <= x && 0 <= y && x >= y
+        decreases y
+    {
+        var temp := y;
+        y := x % y;
+        x := temp;
+    }
+    gcd := x;
+    return;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: True
+Error Taxonomy: None
+Error Message: 
+Code:
+method greatest_common_divisor(a: int, b: int) returns (gcd: int)
+    requires a != 0 || b != 0
+    ensures gcd != 0
+{
+    var cur_a := if a < 0 then -a else a;
+    var cur_b := if b < 0 then -b else b;
+    if cur_a == 0 { gcd := cur_b;
+ return; }
+    if cur_b == 0 { gcd := cur_a;
+ return; }
+    while cur_b > 0
+        invariant cur_a > 0
+        invariant cur_b >= 0
+        decreases cur_b
+    {
+        var temp := cur_b;
+        cur_b := cur_a % cur_b;
+        cur_a := temp;
+    }
+    gcd := cur_a;
+    return;
+}
+

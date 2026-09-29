@@ -1,0 +1,105 @@
+=== BÀI TOÁN: linear_search ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 148.5s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 4, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CHỨA ĐỊNH LƯỢNG TOÀN THỂ (FORALL) BỊ VI PHẠM: `ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target`.
+NGUYÊN LÝ BẤT BIẾN TIỀN TỐ (PREFIX INDUCTIVE INVARIANT): Để Z3 suy diễn được hậu điều kiện toàn thể, vòng lặp BẮT BUỘC phải duy trì bất biến tiền tố cho các phần tử đã duyệt:
+-> [HÀNH ĐỘNG BẮT BUỘC]: Bổ sung đầy đủ các mệnh đề invariant sau vào ngay dưới từ khóa while (theo đúng thứ tự):
+   `invariant forall j :: 0 <= j < i ==> a[j] != target`
+-> [LƯU Ý TÌM KIẾM]: Khi tìm thấy phần tử (`a[i] == target`), hãy gán `r := i; return;` (hoặc `break;`) để thoát ngay khỏi vòng lặp, nhằm bảo toàn invariant `forall j :: 0 <= j < i ==> a[j] != target`.
+Code:
+method LinearSearch(a: array<int>, target: int) returns (r: int)
+    ensures r >= 0 ==> r < a.Length && a[r] == target
+    ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target
+{
+    var i := 0;
+    var result := -1;
+    while i < a.Length
+        invariant 0 <= i <= a.Length
+        invariant r == -1 ==> forall j :: 0 <= j < i ==> a[j] != target
+        invariant r >= 0 ==> r < a.Length && a[r] == target
+        decreases a.Length - i
+    {
+        if a[i] == target {
+            result := i;
+            break;
+        }
+        i := i + 1;
+    }
+    r := result;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 4, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CHỨA ĐỊNH LƯỢNG TOÀN THỂ (FORALL) BỊ VI PHẠM: `ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target`.
+NGUYÊN LÝ BẤT BIẾN TIỀN TỐ (PREFIX INDUCTIVE INVARIANT): Để Z3 suy diễn được hậu điều kiện toàn thể, vòng lặp BẮT BUỘC phải duy trì bất biến tiền tố cho các phần tử đã duyệt:
+-> [HÀNH ĐỘNG BẮT BUỘC]: Bổ sung đầy đủ các mệnh đề invariant sau vào ngay dưới từ khóa while (theo đúng thứ tự):
+   `invariant forall j :: 0 <= j < i ==> a[j] != target`
+-> [LƯU Ý TÌM KIẾM]: Khi tìm thấy phần tử (`a[i] == target`), hãy gán `r := i; return;` (hoặc `break;`) để thoát ngay khỏi vòng lặp, nhằm bảo toàn invariant `forall j :: 0 <= j < i ==> a[j] != target`.
+Code:
+method LinearSearch(a: array<int>, target: int) returns (r: int)
+    ensures r >= 0 ==> r < a.Length && a[r] == target
+    ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target
+{
+    var i := 0;
+    var result := -1;
+    while i < a.Length
+        invariant 0 <= i <= a.Length
+        invariant r == -1 ==> forall j :: 0 <= j < i ==> a[j] != target
+        invariant r >= 0 ==> r < a.Length && a[r] == target
+        decreases a.Length - i
+    {
+        if a[i] == target {
+            result := i;
+            r := result;
+            return;
+        }
+        i := i + 1;
+    }
+    r := result;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 4, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CHỨA ĐỊNH LƯỢNG TOÀN THỂ (FORALL) BỊ VI PHẠM: `ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target`.
+NGUYÊN LÝ BẤT BIẾN TIỀN TỐ (PREFIX INDUCTIVE INVARIANT): Để Z3 suy diễn được hậu điều kiện toàn thể, vòng lặp BẮT BUỘC phải duy trì bất biến tiền tố cho các phần tử đã duyệt:
+-> [HÀNH ĐỘNG BẮT BUỘC]: Bổ sung đầy đủ các mệnh đề invariant sau vào ngay dưới từ khóa while (theo đúng thứ tự):
+   `invariant forall j :: 0 <= j < i ==> a[j] != target`
+-> [LƯU Ý TÌM KIẾM]: Khi tìm thấy phần tử (`a[i] == target`), hãy gán `r := i; return;` (hoặc `break;`) để thoát ngay khỏi vòng lặp, nhằm bảo toàn invariant `forall j :: 0 <= j < i ==> a[j] != target`.
+Code:
+method LinearSearch(a: array<int>, target: int) returns (r: int)
+    ensures r >= 0 ==> r < a.Length && a[r] == target
+    ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target
+{
+    var i := 0;
+    var result := -1;
+    while i < a.Length
+        invariant 0 <= i <= a.Length
+        invariant r == -1 ==> forall j :: 0 <= j < i ==> a[j] != target
+        decreases a.Length - i
+    {
+        if a[i] == target {
+            result := i;
+            r := result;
+            return;
+        }
+        i := i + 1;
+    }
+    r := result;
+}
+

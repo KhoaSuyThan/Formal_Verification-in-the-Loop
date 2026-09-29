@@ -1,0 +1,115 @@
+=== BÀI TOÁN: 031-is-prime ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 129.87s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 28, Cột 2: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `return;`
+-> Mệnh đề liên quan: `ensures result ==> forall i :: 2 <= i < k ==> k % i != 0`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CHỨA ĐỊNH LƯỢNG TOÀN THỂ (FORALL) BỊ VI PHẠM: `ensures result ==> forall i :: 2 <= i < k ==> k % i != 0`.
+NGUYÊN LÝ BẤT BIẾN TIỀN TỐ (PREFIX INDUCTIVE INVARIANT): Để Z3 suy diễn được hậu điều kiện toàn thể, vòng lặp BẮT BUỘC phải duy trì bất biến tiền tố cho các phần tử đã duyệt:
+-> [HÀNH ĐỘNG BẮT BUỘC]: Bổ sung đầy đủ các mệnh đề invariant sau vào ngay dưới từ khóa while (theo đúng thứ tự):
+   `invariant forall j :: 2 <= j < i ==> k % j != 0`
+-> [LƯU Ý VÒNG LẶP SỐ NGUYÊN TỐ]: Z3 SMT Solver không thể suy diễn quy nạp qua căn bậc hai nếu thiếu bổ đề phi tuyến. BẮT BUỘC phải xử lý trường hợp biên trước vòng lặp: `if k <= 1 { result := false; } else { ... }` và trong nhánh else duyệt tuyến tính `while i < k` (TUYỆT ĐỐI KHÔNG dùng `while i * i <= k`) kèm `decreases k - i` và `invariant result ==> forall j :: 2 <= j < i ==> k % j != 0`.
+Code:
+method is_prime(k: int) returns (result: bool)
+  requires k >= 1
+  ensures result ==> forall i :: 2 <= i < k ==> k % i != 0
+  ensures (k > 1 && !result) ==> exists j :: 2 <= j < k && k % j == 0
+{
+  if k <= 1 {
+    result := false;
+
+    return;
+  }
+
+  var i := 2;
+  while i < k
+    invariant 2 <= i <= k
+    decreases k - i
+  {
+    if k % i == 0 {
+      result := false;
+
+      return;
+    }
+    i := i + 1;
+  }
+
+  result := true;
+
+
+  return;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 14, Cột 14: variable 'result', which is subject to definite-assignment rules, might be uninitialized here
+-> Dòng mã vi phạm: `invariant result ==> forall j :: 2 <= j < i ==> k % j != 0`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method is_prime(k: int) returns (result: bool)
+  requires k >= 1
+  ensures result ==> forall i :: 2 <= i < k ==> k % i != 0
+  ensures (k > 1 && !result) ==> exists j :: 2 <= j < k && k % j == 0
+{
+  if k <= 1 {
+    result := false;
+    return;
+  }
+
+  var i := 2;
+  while i < k
+    invariant 2 <= i <= k
+    invariant result ==> forall j :: 2 <= j < i ==> k % j != 0
+    decreases k - i
+  {
+    if k % i == 0 {
+      result := false;
+      return;
+    }
+    i := i + 1;
+  }
+
+  result := true;
+  return;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 14, Cột 14: variable 'result', which is subject to definite-assignment rules, might be uninitialized here
+-> Dòng mã vi phạm: `invariant result ==> forall j :: 2 <= j < i ==> k % j != 0`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method is_prime(k: int) returns (result: bool)
+  requires k >= 1
+  ensures result ==> forall i :: 2 <= i < k ==> k % i != 0
+  ensures (k > 1 && !result) ==> exists j :: 2 <= j < k && k % j == 0
+{
+  if k <= 1 {
+    result := false;
+    return;
+  }
+
+  var i := 2;
+  while i < k
+    invariant 2 <= i <= k
+    invariant result ==> forall j :: 2 <= j < i ==> k % j != 0
+    decreases k - i
+  {
+    if k % i == 0 {
+      result := false;
+      return;
+    }
+    i := i + 1;
+  }
+
+  result := true;
+  return;
+}
+

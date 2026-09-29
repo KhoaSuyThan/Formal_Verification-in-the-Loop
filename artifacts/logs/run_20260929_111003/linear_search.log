@@ -1,0 +1,64 @@
+=== BÀI TOÁN: linear_search ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 80.55s
+Kết quả cuối: PASS
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 9, Cột 18: variable 'r', which is subject to definite-assignment rules, might be uninitialized here
+-> Dòng mã vi phạm: `invariant r == -1 ==> forall j :: 0 <= j < i ==> a[j] != target`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method LinearSearch(a: array<int>, target: int) returns (r: int)
+    ensures r >= 0 ==> r < a.Length && a[r] == target
+    ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target
+{
+    var i := 0;
+    var result := -1;
+    while i < a.Length
+        invariant 0 <= i <= a.Length
+        invariant r == -1 ==> forall j :: 0 <= j < i ==> a[j] != target
+        decreases a.Length - i
+    {
+        if a[i] == target
+        {
+            result := i;
+            break;
+        }
+        i := i + 1;
+    }
+    r := result;
+
+    return;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: True
+Error Taxonomy: None
+Error Message: 
+Code:
+method LinearSearch(a: array<int>, target: int) returns (r: int)
+    ensures r >= 0 ==> r < a.Length && a[r] == target
+    ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target
+{
+    var i := 0;
+    var result := -1;
+    r := result;
+    while i < a.Length
+        invariant 0 <= i <= a.Length
+        invariant r == -1 ==> forall j :: 0 <= j < i ==> a[j] != target
+        decreases a.Length - i
+    {
+        if a[i] == target
+        {
+            result := i;
+            break;
+        }
+        i := i + 1;
+    }
+    r := result;
+
+    return;
+}
+

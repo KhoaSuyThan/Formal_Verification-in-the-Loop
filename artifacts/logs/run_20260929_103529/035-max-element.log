@@ -1,0 +1,114 @@
+=== BÀI TOÁN: 035-max-element ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 165.1s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 9, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures forall i : int :: i >= 0 && i < |l| ==> l[i] <= result`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CHỨA ĐỊNH LƯỢNG TOÀN THỂ (FORALL) BỊ VI PHẠM: `ensures forall i : int :: i >= 0 && i < |l| ==> l[i] <= result`.
+NGUYÊN LÝ BẤT BIẾN TIỀN TỐ (PREFIX INDUCTIVE INVARIANT): Để Z3 suy diễn được hậu điều kiện toàn thể, vòng lặp BẮT BUỘC phải duy trì bất biến tiền tố cho các phần tử đã duyệt:
+-> [HÀNH ĐỘNG BẮT BUỘC]: Bổ sung đầy đủ các mệnh đề invariant sau vào ngay dưới từ khóa while (theo đúng thứ tự):
+   1. `invariant 0 <= i <= |l|` (bắt buộc đặt dòng đầu tiên để tránh lỗi index out of range)
+   2. `invariant forall j :: 0 <= j < i ==> l[j] <= result`
+Code:
+method max_element(l : seq<int>) returns (result : int)
+    // pre-conditions-start
+    requires |l| > 0
+    // pre-conditions-end
+    // post-conditions-start
+    ensures forall i : int :: i >= 0 && i < |l| ==> l[i] <= result
+    ensures exists i : int :: i >= 0 && i < |l| && l[i] == result
+    // post-conditions-end
+{
+    var cur_acc := l[0];
+    var i := 1;
+    // invariant 1 <= i <= |l|
+    // invariant forall j :: 0 <= j < i ==> l[j] <= cur_acc
+    // invariant exists j :: 0 <= j < i && l[j] == cur_acc
+    while i < |l|
+    {
+        if l[i] > cur_acc {
+            cur_acc := l[i];
+        }
+        i := i + 1;
+    }
+    result := cur_acc;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 9, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures forall i : int :: i >= 0 && i < |l| ==> l[i] <= result`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CHỨA ĐỊNH LƯỢNG TOÀN THỂ (FORALL) BỊ VI PHẠM: `ensures forall i : int :: i >= 0 && i < |l| ==> l[i] <= result`.
+NGUYÊN LÝ BẤT BIẾN TIỀN TỐ (PREFIX INDUCTIVE INVARIANT): Để Z3 suy diễn được hậu điều kiện toàn thể, vòng lặp BẮT BUỘC phải duy trì bất biến tiền tố cho các phần tử đã duyệt:
+-> [HÀNH ĐỘNG BẮT BUỘC]: Bổ sung đầy đủ các mệnh đề invariant sau vào ngay dưới từ khóa while (theo đúng thứ tự):
+   1. `invariant 0 <= i <= |l|` (bắt buộc đặt dòng đầu tiên để tránh lỗi index out of range)
+   2. `invariant forall j :: 0 <= j < i ==> l[j] <= result`
+Code:
+method max_element(l : seq<int>) returns (result : int)
+    // pre-conditions-start
+    requires |l| > 0
+    // pre-conditions-end
+    // post-conditions-start
+    ensures forall i : int :: i >= 0 && i < |l| ==> l[i] <= result
+    ensures exists i : int :: i >= 0 && i < |l| && l[i] == result
+    // post-conditions-end
+{
+    var cur_acc := l[0];
+    var i := 1;
+    // invariant 0 <= i <= |l|
+    // invariant forall j :: 0 <= j < i ==> l[j] <= cur_acc
+    // invariant exists j :: 0 <= j < i && l[j] == cur_acc
+    while i < |l|
+    decreases |l| - i
+    {
+        if l[i] > cur_acc {
+            cur_acc := l[i];
+        }
+        i := i + 1;
+    }
+    result := cur_acc;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 9, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures forall i : int :: i >= 0 && i < |l| ==> l[i] <= result`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CHỨA ĐỊNH LƯỢNG TOÀN THỂ (FORALL) BỊ VI PHẠM: `ensures forall i : int :: i >= 0 && i < |l| ==> l[i] <= result`.
+NGUYÊN LÝ BẤT BIẾN TIỀN TỐ (PREFIX INDUCTIVE INVARIANT): Để Z3 suy diễn được hậu điều kiện toàn thể, vòng lặp BẮT BUỘC phải duy trì bất biến tiền tố cho các phần tử đã duyệt:
+-> [HÀNH ĐỘNG BẮT BUỘC]: Bổ sung đầy đủ các mệnh đề invariant sau vào ngay dưới từ khóa while (theo đúng thứ tự):
+   1. `invariant 0 <= i <= |l|` (bắt buộc đặt dòng đầu tiên để tránh lỗi index out of range)
+   2. `invariant forall j :: 0 <= j < i ==> l[j] <= result`
+Code:
+method max_element(l : seq<int>) returns (result : int)
+    // pre-conditions-start
+    requires |l| > 0
+    // pre-conditions-end
+    // post-conditions-start
+    ensures forall i : int :: i >= 0 && i < |l| ==> l[i] <= result
+    ensures exists i : int :: i >= 0 && i < |l| && l[i] == result
+    // post-conditions-end
+{
+    var cur_acc := l[0];
+    var i := 1;
+    // invariant 0 <= i <= |l|
+    // invariant forall j :: 0 <= j < i ==> l[j] <= cur_acc
+    while i < |l|
+    decreases |l| - i
+    {
+        if l[i] > cur_acc {
+            cur_acc := l[i];
+        }
+        i := i + 1;
+    }
+    result := cur_acc;
+}
+

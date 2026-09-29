@@ -11,6 +11,8 @@ from core.template_preserver import TemplatePreserver
 from core.syntax_normalizer import SyntaxNormalizer
 from core.dafny_engine import DafnyEngine, VerifyResult
 from core.diagnostic_parser import DiagnosticParser
+from core.topology_detector import TopologyDetector, AlgorithmTopology
+from core.ast_localizer import ASTLocalizer
 from agents.llm_agent import LLMAgent
 
 # Ngưỡng tương đồng mã nguồn để phát hiện vòng lặp nghẽn
@@ -74,13 +76,19 @@ class PipelineController:
         original_hash = SpecLocker.get_hash(raw_spec)
         history: List[IterationLog] = []
 
-        if self.verbose:
-            print(f"\n[Pha 1: Sinh mã ban đầu] Đang yêu cầu LLM sinh mã thuật toán...")
+        topology = TopologyDetector.detect(raw_spec)
+        topology_directive = TopologyDetector.get_topology_directive(topology)
 
+        if self.verbose:
+            print(f"\n[Pha 1: Sinh mã ban đầu | Hình thái: {topology.value}] Đang yêu cầu LLM sinh mã...")
+
+        directive_text = f"\n\n{topology_directive}\n" if topology_directive else ""
         prompt = (
             f"Hãy hoàn thiện phương thức Dafny sau để vượt qua kiểm định hình thức Z3:\n\n"
             f"{raw_spec}"
+            f"{directive_text}"
         )
+
         current_code = self.agent.generate_code(prompt)
         # Hậu xử lý: bảo toàn template + chuẩn hóa cú pháp
         current_code = self._postprocess_code(raw_spec, current_code)
@@ -165,7 +173,11 @@ class PipelineController:
                     print(f"\n[Pha sửa lỗi {k} -> {k+1}] Đang gửi chẩn đoán ngữ nghĩa sang Repair Agent để vá mã...")
 
                 # Lần sửa thứ nhất với thông tin chẩn đoán giàu ngữ cảnh
-                repaired_code = self.agent.repair_code(current_code, detailed_feedback, raw_spec)
+                repair_feedback = detailed_feedback
+                if topology == AlgorithmTopology.DIRECT:
+                    repair_feedback = f"{topology_directive}\n\n{detailed_feedback}"
+
+                repaired_code = self.agent.repair_code(current_code, repair_feedback, raw_spec)
                 repaired_code = self._postprocess_code(raw_spec, repaired_code)
 
                 # Phát hiện Stagnation ngay lập tức: Nếu mã mới sinh trùng lặp >= 90% với mã hiện tại
