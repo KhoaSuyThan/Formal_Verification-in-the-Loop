@@ -16,7 +16,7 @@ Tất cả các thay đổi đáng chú ý của dự án sẽ được ghi nh�
 - **Chẩn Đoán Ngữ Nghĩa & Phản Hồi Hình Thức ([diagnostic_parser.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/diagnostic_parser.py))**: Sinh gợi ý bất biến quy nạp song hành (`forall` & `exists`) và cơ chế chống bế tắc lặp mã (Stagnation Breaker).
 - **Bộ Kiểm Thử Đơn Vị**: Đạt chuẩn **39/39 unit tests (100% green)**.
 
-
+     
 
 ## [0.4.2] - 2026-09-27
 - **Subset Preservation Protocol**: Nâng cấp [core/spec_locker.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/spec_locker.py) kiểm tra tính toàn vẹn của tập đặc tả gốc ($S_{orig} \subseteq S_{new}$), hỗ trợ chứng minh theo mô-đun (Helper Lemmas) mà vẫn ngăn chặn 100% việc sửa/xóa đặc tả.
