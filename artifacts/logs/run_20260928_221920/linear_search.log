@@ -1,0 +1,86 @@
+=== BÀI TOÁN: linear_search ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 165.51s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: TerminationFailure
+Error Message: [TerminationFailure] tại Dòng 7, Cột 4: decreases expression might not decrease
+-> Dòng mã vi phạm: `while i < a.Length`
+-> Hướng dẫn khắc phục: KHÔNG THỂ CHỨNG MINH VÒNG LẶP DỪNG (Termination Failure): Biểu thức trong mệnh đề `decreases <biểu_thức>` phải luôn bị chặn dưới (>= 0) và giảm nghiêm ngặt sau mỗi bước lặp. Nếu các biến lặp có thể nhận giá trị âm từ tham số đầu vào (ví dụ trong thuật toán GCD/Euclid), BẮT BUỘC phải chuyển đổi biến về số không âm (lấy giá trị tuyệt đối nếu âm) trước khi vào vòng lặp.
+Code:
+method LinearSearch(a: array<int>, target: int) returns (r: int)
+    ensures r >= 0 ==> r < a.Length && a[r] == target
+    ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target
+{
+    var i := 0;
+    var cur_acc := -1;
+    while i < a.Length
+        invariant 0 <= i <= a.Length
+        invariant r == -1 ==> forall j :: 0 <= j < i ==> a[j] != target
+        invariant r >= 0 ==> r < a.Length && a[r] == target
+        decreases a.Length - i
+    {
+        if a[i] == target {
+            r := i;
+        } else {
+            i := i + 1;
+        }
+    }
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: TerminationFailure
+Error Message: [TerminationFailure] tại Dòng 7, Cột 4: decreases expression might not decrease
+-> Dòng mã vi phạm: `while i < a.Length`
+-> Hướng dẫn khắc phục: KHÔNG THỂ CHỨNG MINH VÒNG LẶP DỪNG (Termination Failure): Biểu thức trong mệnh đề `decreases <biểu_thức>` phải luôn bị chặn dưới (>= 0) và giảm nghiêm ngặt sau mỗi bước lặp. Nếu các biến lặp có thể nhận giá trị âm từ tham số đầu vào (ví dụ trong thuật toán GCD/Euclid), BẮT BUỘC phải chuyển đổi biến về số không âm (lấy giá trị tuyệt đối nếu âm) trước khi vào vòng lặp.
+Code:
+method LinearSearch(a: array<int>, target: int) returns (r: int)
+    ensures r >= 0 ==> r < a.Length && a[r] == target
+    ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target
+{
+    var i := 0;
+    var cur_acc := -1;
+    while i < a.Length
+        invariant 0 <= i <= a.Length
+        invariant r == -1 ==> forall j :: 0 <= j < i ==> a[j] != target
+        invariant r >= 0 ==> r < a.Length && a[r] == target
+        decreases a.Length - i
+    {
+        if a[i] == target {
+            r := i;
+        } else {
+            i := i + 1;
+        }
+    }
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: TerminationFailure
+Error Message: [TerminationFailure] tại Dòng 7, Cột 4: decreases expression might not decrease
+-> Dòng mã vi phạm: `while i < a.Length`
+-> Hướng dẫn khắc phục: KHÔNG THỂ CHỨNG MINH VÒNG LẶP DỪNG (Termination Failure): Biểu thức trong mệnh đề `decreases <biểu_thức>` phải luôn bị chặn dưới (>= 0) và giảm nghiêm ngặt sau mỗi bước lặp. Nếu các biến lặp có thể nhận giá trị âm từ tham số đầu vào (ví dụ trong thuật toán GCD/Euclid), BẮT BUỘC phải chuyển đổi biến về số không âm (lấy giá trị tuyệt đối nếu âm) trước khi vào vòng lặp.
+Code:
+method LinearSearch(a: array<int>, target: int) returns (r: int)
+    ensures r >= 0 ==> r < a.Length && a[r] == target
+    ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target
+{
+    var i := 0;
+    var cur_acc := -1;
+    while i < a.Length
+        invariant 0 <= i <= a.Length
+        invariant r == -1 ==> forall j :: 0 <= j < i ==> a[j] != target
+        invariant r >= 0 ==> r < a.Length && a[r] == target
+        decreases a.Length - i
+    {
+        if a[i] == target {
+            r := i;
+        } else {
+            i := i + 1;
+        }
+    }
+}
+

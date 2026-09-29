@@ -1,0 +1,50 @@
+=== BÀI TOÁN: 002-truncate ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 64.54s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 6, Cột 11: type of right argument to - (int) must agree with the result type (real)
+-> Dòng mã vi phạm: `d := x - x.Floor;`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method truncate_number(x : real) returns (d : real)
+    requires x >= 0.0
+    ensures (0.0 <= d <= 1.0)
+    ensures (x - d) == (x.Floor as real)
+{
+    d := x - x.Floor;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 6, Cột 11: type of right argument to - (int) must agree with the result type (real)
+-> Dòng mã vi phạm: `d := x - x.Floor;`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method truncate_number(x : real) returns (d : real)
+    requires x >= 0.0
+    ensures (0.0 <= d <= 1.0)
+    ensures (x - d) == (x.Floor as real)
+{
+    d := x - x.Floor;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 6, Cột 11: type of right argument to - (int) must agree with the result type (real)
+-> Dòng mã vi phạm: `d := x - x.Floor;`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method truncate_number(x : real) returns (d : real)
+    requires x >= 0.0
+    ensures (0.0 <= d <= 1.0)
+    ensures (x - d) == (x.Floor as real)
+{
+    d := x - x.Floor;
+}
+

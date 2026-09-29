@@ -1,0 +1,98 @@
+=== BÀI TOÁN: 002-truncate ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 145.52s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 5, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures (0.0 <= d <= 1.0)`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CỤ THỂ BỊ VI PHẠM: `ensures (0.0 <= d <= 1.0)`.
+SMT Solver không thể suy diễn được điều kiện này tại điểm return. Hãy kiểm tra xem vòng lặp có thiếu invariant quy nạp mô tả kết quả đang tích lũy hay không.
+Code:
+method truncate_number(x : real) returns (d : real)
+    requires x >= 0.0
+    ensures (0.0 <= d <= 1.0)
+    ensures (x - d) == (x.Floor as real)
+{
+    var acc := 0.0;
+    var i := 0;
+    while i < 100
+        invariant 0 <= i <= 100
+        invariant acc <= x
+        decreases 100 - i
+    {
+        if acc + 0.01 <= x {
+            acc := acc + 0.01;
+        } else {
+            break;
+        }
+        i := i + 1;
+    }
+    d := acc;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 5, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures (0.0 <= d <= 1.0)`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CỤ THỂ BỊ VI PHẠM: `ensures (0.0 <= d <= 1.0)`.
+SMT Solver không thể suy diễn được điều kiện này tại điểm return. Hãy kiểm tra xem vòng lặp có thiếu invariant quy nạp mô tả kết quả đang tích lũy hay không.
+Code:
+method truncate_number(x : real) returns (d : real)
+    requires x >= 0.0
+    ensures (0.0 <= d <= 1.0)
+    ensures (x - d) == (x.Floor as real)
+{
+    var acc := 0.0;
+    var i := 0;
+    while i < 100
+        invariant 0 <= i <= 100
+        invariant acc <= x
+        decreases 100 - i
+    {
+        if acc + 0.01 <= x {
+            acc := acc + 0.01;
+        } else {
+            break;
+        }
+        i := i + 1;
+    }
+    d := acc;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 5, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures (0.0 <= d <= 1.0)`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CỤ THỂ BỊ VI PHẠM: `ensures (0.0 <= d <= 1.0)`.
+SMT Solver không thể suy diễn được điều kiện này tại điểm return. Hãy kiểm tra xem vòng lặp có thiếu invariant quy nạp mô tả kết quả đang tích lũy hay không.
+Code:
+method truncate_number(x : real) returns (d : real)
+    requires x >= 0.0
+    ensures (0.0 <= d <= 1.0)
+    ensures (x - d) == (x.Floor as real)
+{
+    var acc := 0.0;
+    var i := 0;
+    while i < 100
+        invariant 0 <= i <= 100
+        invariant acc <= x
+        decreases 100 - i
+    {
+        if acc + 0.01 <= x {
+            acc := acc + 0.01;
+        } else {
+            break;
+        }
+        i := i + 1;
+    }
+    d := acc;
+}
+

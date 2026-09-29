@@ -1,0 +1,27 @@
+=== BÀI TOÁN: sum_to_n ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 21.89s
+Kết quả cuối: PASS
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: True
+Error Taxonomy: None
+Error Message: 
+Code:
+method SumToN(n: int) returns (s: int)
+    requires n >= 0
+    ensures s == n * (n + 1) / 2
+{
+    var i: int := 0;
+    var acc: int := 0;
+    while i <= n
+        invariant 0 <= i <= n + 1
+        invariant acc == (i * (i - 1) / 2)
+        decreases n - i
+    {
+        acc := acc + i;
+        i := i + 1;
+    }
+    s := acc;
+}
+

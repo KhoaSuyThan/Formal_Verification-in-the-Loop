@@ -1,0 +1,59 @@
+=== BÀI TOÁN: linear_search ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 77.86s
+Kết quả cuối: PASS
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 18, Cột 9: unresolved identifier: result
+-> Dòng mã vi phạm: `r := result;`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method LinearSearch(a: array<int>, target: int) returns (r: int)
+    ensures r >= 0 ==> r < a.Length && a[r] == target
+    ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target
+{
+    var i := 0;
+    r := -1;
+    while i < a.Length
+        invariant 0 <= i <= a.Length
+        invariant forall j :: 0 <= j < i ==> a[j] != target
+        decreases a.Length - i
+    {
+        if a[i] == target {
+            r := i;
+            return;
+        }
+        i := i + 1;
+    }
+    r := result;
+
+    return;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: True
+Error Taxonomy: None
+Error Message: 
+Code:
+method LinearSearch(a: array<int>, target: int) returns (r: int)
+    ensures r >= 0 ==> r < a.Length && a[r] == target
+    ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target
+{
+    var i := 0;
+    r := -1;
+    while i < a.Length
+        invariant 0 <= i <= a.Length
+        invariant forall j :: 0 <= j < i ==> a[j] != target
+        decreases a.Length - i
+    {
+        if a[i] == target {
+            r := i;
+            return;
+        }
+        i := i + 1;
+    }
+    return;
+}
+

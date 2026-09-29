@@ -1,0 +1,83 @@
+=== BÀI TOÁN: 002-truncate ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 74.3s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 5, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures (x - d) == (x.Floor as real)`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN QUY NẠP TƯƠNG ĐƯƠNG HÀM ĐỆ QUY (FUNCTIONAL EQUIVALENCE): `ensures (x - d) == (x.Floor as real)`.
+[HÀNH ĐỘNG BẮT BUỘC - ĐỒNG BỘ BẤT BIẾN VỚI HÀM ensures]:
+Phương thức đang tính toán để khớp với hàm thuần túy `ensures(x - d)`.
+SMT Solver BẮT BUỘC cần các invariant quy nạp đồng bộ trực tiếp các biến trạng thái lặp với hàm `ensures`:
+1. `invariant 0 <= i <= x - d`
+2. `invariant a == ensures(i)` (biến tích lũy bước hiện tại)
+3. `invariant b == ensures(i + 1)` (nếu là thuật toán đệ quy 2 bước như Fibonacci, biến tích lũy bước tiếp theo)
+Code:
+method truncate_number(x : real) returns (d : real)
+    requires x >= 0.0
+    ensures (0.0 <= d <= 1.0)
+    ensures (x - d) == (x.Floor as real)
+{
+    if x < 1.0 {
+        d := x;
+    } else {
+        d := 1.0;
+    }
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 5, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures (x - d) == (x.Floor as real)`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN QUY NẠP TƯƠNG ĐƯƠNG HÀM ĐỆ QUY (FUNCTIONAL EQUIVALENCE): `ensures (x - d) == (x.Floor as real)`.
+[HÀNH ĐỘNG BẮT BUỘC - ĐỒNG BỘ BẤT BIẾN VỚI HÀM ensures]:
+Phương thức đang tính toán để khớp với hàm thuần túy `ensures(x - d)`.
+SMT Solver BẮT BUỘC cần các invariant quy nạp đồng bộ trực tiếp các biến trạng thái lặp với hàm `ensures`:
+1. `invariant 0 <= i <= x - d`
+2. `invariant a == ensures(i)` (biến tích lũy bước hiện tại)
+3. `invariant b == ensures(i + 1)` (nếu là thuật toán đệ quy 2 bước như Fibonacci, biến tích lũy bước tiếp theo)
+Code:
+method truncate_number(x : real) returns (d : real)
+    requires x >= 0.0
+    ensures (0.0 <= d <= 1.0)
+    ensures (x - d) == (x.Floor as real)
+{
+    if x < 1.0 {
+        d := x;
+    } else {
+        d := 1.0;
+    }
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 5, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures (x - d) == (x.Floor as real)`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN QUY NẠP TƯƠNG ĐƯƠNG HÀM ĐỆ QUY (FUNCTIONAL EQUIVALENCE): `ensures (x - d) == (x.Floor as real)`.
+[HÀNH ĐỘNG BẮT BUỘC - ĐỒNG BỘ BẤT BIẾN VỚI HÀM ensures]:
+Phương thức đang tính toán để khớp với hàm thuần túy `ensures(x - d)`.
+SMT Solver BẮT BUỘC cần các invariant quy nạp đồng bộ trực tiếp các biến trạng thái lặp với hàm `ensures`:
+1. `invariant 0 <= i <= x - d`
+2. `invariant a == ensures(i)` (biến tích lũy bước hiện tại)
+3. `invariant b == ensures(i + 1)` (nếu là thuật toán đệ quy 2 bước như Fibonacci, biến tích lũy bước tiếp theo)
+Code:
+method truncate_number(x : real) returns (d : real)
+    requires x >= 0.0
+    ensures (0.0 <= d <= 1.0)
+    ensures (x - d) == (x.Floor as real)
+{
+    if x < 1.0 {
+        d := x;
+    } else {
+        d := 1.0;
+    }
+}
+

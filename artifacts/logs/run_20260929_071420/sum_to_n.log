@@ -1,0 +1,77 @@
+=== BÀI TOÁN: sum_to_n ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 91.75s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: LoopInvariantViolation
+Error Message: [LoopInvariantViolation] tại Dòng 8, Cột 25: this invariant could not be proved to be maintained by the loop
+-> Dòng mã vi phạm: `invariant 0 <= i <= n`
+-> Hướng dẫn khắc phục: BẤT BIẾN KHÔNG ĐƯỢC DUY TRÌ SAU THÂN VÒNG LẶP (maintained): `invariant 0 <= i <= n`.
+[LỖI CẬN TRÊN BIẾN LẶP]:
+Khi vòng lặp có điều kiện `while i <= n`, sau bước tăng `i := i + 1;`, biến `i` sẽ đạt giá trị `n + 1` trước khi thoát lặp.
+-> [HÀNH ĐỘNG BẮT BUỘC]: BẮT BUỘC nới lỏng invariant cận trên thành: `invariant 0 <= i <= n + 1` (nếu để `i <= n` sẽ luôn bị vi phạm).
+Code:
+method SumToN(n: int) returns (s: int)
+    requires n >= 0
+    ensures s == n * (n + 1) / 2
+{
+    var i := 0;
+    s := 0;
+    while i <= n
+        invariant 0 <= i <= n
+        invariant s == i * (i - 1) / 2
+    {s := s + i;
+        i := i + 1;
+    }
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 4, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures s == n * (n + 1) / 2`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CỤ THỂ BỊ VI PHẠM: `ensures s == n * (n + 1) / 2`.
+SMT Solver không thể suy diễn được điều kiện này tại điểm return. Hãy kiểm tra xem vòng lặp có thiếu invariant quy nạp mô tả kết quả đang tích lũy hay không.
+Code:
+method SumToN(n: int) returns (s: int)
+    requires n >= 0
+    ensures s == n * (n + 1) / 2
+{
+    var i := 0;
+    s := 0;
+    while i <= n
+        invariant 0 <= i <= n + 1
+        decreases n - i
+    {
+        s := s + i;
+        i := i + 1;
+    }
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 4, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures s == n * (n + 1) / 2`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CỤ THỂ BỊ VI PHẠM: `ensures s == n * (n + 1) / 2`.
+SMT Solver không thể suy diễn được điều kiện này tại điểm return. Hãy kiểm tra xem vòng lặp có thiếu invariant quy nạp mô tả kết quả đang tích lũy hay không.
+Code:
+method SumToN(n: int) returns (s: int)
+    requires n >= 0
+    ensures s == n * (n + 1) / 2
+{
+    var i := 0;
+    s := 0;
+    while i <= n
+        invariant 0 <= i <= n + 1
+        decreases n - i
+    {
+        s := s + i;
+        i := i + 1;
+    }
+}
+

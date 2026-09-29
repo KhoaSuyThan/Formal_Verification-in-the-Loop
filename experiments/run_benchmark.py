@@ -61,6 +61,12 @@ def parse_args():
         default=None,
         help="Giới hạn số lượng bài toán kiểm thử nhanh (mặc định: chạy hết)"
     )
+    parser.add_argument(
+        "--tasks",
+        type=str,
+        default=None,
+        help="Danh sách tên/từ khóa bài toán cần chạy, phân tách bằng dấu phẩy (vd: '031,035,052,055')"
+    )
     return parser.parse_args()
 
 
@@ -99,6 +105,13 @@ def main():
     if not task_files:
         console.print(f"[bold red][LỖI][/bold red] Không tìm thấy file .dfy nào trong: {benchmarks_dir}")
         return
+
+    if args.tasks:
+        keywords = [k.strip().lower() for k in args.tasks.split(",") if k.strip()]
+        task_files = [f for f in task_files if any(kw in f.name.lower() for kw in keywords)]
+        if not task_files:
+            console.print(f"[bold red][LỖI][/bold red] Không tìm thấy bài toán nào khớp với bộ lọc --tasks: {args.tasks}")
+            return
 
     if limit and limit > 0:
         task_files = task_files[:limit]

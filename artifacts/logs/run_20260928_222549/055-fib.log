@@ -1,0 +1,125 @@
+=== BÀI TOÁN: 055-fib ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 143.98s
+Kết quả cuối: PASS
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 14, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures result == fib(n)`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN QUY NẠP TƯƠNG ĐƯƠNG HÀM ĐỆ QUY (FUNCTIONAL EQUIVALENCE): `ensures result == fib(n)`.
+[HÀNH ĐỘNG BẮT BUỘC - ĐỒNG BỘ BẤT BIẾN VỚI HÀM fib]:
+Phương thức đang tính toán để khớp với hàm thuần túy `fib(n)`.
+SMT Solver BẮT BUỘC cần các invariant quy nạp đồng bộ trực tiếp các biến trạng thái lặp với hàm `fib`:
+1. `invariant 0 <= i <= n`
+2. `invariant a == fib(i)` (biến tích lũy bước hiện tại)
+3. `invariant b == fib(i + 1)` (nếu là thuật toán đệ quy 2 bước như Fibonacci, biến tích lũy bước tiếp theo)
+Code:
+function fib(n: nat): nat
+  decreases n
+{
+  if n == 0 then 0
+  else if n == 1 then 1
+  else fib(n - 1) + fib(n - 2)
+}
+// pure-end
+
+method ComputeFib(n: nat) returns (result: nat)
+  // post-conditions-start
+  ensures result == fib(n)
+  // post-conditions-end
+{
+  var a := 0;
+  var b := 1;
+  var i := 0;
+  while i < n
+    decreases n - i
+  {
+    var temp := a + b;
+    a := b;
+    b := temp;
+    i := i + 1;
+  }
+  result := a;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 14, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures result == fib(n)`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN QUY NẠP TƯƠNG ĐƯƠNG HÀM ĐỆ QUY (FUNCTIONAL EQUIVALENCE): `ensures result == fib(n)`.
+[HÀNH ĐỘNG BẮT BUỘC - ĐỒNG BỘ BẤT BIẾN VỚI HÀM fib]:
+Phương thức đang tính toán để khớp với hàm thuần túy `fib(n)`.
+SMT Solver BẮT BUỘC cần các invariant quy nạp đồng bộ trực tiếp các biến trạng thái lặp với hàm `fib`:
+1. `invariant 0 <= i <= n`
+2. `invariant a == fib(i)` (biến tích lũy bước hiện tại)
+3. `invariant b == fib(i + 1)` (nếu là thuật toán đệ quy 2 bước như Fibonacci, biến tích lũy bước tiếp theo)
+Code:
+function fib(n: nat): nat
+  decreases n
+{
+  if n == 0 then 0
+  else if n == 1 then 1
+  else fib(n - 1) + fib(n - 2)
+}
+// pure-end
+
+method ComputeFib(n: nat) returns (result: nat)
+  // post-conditions-start
+  ensures result == fib(n)
+  // post-conditions-end
+{
+  var a := 0;
+  var b := 1;
+  var i := 0;
+  while i < n
+    decreases n - i
+  {
+    var temp := a + b;
+    a := b;
+    b := temp;
+    i := i + 1;
+  }
+  result := a;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: True
+Error Taxonomy: None
+Error Message: 
+Code:
+function fib(n: nat): nat
+  decreases n
+{
+  if n == 0 then 0
+  else if n == 1 then 1
+  else fib(n - 1) + fib(n - 2)
+}
+// pure-end
+
+method ComputeFib(n: nat) returns (result: nat)
+  // post-conditions-start
+  ensures result == fib(n)
+  // post-conditions-end
+{
+  var a := 0;
+  var b := 1;
+  var i := 0;
+  while i < n
+    decreases n - i
+    invariant 0 <= i <= n
+    invariant a == fib(i)
+    invariant b == fib(i + 1)
+  {
+    var temp := a + b;
+    a := b;
+    b := temp;
+    i := i + 1;
+  }
+  result := a;
+}
+

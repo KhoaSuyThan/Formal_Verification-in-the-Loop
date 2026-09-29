@@ -1,0 +1,98 @@
+=== BÀI TOÁN: 013-greatest_common_divisor ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 128.3s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 12, Cột 18: unresolved identifier: max
+-> Dòng mã vi phạm: `decreases max(cur_a, cur_b)`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method greatest_common_divisor(a: int, b: int) returns (gcd: int)
+    requires a != 0 || b != 0
+    ensures gcd != 0
+{
+    var cur_a := a;
+    var cur_b := b;
+    var acc := 1;
+
+    while cur_a != cur_b
+        invariant 0 <= cur_a && 0 <= cur_b
+        invariant 0 <= acc
+        decreases max(cur_a, cur_b)
+    {
+        if cur_a > cur_b {
+            cur_a := cur_a - cur_b;
+        } else {
+            cur_b := cur_b - cur_a;
+        }
+        acc := cur_a;
+    }
+
+    gcd := acc;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 12, Cột 18: unresolved identifier: max
+-> Dòng mã vi phạm: `decreases max(cur_a, cur_b)`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method greatest_common_divisor(a: int, b: int) returns (gcd: int)
+    requires a != 0 || b != 0
+    ensures gcd != 0
+{
+    var cur_a := a;
+    var cur_b := b;
+    var acc := 1;
+
+    while cur_a != cur_b
+        invariant 0 <= cur_a && 0 <= cur_b
+        invariant 0 <= acc
+        decreases max(cur_a, cur_b)
+    {
+        if cur_a > cur_b {
+            cur_a := cur_a - cur_b;
+        } else {
+            cur_b := cur_b - cur_a;
+        }
+        acc := cur_a;
+    }
+
+    gcd := acc;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 12, Cột 18: unresolved identifier: max
+-> Dòng mã vi phạm: `decreases max(cur_a, cur_b)`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method greatest_common_divisor(a: int, b: int) returns (gcd: int)
+    requires a != 0 || b != 0
+    ensures gcd != 0
+{
+    var cur_a := a;
+    var cur_b := b;
+    var acc := 1;
+
+    while cur_a != cur_b
+        invariant 0 <= cur_a && 0 <= cur_b
+        invariant 0 <= acc
+        decreases max(cur_a, cur_b)
+    {
+        if cur_a > cur_b {
+            cur_a := cur_a - cur_b;
+        } else {
+            cur_b := cur_b - cur_a;
+        }
+        acc := cur_a;
+    }
+
+    gcd := acc;
+}
+

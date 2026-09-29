@@ -1,0 +1,320 @@
+=== BÀI TOÁN: 088-sort_array ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 547.87s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 12, Cột 12: new can be applied only to class types (got seq<int>)
+-> Dòng mã vi phạm: `sorted := new seq<int>(n);`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method sort_array(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures |sorted| == |s|
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 == 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] >= sorted[j]
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 != 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  // post-conditions-end
+{
+  var n := |s|;
+  var arr := s;
+  sorted := new seq<int>(n);
+  var i := 0;
+  while i < n
+    invariant 0 <= i <= n
+    decreases n - i
+  {
+    var minIndex := i;
+    var minValue := arr[minIndex];
+    var j := i + 1;
+    while j < n
+      invariant 0 <= j <= n
+      invariant 0 <= minIndex <= n
+      invariant i <= j
+      invariant forall k :: i <= k < j ==> arr[k] >= minValue
+      decreases n - j
+    {
+      if arr[j] < minValue
+      {
+        minIndex := j;
+        minValue := arr[j];
+      }
+      j := j + 1;
+    }
+    arr := arr[minIndex := arr[i]];
+    arr := arr[i := minValue];
+    i := i + 1;
+  }
+  sorted := arr;
+}
+
+method reverse(s: seq<int>) returns (rev: seq<int>)
+  // post-conditions-start
+  ensures |rev| == |s|
+  ensures forall k :: 0 <= k < |s| ==> rev[k] == s[|s| - 1 - k]
+  // post-conditions-end
+{
+  var n := |s|;
+  rev := new seq<int>(n);
+  var i := 0;
+  while i < n
+    invariant 0 <= i <= n
+    decreases n - i
+  {
+    rev := rev[i := s[n - 1 - i]];
+    i := i + 1;
+  }
+}
+
+method SortSeq(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  ensures |sorted| == |s|
+  ensures multiset(s) == multiset(sorted)
+  // post-conditions-end
+{
+  var n := |s|;
+  var arr := s;
+  sorted := new seq<int>(n);
+  var i := 0;
+  while i < n
+    invariant 0 <= i <= n
+    decreases n - i
+  {
+    var minIndex := i;
+    var minValue := arr[minIndex];
+    var j := i + 1;
+    while j < n
+      invariant 0 <= j <= n
+      invariant 0 <= minIndex <= n
+      invariant i <= j
+      invariant forall k :: i <= k < j ==> arr[k] >= minValue
+      decreases n - j
+    {
+      if arr[j] < minValue
+      {
+        minIndex := j;
+        minValue := arr[j];
+      }
+      j := j + 1;
+    }
+    arr := arr[minIndex := arr[i]];
+    arr := arr[i := minValue];
+    i := i + 1;
+  }
+  sorted := arr;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 12, Cột 12: new can be applied only to class types (got seq<int>)
+-> Dòng mã vi phạm: `sorted := new seq<int>(n);`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method sort_array(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures |sorted| == |s|
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 == 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] >= sorted[j]
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 != 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  // post-conditions-end
+{
+  var n := |s|;
+  var arr := s;
+  sorted := new seq<int>(n);
+  var i := 0;
+  while i < n
+    invariant 0 <= i <= n
+    decreases n - i
+  {
+    var minIndex := i;
+    var minValue := arr[minIndex];
+    var j := i + 1;
+    while j < n
+      invariant 0 <= j <= n
+      invariant 0 <= minIndex <= n
+      invariant i <= j
+      invariant forall k :: i <= k < j ==> arr[k] >= minValue
+      decreases n - j
+    {
+      if arr[j] < minValue
+      {
+        minIndex := j;
+        minValue := arr[j];
+      }
+      j := j + 1;
+    }
+    arr := arr[minIndex := arr[i]];
+    arr := arr[i := minValue];
+    i := i + 1;
+  }
+  sorted := arr;
+}
+
+method reverse(s: seq<int>) returns (rev: seq<int>)
+  // post-conditions-start
+  ensures |rev| == |s|
+  ensures forall k :: 0 <= k < |s| ==> rev[k] == s[|s| - 1 - k]
+  // post-conditions-end
+{
+  var n := |s|;
+  rev := new seq<int>(n);
+  var i := 0;
+  while i < n
+    invariant 0 <= i <= n
+    decreases n - i
+  {
+    rev := rev[i := s[n - 1 - i]];
+    i := i + 1;
+  }
+}
+
+method SortSeq(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  ensures |sorted| == |s|
+  ensures multiset(s) == multiset(sorted)
+  // post-conditions-end
+{
+  var n := |s|;
+  var arr := s;
+  sorted := new seq<int>(n);
+  var i := 0;
+  while i < n
+    invariant 0 <= i <= n
+    decreases n - i
+  {
+    var minIndex := i;
+    var minValue := arr[minIndex];
+    var j := i + 1;
+    while j < n
+      invariant 0 <= j <= n
+      invariant 0 <= minIndex <= n
+      invariant i <= j
+      invariant forall k :: i <= k < j ==> arr[k] >= minValue
+      decreases n - j
+    {
+      if arr[j] < minValue
+      {
+        minIndex := j;
+        minValue := arr[j];
+      }
+      j := j + 1;
+    }
+    arr := arr[minIndex := arr[i]];
+    arr := arr[i := minValue];
+    i := i + 1;
+  }
+  sorted := arr;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 12, Cột 12: new can be applied only to class types (got seq<int>)
+-> Dòng mã vi phạm: `sorted := new seq<int>(n);`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method sort_array(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures |sorted| == |s|
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 == 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] >= sorted[j]
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 != 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  // post-conditions-end
+{
+  var n := |s|;
+  var arr := s;
+  sorted := new seq<int>(n);
+  var i := 0;
+  while i < n
+    invariant 0 <= i <= n
+    decreases n - i
+  {
+    var minIndex := i;
+    var minValue := arr[minIndex];
+    var j := i + 1;
+    while j < n
+      invariant 0 <= j <= n
+      invariant 0 <= minIndex <= n
+      invariant i <= j
+      invariant forall k :: i <= k < j ==> arr[k] >= minValue
+      decreases n - j
+    {
+      if arr[j] < minValue
+      {
+        minIndex := j;
+        minValue := arr[j];
+      }
+      j := j + 1;
+    }
+    arr := arr[minIndex := arr[i]];
+    arr := arr[i := minValue];
+    i := i + 1;
+  }
+  sorted := arr;
+}
+
+method reverse(s: seq<int>) returns (rev: seq<int>)
+  // post-conditions-start
+  ensures |rev| == |s|
+  ensures forall k :: 0 <= k < |s| ==> rev[k] == s[|s| - 1 - k]
+  // post-conditions-end
+{
+  var n := |s|;
+  rev := new seq<int>(n);
+  var i := 0;
+  while i < n
+    invariant 0 <= i <= n
+    decreases n - i
+  {
+    rev := rev[i := s[n - 1 - i]];
+    i := i + 1;
+  }
+}
+
+method SortSeq(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  ensures |sorted| == |s|
+  ensures multiset(s) == multiset(sorted)
+  // post-conditions-end
+{
+  var n := |s|;
+  var arr := s;
+  sorted := new seq<int>(n);
+  var i := 0;
+  while i < n
+    invariant 0 <= i <= n
+    decreases n - i
+  {
+    var minIndex := i;
+    var minValue := arr[minIndex];
+    var j := i + 1;
+    while j < n
+      invariant 0 <= j <= n
+      invariant 0 <= minIndex <= n
+      invariant i <= j
+      invariant forall k :: i <= k < j ==> arr[k] >= minValue
+      decreases n - j
+    {
+      if arr[j] < minValue
+      {
+        minIndex := j;
+        minValue := arr[j];
+      }
+      j := j + 1;
+    }
+    arr := arr[minIndex := arr[i]];
+    arr := arr[i := minValue];
+    i := i + 1;
+  }
+  sorted := arr;
+}
+

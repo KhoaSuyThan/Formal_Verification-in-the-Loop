@@ -1,0 +1,79 @@
+=== BÀI TOÁN: sum_to_n ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 131.6s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 4, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures s == n * (n + 1) / 2`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CỤ THỂ BỊ VI PHẠM: `ensures s == n * (n + 1) / 2`.
+SMT Solver không thể suy diễn được điều kiện này tại điểm return. Hãy kiểm tra xem vòng lặp có thiếu invariant quy nạp mô tả kết quả đang tích lũy hay không.
+Code:
+method SumToN(n: int) returns (s: int)
+    requires n >= 0
+    ensures s == n * (n + 1) / 2
+{
+    var cur_acc := 0;
+    var i := 0;
+    while i <= n
+        invariant 0 <= i <= n + 1
+        invariant forall j :: 0 <= j < i ==> cur_acc == j
+        decreases n - i
+    {
+        cur_acc := cur_acc + i;
+        i := i + 1;
+    }
+    s := cur_acc;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: LoopInvariantViolation
+Error Message: [LoopInvariantViolation] tại Dòng 9, Cột 18: this invariant could not be proved to be maintained by the loop
+-> Dòng mã vi phạm: `invariant forall j :: 0 <= j < i ==> cur_acc == j * (j + 1) / 2`
+-> Hướng dẫn khắc phục: BẤT BIẾN KHÔNG ĐƯỢC DUY TRÌ SAU THÂN VÒNG LẶP (maintained): Sau bước nhảy (ví dụ `i := i + 1`), biến có thể vượt qua biên của invariant. Lưu ý: Nếu duyệt mảng `while i < a.Length`, TUYỆT ĐỐI KHÔNG sửa thành `while i <= a.Length` (sẽ gây lỗi vượt biên). Hãy giữ nguyên điều kiện lặp hợp lệ và nới lỏng invariant cận trên thành `0 <= i <= a.Length`.
+Code:
+method SumToN(n: int) returns (s: int)
+    requires n >= 0
+    ensures s == n * (n + 1) / 2
+{
+    var cur_acc := 0;
+    var i := 0;
+    while i <= n
+        invariant 0 <= i <= n + 1
+        invariant forall j :: 0 <= j < i ==> cur_acc == j * (j + 1) / 2
+        decreases n - i
+    {
+        cur_acc := cur_acc + i;
+        i := i + 1;
+    }
+    s := cur_acc;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: LoopInvariantViolation
+Error Message: [LoopInvariantViolation] tại Dòng 9, Cột 18: this invariant could not be proved to be maintained by the loop
+-> Dòng mã vi phạm: `invariant forall j :: 0 <= j <= i ==> cur_acc == j * (j + 1) / 2`
+-> Hướng dẫn khắc phục: BẤT BIẾN KHÔNG ĐƯỢC DUY TRÌ SAU THÂN VÒNG LẶP (maintained): Sau bước nhảy (ví dụ `i := i + 1`), biến có thể vượt qua biên của invariant. Lưu ý: Nếu duyệt mảng `while i < a.Length`, TUYỆT ĐỐI KHÔNG sửa thành `while i <= a.Length` (sẽ gây lỗi vượt biên). Hãy giữ nguyên điều kiện lặp hợp lệ và nới lỏng invariant cận trên thành `0 <= i <= a.Length`.
+Code:
+method SumToN(n: int) returns (s: int)
+    requires n >= 0
+    ensures s == n * (n + 1) / 2
+{
+    var cur_acc := 0;
+    var i := 0;
+    while i <= n
+        invariant 0 <= i <= n + 1
+        invariant forall j :: 0 <= j <= i ==> cur_acc == j * (j + 1) / 2
+        decreases n - i
+    {
+        cur_acc := cur_acc + i;
+        i := i + 1;
+    }
+    s := cur_acc;
+}
+

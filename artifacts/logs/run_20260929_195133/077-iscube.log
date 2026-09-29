@@ -1,0 +1,276 @@
+=== BÀI TOÁN: 077-iscube ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 519.71s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 53, Cột 4: RHS (of type int) not assignable to LHS (of type bool)
+-> Dòng mã vi phạm: `r := i - 1;`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method cube_root(N: nat) returns (r: nat)
+  // post-conditions-start
+  ensures cube(r) <= N < cube(r + 1)
+  ensures r <= N
+  // post-conditions-end
+{
+  var i: nat := 0;
+  while i * i * i <= N
+    invariant 0 <= i <= N
+    decreases N - i * i * i
+  {
+    i := i + 1;
+  }
+  r := i - 1;
+}
+
+method iscube(n: int) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r && n >= 0 ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r && n >= 0 ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  ensures r && n < 0 ==> exists r :: 0 <= r <= -n && n == -cube(r)
+  ensures !r && n < 0 ==> forall r :: 0 <= r <= -n ==> n != -cube(r)
+  // post-conditions-end
+{
+  if n >= 0 {
+    r := iscube_positive(n);
+
+    return;
+  } else {
+    r := iscube_negative(-n);
+
+    return;
+  }
+}
+
+method iscube_positive(n: nat) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  // post-conditions-end
+{
+  var i: nat := 0;
+  while i * i * i <= n
+    invariant 0 <= i <= n
+    decreases n - i * i * i
+  {
+    i := i + 1;
+  }
+  r := i - 1;
+  r := n == cube(r);
+
+  return;
+}
+
+method iscube_negative(n: nat) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r ==> exists r :: 0 <= r <= n && n == -cube(r)
+  ensures !r ==> forall r :: 0 <= r <= n ==> n != -cube(r)
+  // post-conditions-end
+{
+  var i: nat := 0;
+  while i * i * i <= n
+    invariant 0 <= i <= n
+    decreases n - i * i * i
+  {
+    i := i + 1;
+  }
+  r := i - 1;
+  r := n == -cube(r);
+
+  return;
+}
+
+function cube(n: int): int { n * n * n }
+// pure-end
+lemma cube_of_larger_is_larger()
+    ensures forall smaller : int, larger : int :: smaller <= larger ==> cube(smaller) <= cube(larger)
+{}
+// pure-end
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 51, Cột 4: RHS (of type int) not assignable to LHS (of type bool)
+-> Dòng mã vi phạm: `r := i - 1;`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method cube_root(N: nat) returns (r: nat)
+  // post-conditions-start
+  ensures cube(r) <= N < cube(r + 1)
+  ensures r <= N
+  // post-conditions-end
+{
+  var i: nat := 0;
+  while i * i * i <= N
+    invariant 0 <= i <= N
+    decreases N - i * i * i
+  {
+    i := i + 1;
+  }
+  r := i - 1;
+}
+
+method iscube(n: int) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r && n >= 0 ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r && n >= 0 ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  ensures r && n < 0 ==> exists r :: 0 <= r <= -n && n == -cube(r)
+  ensures !r && n < 0 ==> forall r :: 0 <= r <= -n ==> n != -cube(r)
+  // post-conditions-end
+{
+  if n >= 0 {
+    r := iscube_positive(n);
+    return;
+  } else {
+    r := iscube_negative(-n);
+    return;
+  }
+}
+
+method iscube_positive(n: nat) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  // post-conditions-end
+{
+  var i: nat := 0;
+  while i * i * i <= n
+    invariant 0 <= i <= n
+    decreases n - i * i * i
+  {
+    i := i + 1;
+  }
+  r := i - 1;
+  r := n == cube(r);
+  return;
+}
+
+method iscube_negative(n: nat) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r ==> exists r :: 0 <= r <= n && n == -cube(r)
+  ensures !r ==> forall r :: 0 <= r <= n ==> n != -cube(r)
+  // post-conditions-end
+{
+  var i: nat := 0;
+  while i * i * i <= n
+    invariant 0 <= i <= n
+    decreases n - i * i * i
+  {
+    i := i + 1;
+  }
+  r := i - 1;
+  r := n == -cube(r);
+  return;
+}
+
+function cube(n: int): int { n * n * n }
+// pure-end
+lemma cube_of_larger_is_larger()
+    ensures forall smaller : int, larger : int :: smaller <= larger ==> cube(smaller) <= cube(larger)
+{}
+// pure-end
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 51, Cột 4: RHS (of type int) not assignable to LHS (of type bool)
+-> Dòng mã vi phạm: `r := i - 1;`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method cube_root(N: nat) returns (r: nat)
+  // post-conditions-start
+  ensures cube(r) <= N < cube(r + 1)
+  ensures r <= N
+  // post-conditions-end
+{
+  var i: nat := 0;
+  while i * i * i <= N
+    invariant 0 <= i <= N
+    decreases N - i * i * i
+  {
+    i := i + 1;
+  }
+  r := i - 1;
+}
+
+method iscube(n: int) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r && n >= 0 ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r && n >= 0 ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  ensures r && n < 0 ==> exists r :: 0 <= r <= -n && n == -cube(r)
+  ensures !r && n < 0 ==> forall r :: 0 <= r <= -n ==> n != -cube(r)
+  // post-conditions-end
+{
+  if n >= 0 {
+    r := iscube_positive(n);
+    return;
+  } else {
+    r := iscube_negative(-n);
+    return;
+  }
+}
+
+method iscube_positive(n: nat) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  // post-conditions-end
+{
+  var i: nat := 0;
+  while i * i * i <= n
+    invariant 0 <= i <= n
+    decreases n - i * i * i
+  {
+    i := i + 1;
+  }
+  r := i - 1;
+  r := n == cube(r);
+  return;
+}
+
+method iscube_negative(n: nat) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r ==> exists r :: 0 <= r <= n && n == -cube(r)
+  ensures !r ==> forall r :: 0 <= r <= n ==> n != -cube(r)
+  // post-conditions-end
+{
+  var i: nat := 0;
+  while i * i * i <= n
+    invariant 0 <= i <= n
+    decreases n - i * i * i
+  {
+    i := i + 1;
+  }
+  r := i - 1;
+  r := n == -cube(r);
+  return;
+}
+
+function cube(n: int): int { n * n * n }
+// pure-end
+lemma cube_of_larger_is_larger()
+    ensures forall smaller : int, larger : int :: smaller <= larger ==> cube(smaller) <= cube(larger)
+{}
+// pure-end
+

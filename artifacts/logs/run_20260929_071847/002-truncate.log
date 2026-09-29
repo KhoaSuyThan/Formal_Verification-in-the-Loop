@@ -1,0 +1,49 @@
+=== BÀI TOÁN: 002-truncate ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 36.64s
+Kết quả cuối: PASS
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 5, Cột 0: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `{`
+-> Mệnh đề liên quan: `ensures (x - d) == (x.Floor as real)`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN TÍNH PHẦN THẬP PHÂN (TRUNCATE):
+[HÀNH ĐỘNG BẮT BUỘC]:
+Để lấy phần thập phân và thỏa mãn `(x - d) == (x.Floor as real)`, hãy gán trực tiếp: `d := x - (x.Floor as real);` mà TUYỆT ĐỐI KHÔNG dùng vòng lặp while hay cấu trúc if-else.
+Code:
+method truncate_number(x : real) returns (d : real)
+    requires x >= 0.0
+    ensures (0.0 <= d <= 1.0)
+    ensures (x - d) == (x.Floor as real)
+{
+    var acc := 0.0;
+    var i := 0;
+    while i < 1000
+        invariant 0 <= i <= 1000
+        invariant acc <= x
+        decreases 1000 - i
+    {
+        if x - acc < 1.0 {
+            acc := x;
+            break;
+        }
+        i := i + 1;
+    }
+    d := acc;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: True
+Error Taxonomy: None
+Error Message: 
+Code:
+method truncate_number(x : real) returns (d : real)
+    requires x >= 0.0
+    ensures (0.0 <= d <= 1.0)
+    ensures (x - d) == (x.Floor as real)
+{
+    d := x - (x.Floor as real);
+}
+

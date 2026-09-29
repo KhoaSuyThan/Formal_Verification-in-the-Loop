@@ -1,0 +1,75 @@
+=== BÀI TOÁN: sum_to_n ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 99.3s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 9, Cột 30: closeparen expected
+-> Dòng mã vi phạm: `invariant acc == sum(0..i)`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method SumToN(n: int) returns (s: int)
+    requires n >= 0
+    ensures s == n * (n + 1) / 2
+{
+    var i := 0;
+    var acc := 0;
+    while i <= n
+        invariant 0 <= i <= n
+        invariant acc == sum(0..i)
+    {
+        acc := acc + i;
+        i := i + 1;
+    }
+    s := acc;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 10, Cột 30: closeparen expected
+-> Dòng mã vi phạm: `invariant acc == sum(0..i)`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method SumToN(n: int) returns (s: int)
+    requires n >= 0
+    ensures s == n * (n + 1) / 2
+{
+    var i := 0;
+    var acc := 0;
+    while i <= n
+        decreases n - i
+        invariant 0 <= i <= n
+        invariant acc == sum(0..i)
+    {acc := acc + i;
+        i := i + 1;
+    }
+    s := acc;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 10, Cột 30: closeparen expected
+-> Dòng mã vi phạm: `invariant acc == sum(0..i)`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method SumToN(n: int) returns (s: int)
+    requires n >= 0
+    ensures s == n * (n + 1) / 2
+{
+    var i := 0;
+    var acc := 0;
+    while i <= n
+        decreases n - i
+        invariant 0 <= i <= n
+        invariant acc == sum(0..i)
+    {
+        acc := acc + i;
+        i := i + 1;
+    }
+    s := acc;
+}
+

@@ -1,0 +1,5 @@
+task_name,model,is_success,total_iterations,pass_at_1,pass_at_k,error_taxonomy,execution_time_sec,timestamp
+000-has_close_elements,ollama/qwen2.5-coder:7b,False,3,0,0,PostconditionViolation,227.83,20260929_210104
+010-is_palindrome,ollama/qwen2.5-coder:7b,False,3,0,0,GeneralVerificationFailure,339.77,20260929_210104
+077-iscube,ollama/qwen2.5-coder:7b,False,3,0,0,GeneralVerificationFailure,356.11,20260929_210104
+088-sort_array,ollama/qwen2.5-coder:7b,False,3,0,0,GeneralVerificationFailure,689.43,20260929_210104

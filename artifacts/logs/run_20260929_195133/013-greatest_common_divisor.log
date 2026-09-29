@@ -1,0 +1,34 @@
+=== BÀI TOÁN: 013-greatest_common_divisor ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 23.52s
+Kết quả cuối: PASS
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: True
+Error Taxonomy: None
+Error Message: 
+Code:
+method greatest_common_divisor(a: int, b: int) returns (gcd: int)
+    requires a != 0 || b != 0
+    ensures gcd != 0
+{
+    var x := if a < 0 then -a else a;
+    var y := if b < 0 then -b else b;
+    if x == 0 { gcd := y;
+ return; }
+    if y == 0 { gcd := x;
+ return; }
+    while y > 0
+        invariant x > 0
+        invariant y >= 0
+        decreases y
+    {
+        var temp := y;
+        y := x % y;
+        x := temp;
+    }
+    gcd := x;
+
+    return;
+}
+

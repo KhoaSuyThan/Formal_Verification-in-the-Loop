@@ -1,0 +1,195 @@
+=== BÀI TOÁN: 010-is_palindrome ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 239.92s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 24, Cột 4: unresolved identifier: rev
+-> Dòng mã vi phạm: `rev := reverse(s);`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+function is_palindrome(s : string) : bool {
+    forall k :: 0 <= k < |s| ==> s[k] == s[|s| - 1 - k]
+}
+// pure-end
+
+function starts_with(result : string, s : string) : bool {
+    |result| >= |s| && forall k :: 0 <= k < |s| ==> result[k] == s[k]
+}
+// pure-end
+
+method make_palindrome(s: string) returns (result: string)
+    // post-conditions-start
+    ensures |result| <= 2 * |s|
+    ensures is_palindrome(result)
+    ensures starts_with(result, s)
+    // post-conditions-end
+{
+    var n := |s|;
+    if n == 0 {
+        result := "";
+        return;
+    }
+
+    rev := reverse(s);
+    if s == rev {
+        result := s;
+        return;
+    }
+
+    var mid := n / 2;
+    var prefix := s[0..mid];
+    var suffix := s[mid..n];
+    var reversed_suffix := reverse(suffix);
+    result := prefix + reversed_suffix + suffix;
+}
+
+method reverse(str: string) returns (rev: string)
+    // post-conditions-start
+    ensures |rev| == |str|
+    ensures forall k :: 0 <= k < |str| ==> rev[k] == str[|str| - 1 - k]
+    // post-conditions-end
+{
+    var n := |str|;
+    rev := "";
+    var i := 0;
+    while i < n
+        invariant 0 <= i <= n
+        decreases n - i
+    {
+        rev := str[i] + rev;
+        i := i + 1;
+    }
+    return;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 26, Cột 4: unresolved identifier: rev
+-> Dòng mã vi phạm: `rev := reverse(s);`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+function is_palindrome(s : string) : bool {
+    forall k :: 0 <= k < |s| ==> s[k] == s[|s| - 1 - k]
+}
+
+// pure-end
+
+function starts_with(result : string, s : string) : bool {
+    |result| >= |s| && forall k :: 0 <= k < |s| ==> result[k] == s[k]
+}
+
+// pure-end
+
+method make_palindrome(s: string) returns (result: string)
+    // post-conditions-start
+    ensures |result| <= 2 * |s|
+    ensures is_palindrome(result)
+    ensures starts_with(result, s)
+    // post-conditions-end
+{
+    var n := |s|;
+    if n == 0 {
+        result := "";
+        return;
+    }
+
+    rev := reverse(s);
+    if s == rev {
+        result := s;
+        return;
+    }
+
+    var mid := n / 2;
+    var prefix := s[0..mid];
+    var suffix := s[mid..n];
+    var reversed_suffix := reverse(suffix);
+    result := prefix + reversed_suffix + suffix;
+}
+
+method reverse(str: string) returns (rev: string)
+    // post-conditions-start
+    ensures |rev| == |str|
+    ensures forall k :: 0 <= k < |str| ==> rev[k] == str[|str| - 1 - k]
+    // post-conditions-end
+{
+    var n := |str|;
+    rev := "";
+    var i := 0;
+    while i < n
+        invariant 0 <= i <= n
+        decreases n - i
+    {
+        rev := str[i] + rev;
+        i := i + 1;
+    }
+    return;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 26, Cột 4: unresolved identifier: rev
+-> Dòng mã vi phạm: `rev := reverse(s);`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+function is_palindrome(s : string) : bool {
+    forall k :: 0 <= k < |s| ==> s[k] == s[|s| - 1 - k]
+}
+
+// pure-end
+
+function starts_with(result : string, s : string) : bool {
+    |result| >= |s| && forall k :: 0 <= k < |s| ==> result[k] == s[k]
+}
+
+// pure-end
+
+method make_palindrome(s: string) returns (result: string)
+    // post-conditions-start
+    ensures |result| <= 2 * |s|
+    ensures is_palindrome(result)
+    ensures starts_with(result, s)
+    // post-conditions-end
+{
+    var n := |s|;
+    if n == 0 {
+        result := "";
+        return;
+    }
+
+    rev := reverse(s);
+    if s == rev {
+        result := s;
+        return;
+    }
+
+    var mid := n / 2;
+    var prefix := s[0..mid];
+    var suffix := s[mid..n];
+    var reversed_suffix := reverse(suffix);
+    result := prefix + reversed_suffix + suffix;
+}
+
+method reverse(str: string) returns (rev: string)
+    // post-conditions-start
+    ensures |rev| == |str|
+    ensures forall k :: 0 <= k < |str| ==> rev[k] == str[|str| - 1 - k]
+    // post-conditions-end
+{
+    var n := |str|;
+    rev := "";
+    var i := 0;
+    while i < n
+        invariant 0 <= i <= n
+        decreases n - i
+    {
+        rev := str[i] + rev;
+        i := i + 1;
+    }
+    return;
+}
+

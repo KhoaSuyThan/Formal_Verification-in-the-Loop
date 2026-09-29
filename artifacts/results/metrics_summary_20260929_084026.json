@@ -1,0 +1,19 @@
+{
+  "model": "ollama/qwen2.5-coder:7b",
+  "total_tasks": 10,
+  "pass_at_1_count": 1,
+  "pass_at_1_rate": 10.0,
+  "pass_at_k_count": 4,
+  "pass_at_k_rate": 40.0,
+  "failed_at_1_count": 9,
+  "repaired_count": 3,
+  "repair_success_rate": 33.33,
+  "error_distribution": {
+    "PostconditionViolation": 4,
+    "GeneralVerificationFailure": 2
+  },
+  "total_execution_time_sec": 1748.34,
+  "avg_time_per_task_sec": 174.83,
+  "avg_pass_time_sec": 59.56,
+  "avg_fail_time_sec": 251.68
+}

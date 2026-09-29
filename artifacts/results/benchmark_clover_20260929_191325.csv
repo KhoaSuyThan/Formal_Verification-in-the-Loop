@@ -1,0 +1,7 @@
+task_name,model,is_success,total_iterations,pass_at_1,pass_at_k,error_taxonomy,execution_time_sec,timestamp
+abs_val,ollama/qwen2.5-coder:7b,True,1,1,1,None,42.72,20260929_191325
+find_min,ollama/qwen2.5-coder:7b,True,1,1,1,None,14.81,20260929_191325
+linear_search,ollama/qwen2.5-coder:7b,False,3,0,0,PostconditionViolation,148.5,20260929_191325
+sample_max,ollama/qwen2.5-coder:7b,True,1,1,1,None,12.05,20260929_191325
+sign_function,ollama/qwen2.5-coder:7b,True,1,1,1,None,16.19,20260929_191325
+sum_to_n,ollama/qwen2.5-coder:7b,False,3,0,0,PostconditionViolation,102.45,20260929_191325

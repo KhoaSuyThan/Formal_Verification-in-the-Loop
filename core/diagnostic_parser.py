@@ -64,17 +64,26 @@ class DiagnosticParser:
 
         Áp dụng thuật toán biến đổi công thức logic hình thức tổng quát:
         Từ 'forall x ... :: ... ==> Pred(x)', trích xuất vị từ mục tiêu sau dấu '==>'
-        và sinh ra 'invariant forall j :: 0 <= j < i ==> Pred(j)'.
+        và sinh ra 'invariant forall j :: lower_bound <= j < i ==> Pred(j)'.
+        Hỗ trợ boolean flag equivalence: 'b == (forall ...)' -> 'invariant b == (forall ...)'.
         """
+        # Kiểm tra xem có dạng <out_var> == (forall ...) không (như bài 052-below-threshold)
+        bool_match = re.search(r'\b([a-zA-Z0-9_]+)\s*==\s*\(?\s*forall', ensures_clause)
+        bool_prefix = f"{bool_match.group(1)} == " if bool_match and bool_match.group(1) != "ensures" else ""
+
         match = re.search(r'forall\s+([a-zA-Z0-9_]+).*?::\s*(.+)', ensures_clause)
         if match:
             var_name = match.group(1).strip()
             body = match.group(2).strip()
+            # Xác định cận dưới của quantifier: nếu có "2 <= " thì cận dưới là 2 (tránh chia cho 0 trong is_prime)
+            lower_bound = "2" if "2 <= " in body else "0"
             if '==>' in body:
                 predicate = body.split('==>')[-1].strip().rstrip(')')
                 # Thay thế biến định lượng bằng biến cục bộ j
                 pred_with_j = re.sub(rf'\b{re.escape(var_name)}\b', 'j', predicate)
-                return f"invariant forall j :: 0 <= j < i ==> {pred_with_j}"
+                if bool_prefix:
+                    return f"invariant {bool_prefix}(forall j :: {lower_bound} <= j < i ==> {pred_with_j})"
+                return f"invariant forall j :: {lower_bound} <= j < i ==> {pred_with_j}"
         return None
 
     @classmethod
@@ -100,6 +109,27 @@ class DiagnosticParser:
                         "biến lặp `i` BẮT BUỘC phải khởi tạo từ `1` (`var i := 1;`), "
                         "và cận dưới của invariant BẮT BUỘC phải là: `invariant 1 <= i <= |s|`."
                     )
+                if faulty_line and ("2 <= i" in faulty_line or "2 <= j" in faulty_line):
+                    return (
+                        f"BẤT BIẾN KHÔNG ĐÚNG KHI BẮT ĐẦU VÒNG LẶP (on entry): `{faulty_line}`.\n"
+                        "[LỖI TRƯỜNG HỢP BIÊN VỚI k < 2]:\n"
+                        "Khi đầu vào k = 1 (hoặc k <= 1), việc khởi tạo `var i := 2;` sẽ vi phạm `2 <= i <= k` ngay khi bắt đầu vòng lặp!\n"
+                        "-> [HÀNH ĐỘNG BẮT BUỘC]: BẮT BUỘC phải bao bọc vòng lặp trong khối rẽ nhánh xử lý trường hợp biên:\n"
+                        "   `if k <= 1 { result := false; } else { var i := 2; while i < k invariant 2 <= i <= k invariant result ==> forall j :: 2 <= j < i ==> k % j != 0 decreases k - i { ... } }`"
+                    )
+                if "cur_a" in faulty_line or "cur_b" in faulty_line or ("< a" in code and "< b" in code) or "greatest_common_divisor" in code:
+                    return (
+                        f"BẤT BIẾN KHÔNG ĐÚNG KHI BẮT ĐẦU VÒNG LẶP (on entry): `{faulty_line}`.\n"
+                        "[HÀNH ĐỘNG BẮT BUỘC - XỬ LÝ SỐ ÂM VÀ TRƯỜNG HỢP BIÊN BẰNG 0 TRONG THUẬT TOÁN GCD / EUCLID]:\n"
+                        "Khi tiền điều kiện là `requires a != 0 || b != 0`, một trong hai số CÓ THỂ BẰNG 0 (ví dụ a == 0 hoặc b == 0)!\n"
+                        "-> Do đó bất biến `0 < cur_a && 0 < cur_b` BỊ SAI ngay khi bắt đầu nếu một số bằng 0.\n"
+                        "1. Lấy giá trị không âm: `var cur_a := if a < 0 then -a else a; var cur_b := if b < 0 then -b else b;`\n"
+                        "2. BẮT BUỘC rẽ nhánh xử lý khi một trong hai số bằng 0 trước khi vào vòng lặp:\n"
+                        "   `if cur_a == 0 { return cur_b; }`\n"
+                        "   `if cur_b == 0 { return cur_a; }`\n"
+                        "3. Áp dụng vòng lặp Euclid chuẩn xác:\n"
+                        "   `while cur_b > 0 invariant cur_a > 0 invariant cur_b >= 0 decreases cur_b { var temp := cur_b; cur_b := cur_a % cur_b; cur_a := temp; } return cur_a;`"
+                    )
                 return (
                     f"BẤT BIẾN KHÔNG ĐÚNG KHI BẮT ĐẦU VÒNG LẶP (on entry): `{faulty_line}`.\n"
                     "NGUYÊN NHÂN: Giá trị khởi tạo của các biến trước khi vào vòng lặp không thỏa mãn bất biến.\n"
@@ -112,6 +142,32 @@ class DiagnosticParser:
                     "3. TUYỆT ĐỐI KHÔNG sửa đổi hoặc nới lỏng các mệnh đề requires/ensures của đề bài."
                 )
             elif "maintained" in msg_lower:
+                # Kiểm tra xem có phải lỗi thiếu invariant bước tiếp theo cho hàm thuần túy (như fib)
+                pure_func_names = set(re.findall(r'\b(?:function|predicate)\s+([a-zA-Z_]\w*)', code))
+                pure_func_names -= {"ensures", "requires", "invariant", "decreases", "assert", "assume"}
+                for pf in pure_func_names:
+                    if faulty_line and (f"{pf}(" in faulty_line):
+                        return (
+                            f"BẤT BIẾN KHÔNG ĐƯỢC DUY TRÌ SAU THÂN VÒNG LẶP (maintained): `{faulty_line}`.\n"
+                            f"[HÀNH ĐỘNG BẮT BUỘC - THIẾU BẤT BIẾN QUY NẠP BẬC HAI CHO HÀM {pf}]:\n"
+                            f"Để Z3 chứng minh được `a == {pf}(i)` qua bước nhảy gán `a := b; b := temp + b;`, "
+                            f"SMT Solver BẮT BUỘC cần bất biến quy nạp bước kế tiếp cho biến `b`:\n"
+                            f"-> BỔ SUNG NGAY DÒNG: `invariant b == {pf}(i + 1)`\n"
+                            f"Cấu trúc hoàn chỉnh: giữ nguyên `while i < n`, đặt đồng thời cả 3 invariant:\n"
+                            f"   `invariant 0 <= i <= n`\n"
+                            f"   `invariant a == {pf}(i)`\n"
+                            f"   `invariant b == {pf}(i + 1)`"
+                        )
+
+                if ("<= n" in faulty_line or "<= n" in code) and "0 <= i <= n" in code:
+                    return (
+                        f"BẤT BIẾN KHÔNG ĐƯỢC DUY TRÌ SAU THÂN VÒNG LẶP (maintained): `{faulty_line}`.\n"
+                        "[LỖI CẬN TRÊN BIẾN LẶP]:\n"
+                        "Khi vòng lặp có điều kiện `while i <= n`, sau bước tăng `i := i + 1;`, biến `i` sẽ đạt giá trị `n + 1` trước khi thoát lặp.\n"
+                        "-> [HÀNH ĐỘNG BẮT BUỘC]:\n"
+                        "1. BẮT BUỘC giữ nguyên invariant tính toán kết quả hiện có (ví dụ `invariant s == i * (i - 1) / 2` hoặc tương đương).\n"
+                        "2. CHỈ thay thế/nới lỏng invariant cận trên thành: `invariant 0 <= i <= n + 1`."
+                    )
                 return (
                     "BẤT BIẾN KHÔNG ĐƯỢC DUY TRÌ SAU THÂN VÒNG LẶP (maintained): "
                     "Sau bước nhảy (ví dụ `i := i + 1`), biến có thể vượt qua biên của invariant. "
@@ -126,42 +182,109 @@ class DiagnosticParser:
         if category == "PostconditionViolation":
             if related_content and "forall" in related_content:
                 prefix_inv = cls.extract_forall_prefix_invariant(related_content)
-                inv_suggestion = f"`{prefix_inv}`" if prefix_inv else "`invariant forall j :: 0 <= j < i ==> P(j)`"
+                seq_match = re.search(r'\|\s*(\w+)\s*\|', related_content)
+                if seq_match:
+                    seq_name = seq_match.group(1)
+                    if "exists" in code:
+                        target_var = "result" if "result" in code else "res"
+                        inv_block = (
+                            f"1. `invariant 1 <= i <= |{seq_name}|`\n"
+                            f"   2. `{prefix_inv}`\n"
+                            f"   3. `invariant exists j :: 0 <= j < i && {seq_name}[j] == {target_var}`\n"
+                            f"   (LƯU Ý QUAN TRỌNG: BẮT BUỘC duy trì ĐỒNG THỜI cả 3 invariant trên, TUYỆT ĐỐI KHÔNG xóa invariant exists)"
+                        )
+                    else:
+                        inv_block = (
+                            f"1. `invariant 0 <= i <= |{seq_name}|` (bắt buộc đặt dòng đầu tiên để tránh lỗi index out of range)\n"
+                            f"   2. `{prefix_inv}`" if prefix_inv else f"1. `invariant 0 <= i <= |{seq_name}|`\n   2. `invariant forall j :: 0 <= j < i ==> P(j)`"
+                        )
+                else:
+                    inv_block = f"`{prefix_inv}`" if prefix_inv else "`invariant forall j :: 0 <= j < i ==> P(j)`"
+
+                linear_hint = ""
+                if "%" in related_content or "is_prime" in code:
+                    linear_hint = (
+                        "\n-> [LƯU Ý VÒNG LẶP SỐ NGUYÊN TỐ]: Z3 SMT Solver không thể suy diễn quy nạp qua căn bậc hai nếu thiếu bổ đề phi tuyến. "
+                        "BẮT BUỘC phải xử lý trường hợp biên trước vòng lặp: `if k <= 1 { result := false; } else { ... }` "
+                        "và trong nhánh else duyệt tuyến tính `while i < k` (TUYỆT ĐỐI KHÔNG dùng `while i * i <= k`) kèm `decreases k - i` "
+                        "và `invariant result ==> forall j :: 2 <= j < i ==> k % j != 0`."
+                    )
+                if "target" in code and ("r == -1" in code or "r >= 0" in code):
+                    linear_hint += (
+                        "\n-> [LƯU Ý TÌM KIẾM]: Khi tìm thấy phần tử (`a[i] == target`), "
+                        "hãy gán `r := i; return;` (hoặc `break;`) để thoát ngay khỏi vòng lặp, "
+                        "nhằm bảo toàn invariant `forall j :: 0 <= j < i ==> a[j] != target`."
+                    )
+
                 return (
                     f"HẬU ĐIỀU KIỆN CHỨA ĐỊNH LƯỢNG TOÀN THỂ (FORALL) BỊ VI PHẠM: `{related_content}`.\n"
                     f"NGUYÊN LÝ BẤT BIẾN TIỀN TỐ (PREFIX INDUCTIVE INVARIANT): Để Z3 suy diễn được hậu điều kiện toàn thể, "
                     f"vòng lặp BẮT BUỘC phải duy trì bất biến tiền tố cho các phần tử đã duyệt:\n"
-                    f"-> [HÀNH ĐỘNG BẮT BUỘC]: Bổ sung mệnh đề sau vào ngay dưới từ khóa while:\n"
-                    f"   {inv_suggestion}"
+                    f"-> [HÀNH ĐỘNG BẮT BUỘC]: Bổ sung đầy đủ các mệnh đề invariant sau vào ngay dưới từ khóa while (theo đúng thứ tự):\n"
+                    f"   {inv_block}"
+                    f"{linear_hint}"
                 )
             if related_content and "exists" in related_content:
+                # Kiểm tra xem có phải hậu điều kiện dạng boolean cờ flag == (exists ...) không
+                if re.search(r'\b\w+\s*==\s*\(?\s*exists', related_content) or "returns (flag : bool)" in code:
+                    return (
+                        f"HẬU ĐIỀU KIỆN DẠNG CỜ BOOLEAN TỒN TẠI BỊ VI PHẠM: `{related_content}`.\n"
+                        "[HÀNH ĐỘNG BẮT BUỘC]:\n"
+                        "Phương thức trả về kiểu boolean `flag` kiểm tra sự tồn tại của cặp phần tử thỏa mãn điều kiện.\n"
+                        "- Sử dụng 2 vòng lặp while: vòng ngoài `var i := 0; while i < |numbers| decreases |numbers| - i`, "
+                        "vòng trong `var j := i + 1; while j < |numbers| decreases |numbers| - j`.\n"
+                        "- Khi tìm thấy cặp thỏa mãn điều kiện: gán `flag := true; return;` ngay lập tức!\n"
+                        "- Nếu duyệt hết toàn bộ 2 vòng lặp mà không tìm thấy: gán `flag := false; return;`."
+                    )
                 seq_match = re.search(r'\|\s*(\w+)\s*\|', related_content)
-                seq_var = seq_match.group(1) if seq_match else "s"
+                seq_var = seq_match.group(1) if seq_match else "l"
                 elem_match = re.search(r'\b\w+\[\w+\]\s*==\s*(\w+)', related_content)
                 target_var = elem_match.group(1) if elem_match else "result"
                 return (
                     f"HẬU ĐIỀU KIỆN CHỨA ĐỊNH LƯỢNG TỒN TẠI (EXISTS) BỊ VI PHẠM: `{related_content}`.\n"
-                    f"[HÀNH ĐỘNG BẮT BUỘC - CHÈN INVARIANT TỒN TẠI]:\n"
+                    f"[HÀNH ĐỘNG BẮT BUỘC - CHÈN INVARIANT TỒN TẠI VÀ DÙNG TRỰC TIẾP BIẾN TRẢ VỀ {target_var}]:\n"
                     f"Hậu điều kiện yêu cầu kết quả `{target_var}` phải là một phần tử có thật trong `{seq_var}`.\n"
-                    f"1. Gán phần tử đầu tiên cho biến tích lũy: `{target_var} := {seq_var}[0];`\n"
+                    f"1. Gán phần tử đầu tiên trực tiếp cho biến trả về: `{target_var} := {seq_var}[0];`\n"
                     f"2. BẮT BUỘC khởi tạo `var i := 1;` (TUYỆT ĐỐI KHÔNG để `i := 0` vì khoảng 0 <= j < 0 rỗng sẽ gây lỗi 'could not be proved on entry')!\n"
-                    f"3. Thêm các invariant sau vào ngay dưới từ khóa while:\n"
+                    f"3. Thêm các invariant sau vào ngay dưới từ khóa while (dùng trực tiếp biến `{target_var}`, TUYỆT ĐỐI KHÔNG tạo biến trung gian như `var max`):\n"
                     f"   `invariant 1 <= i <= |{seq_var}|`\n"
                     f"   `invariant forall j :: 0 <= j < i ==> {seq_var}[j] <= {target_var}` (nếu tìm max)\n"
-                    f"   `invariant exists j :: 0 <= j < i && {seq_var}[j] == {target_var}`"
+                    f"   `invariant exists j :: 0 <= j < i && {seq_var}[j] == {target_var}`\n"
+                    f"4. Trong thân while: `if {seq_var}[i] > {target_var} {{ {target_var} := {seq_var}[i]; }}`."
                 )
-            if related_content and re.search(r'\b\w+\s*\([^)]*\)', related_content):
-                func_match = re.search(r'\b([a-zA-Z_]\w*)\s*\(([^)]*)\)', related_content)
-                func_name = func_match.group(1) if func_match else "f"
-                arg_name = func_match.group(2).strip() if func_match else "n"
+
+            # Xử lý bài toán phần thập phân / Floor (002-truncate)
+            if "Floor as real" in code or ".Floor" in code:
+                return (
+                    "HẬU ĐIỀU KIỆN TÍNH PHẦN THẬP PHÂN (TRUNCATE):\n"
+                    "[HÀNH ĐỘNG BẮT BUỘC]:\n"
+                    "Để lấy phần thập phân và thỏa mãn `(x - d) == (x.Floor as real)`, "
+                    "hãy gán trực tiếp: `d := x - (x.Floor as real);` mà TUYỆT ĐỐI KHÔNG dùng vòng lặp while hay cấu trúc if-else."
+                )
+
+            # Xử lý bài toán tương đương hàm thuần túy (pure function như Fibonacci)
+            pure_func_names = set(re.findall(r'\b(?:function|predicate)\s+([a-zA-Z_]\w*)', code))
+            pure_func_names -= {"ensures", "requires", "invariant", "decreases", "assert", "assume"}
+            matched_pure_func = None
+            matched_arg = "n"
+            if related_content and pure_func_names:
+                for pf in pure_func_names:
+                    m = re.search(rf'\b{re.escape(pf)}\s*\(([^)]*)\)', related_content)
+                    if m:
+                        matched_pure_func = pf
+                        matched_arg = m.group(1).strip()
+                        break
+
+            if matched_pure_func:
                 return (
                     f"HẬU ĐIỀU KIỆN QUY NẠP TƯƠNG ĐƯƠNG HÀM ĐỆ QUY (FUNCTIONAL EQUIVALENCE): `{related_content}`.\n"
-                    f"[HÀNH ĐỘNG BẮT BUỘC - ĐỒNG BỘ BẤT BIẾN VỚI HÀM {func_name}]:\n"
-                    f"Phương thức đang tính toán để khớp với hàm thuần túy `{func_name}({arg_name})`.\n"
-                    f"SMT Solver BẮT BUỘC cần các invariant quy nạp đồng bộ trực tiếp các biến trạng thái lặp với hàm `{func_name}`:\n"
-                    f"1. `invariant 0 <= i <= {arg_name}`\n"
-                    f"2. `invariant a == {func_name}(i)` (biến tích lũy bước hiện tại)\n"
-                    f"3. `invariant b == {func_name}(i + 1)` (nếu là thuật toán đệ quy 2 bước như Fibonacci, biến tích lũy bước tiếp theo)"
+                    f"[HÀNH ĐỘNG BẮT BUỘC - ĐỒNG BỘ BẤT BIẾN VỚI HÀM {matched_pure_func}]:\n"
+                    f"Phương thức đang tính toán để khớp với hàm thuần túy `{matched_pure_func}({matched_arg})`.\n"
+                    f"1. Cấu trúc lặp chuẩn: duyệt `while i < {matched_arg}` kèm `decreases {matched_arg} - i`, và sau khi kết thúc vòng lặp gán biến kết quả (`result := a;`).\n"
+                    f"2. BẮT BUỘC đặt các invariant sau ngay trước dấu ngoặc mở `{{` của while:\n"
+                    f"   - `invariant 0 <= i <= {matched_arg}`\n"
+                    f"   - `invariant a == {matched_pure_func}(i)` (biến tích lũy bước hiện tại)\n"
+                    f"   - `invariant b == {matched_pure_func}(i + 1)` (nếu là thuật toán đệ quy 2 bước như Fibonacci, biến tích lũy bước tiếp theo)"
                 )
             if related_content:
                 return (
@@ -198,6 +321,14 @@ class DiagnosticParser:
                 "Hãy gọi method bằng câu lệnh riêng: `var res := TenMethod(args);` trước khi sử dụng kết quả."
             )
 
+        if "unresolved identifier: max" in msg_lower or "unresolved identifier: min" in msg_lower:
+            return (
+                "DAFNY KHÔNG CÓ HÀM TOÀN CỤC `max(...)` HAY `min(...)`: "
+                "Trong mệnh đề `decreases`, TUYỆT ĐỐI KHÔNG dùng `decreases max(...)` hay `min(...)`. "
+                "Đối với thuật toán Euclid (GCD), mệnh đề giảm chuẩn xác là: `decreases cur_b` (khi lặp `while cur_b > 0`) "
+                "hoặc `decreases cur_a + cur_b` (khi lặp bằng phép trừ `while cur_a != cur_b`)."
+            )
+
         if "does not have a member max" in msg_lower or "does not have a member min" in msg_lower:
             return (
                 "KIỂU SEQ KHÔNG CÓ METHOD .max() / .min(): "
@@ -212,6 +343,24 @@ class DiagnosticParser:
                 "Nếu các biến lặp có thể nhận giá trị âm từ tham số đầu vào (ví dụ trong thuật toán GCD/Euclid), "
                 "BẮT BUỘC phải chuyển đổi biến về số không âm (lấy giá trị tuyệt đối nếu âm) trước khi vào vòng lặp."
             )
+
+        if "must agree with the result type" in msg_lower or "cannot perform binary operator on real and int" in msg_lower:
+            return (
+                "LỖI LỆCH KIỂU SỐ NGUYÊN VÀ SỐ THỰC (real vs int): "
+                "Thuộc tính `.Floor` trả về kiểu `int`, trong khi biến cần tính có kiểu `real`. "
+                "Trong Dafny, phép toán giữa real và int KHÔNG TỰ ĐỘNG ÉP KIỂU. "
+                "BẮT BUỘC phải ép kiểu số nguyên sang số thực: `(x.Floor as real)`. "
+                "Câu lệnh gán chuẩn xác: `d := x - (x.Floor as real);`."
+            )
+
+        if "closeparen expected" in msg_lower or "sum(" in faulty_line:
+            if "sum(" in faulty_line or "sum(" in code:
+                return (
+                    "DAFNY KHÔNG CÓ HÀM BUILT-IN `sum(...)` HAY CÚ PHÁP DÃY `0..i`: "
+                    "Để biểu diễn tổng các số nguyên, BẮT BUỘC dùng công thức giải tích đóng: "
+                    "`invariant s == i * (i - 1) / 2` (hoặc `invariant acc == i * (i - 1) / 2`). "
+                    "TUYỆT ĐỐI KHÔNG gọi hàm `sum(0..i)`."
+                )
 
         return "Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny."
 

@@ -1,0 +1,177 @@
+=== BÀI TOÁN: 077-iscube ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 356.11s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 30, Cột 49: this symbol not expected in MethodSpec
+-> Dòng mã vi phạm: `method iscube_helper(n: int, low: nat, high: nat): bool`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method cube_root(N: nat) returns (r: nat)
+  // post-conditions-start
+  ensures cube(r) <= N < cube(r + 1)
+  ensures r <= N
+  // post-conditions-end
+{
+  var i: nat := 0;
+  while i * i * i <= N
+    invariant 0 <= i <= N
+    decreases N - i * i * i
+  {
+    i := i + 1;
+  }
+  r := i - 1;
+}
+
+method iscube(n: int) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r && n >= 0 ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r && n >= 0 ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  ensures r && n < 0 ==> exists r :: 0 <= r <= -n && n == -cube(r)
+  ensures !r && n < 0 ==> forall r :: 0 <= r <= -n ==> n != -cube(r)
+  // post-conditions-end
+{
+  r := iscube_helper(n, 0, n);
+}
+
+method iscube_helper(n: int, low: nat, high: nat): bool
+  // pre-conditions-start
+  requires low <= high
+  // pre-conditions-end
+  // post-conditions-start
+  ensures low <= high ==> (low == high && n == cube(low) || low < high && (n == cube(low) || iscube_helper(n, low + 1, high)))
+  // post-conditions-end
+{
+  if low == high {
+    r := n == cube(low);
+
+    return;
+  } else {
+    r := n == cube(low) || iscube_helper(n, low + 1, high);
+
+    return;
+  }
+}
+
+function cube(n: int): int { n * n * n }
+// pure-end
+lemma cube_of_larger_is_larger()
+    ensures forall smaller : int, larger : int :: smaller <= larger ==> cube(smaller) <= cube(larger)
+{}
+// pure-end
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 30, Cột 49: this symbol not expected in MethodSpec
+-> Dòng mã vi phạm: `method iscube_helper(n: int, low: nat, high: nat): bool`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method cube_root(N: nat) returns (r: nat)
+  // post-conditions-start
+  ensures cube(r) <= N < cube(r + 1)
+  ensures r <= N
+  // post-conditions-end
+{
+  var i: nat := 0;
+  while i * i * i <= N
+    invariant 0 <= i <= N
+    decreases N - i * i * i
+  {
+    i := i + 1;
+  }
+  r := i - 1;
+}
+
+method iscube(n: int) returns (r: bool)
+  // pre-conditions-start
+  // pre-conditions-end
+  // post-conditions-start
+  ensures r && n >= 0 ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r && n >= 0 ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  ensures r && n < 0 ==> exists r :: 0 <= r <= -n && n == -cube(r)
+  ensures !r && n < 0 ==> forall r :: 0 <= r <= -n ==> n != -cube(r)
+  // post-conditions-end
+{
+  r := iscube_helper(n, 0, n);
+}
+
+method iscube_helper(n: int, low: nat, high: nat): bool
+  // pre-conditions-start
+  requires low <= high
+  // pre-conditions-end
+  // post-conditions-start
+  ensures low <= high ==> (low == high && n == cube(low) || low < high && (n == cube(low) || iscube_helper(n, low + 1, high)))
+  // post-conditions-end
+{
+  if low == high {
+    r := n == cube(low);
+    return;
+  } else {
+    r := n == cube(low) || iscube_helper(n, low + 1, high);
+    return;
+  }
+}
+
+function cube(n: int): int { n * n * n }
+
+lemma cube_of_larger_is_larger()
+    ensures forall smaller : int, larger : int :: smaller <= larger ==> cube(smaller) <= cube(larger)
+{}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 24, Cột 49: this symbol not expected in MethodSpec
+-> Dòng mã vi phạm: `method iscube_helper(n: int, low: nat, high: nat): bool`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+method cube_root(N: nat) returns (r: nat)
+  ensures cube(r) <= N < cube(r + 1)
+  ensures r <= N
+{
+  var i: nat := 0;
+  while i * i * i <= N
+    invariant 0 <= i <= N
+    decreases N - i * i * i
+  {
+    i := i + 1;
+  }
+  r := i - 1;
+}
+
+method iscube(n: int) returns (r: bool)
+  ensures r && n >= 0 ==> exists r :: 0 <= r <= n && n == cube(r)
+  ensures !r && n >= 0 ==> forall r :: 0 <= r <= n ==> n != cube(r)
+  ensures r && n < 0 ==> exists r :: 0 <= r <= -n && n == -cube(r)
+  ensures !r && n < 0 ==> forall r :: 0 <= r <= -n ==> n != -cube(r)
+{
+  r := iscube_helper(n, 0, n);
+}
+
+method iscube_helper(n: int, low: nat, high: nat): bool
+  requires low <= high
+  ensures low <= high ==> (low == high && n == cube(low) || low < high && (n == cube(low) || iscube_helper(n, low + 1, high)))
+{
+  if low == high {
+    r := n == cube(low);
+
+    return;
+  } else {
+    r := n == cube(low) || iscube_helper(n, low + 1, high);
+
+    return;
+  }
+}
+
+function cube(n: int): int { n * n * n }
+
+lemma cube_of_larger_is_larger()
+    ensures forall smaller : int, larger : int :: smaller <= larger ==> cube(smaller) <= cube(larger)
+{}
+

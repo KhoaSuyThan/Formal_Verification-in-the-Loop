@@ -1,0 +1,63 @@
+=== BÀI TOÁN: 052-below-threshold ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 70.44s
+Kết quả cuối: PASS
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: PostconditionViolation
+Error Message: [PostconditionViolation] tại Dòng 18, Cột 4: a postcondition could not be proved on this return path
+-> Dòng mã vi phạm: `return;`
+-> Mệnh đề liên quan: `ensures b == (forall i : int :: i >= 0 && i < |l| ==> l[i] < t)`
+-> Hướng dẫn khắc phục: HẬU ĐIỀU KIỆN CHỨA ĐỊNH LƯỢNG TOÀN THỂ (FORALL) BỊ VI PHẠM: `ensures b == (forall i : int :: i >= 0 && i < |l| ==> l[i] < t)`.
+NGUYÊN LÝ BẤT BIẾN TIỀN TỐ (PREFIX INDUCTIVE INVARIANT): Để Z3 suy diễn được hậu điều kiện toàn thể, vòng lặp BẮT BUỘC phải duy trì bất biến tiền tố cho các phần tử đã duyệt:
+-> [HÀNH ĐỘNG BẮT BUỘC]: Bổ sung đầy đủ các mệnh đề invariant sau vào ngay dưới từ khóa while (theo đúng thứ tự):
+   1. `invariant 0 <= i <= |l|` (bắt buộc đặt dòng đầu tiên để tránh lỗi index out of range)
+   2. `invariant b == (forall j :: 0 <= j < i ==> l[j] < t)`
+Code:
+method below_threshold(l : seq<int>, t : int) returns (b : bool)
+    // post-conditions-start
+    ensures b == (forall i : int :: i >= 0 && i < |l| ==> l[i] < t)
+    // post-conditions-end
+{
+    b := true;
+    var i := 0;
+    while i < |l|
+        invariant 0 <= i <= |l|
+        decreases |l| - i
+    {
+        if l[i] >= t {
+            b := false;
+            break;
+        }
+        i := i + 1;
+    }
+    return;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: True
+Error Taxonomy: None
+Error Message: 
+Code:
+method below_threshold(l : seq<int>, t : int) returns (b : bool)
+    // post-conditions-start
+    ensures b == (forall i : int :: i >= 0 && i < |l| ==> l[i] < t)
+    // post-conditions-end
+{
+    b := true;
+    var i := 0;
+    while i < |l|
+        invariant 0 <= i <= |l|
+        invariant b == (forall j :: 0 <= j < i ==> l[j] < t)
+        decreases |l| - i
+    {
+        if l[i] >= t {
+            b := false;
+            break;
+        }
+        i := i + 1;
+    }
+    return;
+}
+
