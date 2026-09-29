@@ -155,9 +155,35 @@ python -m experiments.run_benchmark --benchmark humaneval_dafny --tasks "002,013
 python -m experiments.run_benchmark --benchmark clover && python -m experiments.run_benchmark --benchmark humaneval_dafny --tasks "002,013,031,035,052,055" && python -m experiments.evaluate_metrics
 ```
 
+### 4.4. Khởi chạy Giao diện Web Demo Tương tác (Streamlit UI)
+Ứng dụng Web Demo Streamlit cung cấp giao diện trực quan hóa tương tác toàn bộ quy trình Formal Verification-in-the-Loop thời gian thực:
+
+```bash
+# 1. Kích hoạt môi trường ảo
+venv\Scripts\activate      # Trên Windows
+# source venv/bin/activate # Trên Linux / macOS
+
+# 2. Khởi chạy ứng dụng Web Demo Streamlit
+streamlit run app.py
+
+# (Tùy chọn) Chỉ định cổng tùy ý nếu cổng mặc định đang bận
+streamlit run app.py --server.port 8501
+```
+Ứng dụng sẽ tự động khởi chạy và mở trên trình duyệt cục bộ tại: `http://localhost:8501`.
+
+**Các tính năng nổi bật trên Web Demo:**
+* **🎯 Chế độ Đơn Lẻ (Single Task)**: Lựa chọn 1 bài toán mẫu từ kho benchmark để theo dõi chi tiết từng vòng lặp tự sửa Pass@K, nhận diện hình thái giải thuật và mã băm khóa đặc tả SHA-256.
+* **🚀 Chế độ Hàng Loạt (Batch Multi-Select)**:
+  * *Bộ chọn nhanh (Quick Presets)*: Sổ xuống chọn nhanh bộ 12 bài chuẩn 100%, bộ bài cũ Clover, bộ bài mới HumanEval hoặc toàn bộ kho bài toán với số lượng được tính toán tự động.
+  * *Hộp thoại Modal Popup (`@st.dialog`)*: Mở popup giữa màn hình, hỗ trợ thanh tìm kiếm theo tên file Dafny (`.dfy`), tick chọn linh hoạt tổ hợp bài toán tùy ý (ví dụ: 3 bài Clover + 4 bài HumanEval).
+  * *Bảng tiến trình thời gian thực (Live Results)*: Cập nhật trực tiếp kết quả thẩm định Z3, số lượt hội tụ và thời gian thực thi từng bài.
+* **🔍 So Sánh Mã Nguồn & Bất Biến (Tab 2 - Code Diff)**: Trực quan hóa dòng mã lỗi ban đầu và mã hoàn chỉnh được Z3 chứng minh tính đúng đắn 100%.
+* **📊 Báo Cáo Nghiên Cứu Khoa Học (Tab 3 - Scientific Dashboard)**: Bảng chỉ số thực nghiệm, ma trận phân loại lỗi SMT Solver và biểu đồ so sánh Pass@1 vs Pass@3.
+
 ---
 
 ## 5. Kết Quả Thực Nghiệm Mới Nhất (Empirical Evaluation)
+
 
 Kết quả thực nghiệm trên mô hình cục bộ **`ollama/qwen2.5-coder:7b`** với $K = 3$ vòng lặp tự sửa:
 
