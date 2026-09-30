@@ -1,9 +1,9 @@
 {
-  "timestamp": "22:56:48 30/09/2026",
+  "timestamp": "23:38:08 30/09/2026",
   "model_name": "ollama/qwen2.5-coder:7b",
   "max_k": 3,
   "timeout_sec": 15,
-  "total_batch_time": 452.66,
+  "total_batch_time": 1513.58,
   "results_list": [
     {
       "STT": 1,
@@ -11,7 +11,7 @@
       "Tập Benchmark": "Clover",
       "Kết Quả Z3": "✅ PASS",
       "Lượt Hội Tụ": "Pass@1",
-      "Thời Gian (s)": 31.8,
+      "Thời Gian (s)": 28.66,
       "Hình Thái": "DIRECT"
     },
     {
@@ -20,7 +20,7 @@
       "Tập Benchmark": "Clover",
       "Kết Quả Z3": "✅ PASS",
       "Lượt Hội Tụ": "Pass@1",
-      "Thời Gian (s)": 10.15,
+      "Thời Gian (s)": 9.06,
       "Hình Thái": "DIRECT"
     },
     {
@@ -29,7 +29,7 @@
       "Tập Benchmark": "Clover",
       "Kết Quả Z3": "✅ PASS",
       "Lượt Hội Tụ": "Pass@1",
-      "Thời Gian (s)": 26.41,
+      "Thời Gian (s)": 24.34,
       "Hình Thái": "LINEAR_LOOP"
     },
     {
@@ -38,7 +38,7 @@
       "Tập Benchmark": "Clover",
       "Kết Quả Z3": "✅ PASS",
       "Lượt Hội Tụ": "Pass@1",
-      "Thời Gian (s)": 11.62,
+      "Thời Gian (s)": 12.39,
       "Hình Thái": "DIRECT"
     },
     {
@@ -47,7 +47,7 @@
       "Tập Benchmark": "Clover",
       "Kết Quả Z3": "✅ PASS",
       "Lượt Hội Tụ": "Pass@1",
-      "Thời Gian (s)": 15.87,
+      "Thời Gian (s)": 16.78,
       "Hình Thái": "DIRECT"
     },
     {
@@ -56,7 +56,7 @@
       "Tập Benchmark": "Clover",
       "Kết Quả Z3": "✅ PASS",
       "Lượt Hội Tụ": "Pass@1",
-      "Thời Gian (s)": 17.81,
+      "Thời Gian (s)": 16.42,
       "Hình Thái": "LINEAR_LOOP"
     },
     {
@@ -65,7 +65,7 @@
       "Tập Benchmark": "HumanEval",
       "Kết Quả Z3": "✅ PASS",
       "Lượt Hội Tụ": "Pass@1",
-      "Thời Gian (s)": 12.7,
+      "Thời Gian (s)": 11.08,
       "Hình Thái": "DIRECT"
     },
     {
@@ -74,7 +74,7 @@
       "Tập Benchmark": "HumanEval",
       "Kết Quả Z3": "✅ PASS",
       "Lượt Hội Tụ": "Pass@1",
-      "Thời Gian (s)": 24.67,
+      "Thời Gian (s)": 23.38,
       "Hình Thái": "NUMBER_THEORY"
     },
     {
@@ -83,7 +83,7 @@
       "Tập Benchmark": "HumanEval",
       "Kết Quả Z3": "✅ PASS",
       "Lượt Hội Tụ": "Pass@2",
-      "Thời Gian (s)": 84.99,
+      "Thời Gian (s)": 87.45,
       "Hình Thái": "NUMBER_THEORY"
     },
     {
@@ -92,7 +92,7 @@
       "Tập Benchmark": "HumanEval",
       "Kết Quả Z3": "✅ PASS",
       "Lượt Hội Tụ": "Pass@3",
-      "Thời Gian (s)": 108.08,
+      "Thời Gian (s)": 100.57,
       "Hình Thái": "LINEAR_LOOP"
     },
     {
@@ -101,7 +101,7 @@
       "Tập Benchmark": "HumanEval",
       "Kết Quả Z3": "✅ PASS",
       "Lượt Hội Tụ": "Pass@1",
-      "Thời Gian (s)": 23.14,
+      "Thời Gian (s)": 21.65,
       "Hình Thái": "LINEAR_LOOP"
     },
     {
@@ -110,8 +110,44 @@
       "Tập Benchmark": "HumanEval",
       "Kết Quả Z3": "✅ PASS",
       "Lượt Hội Tụ": "Pass@2",
-      "Thời Gian (s)": 85.38,
+      "Thời Gian (s)": 82.15,
       "Hình Thái": "PURE_FUNC_EQUIV"
+    },
+    {
+      "STT": 13,
+      "Bài Toán": "000-has_close_elements",
+      "Tập Benchmark": "HumanEval",
+      "Kết Quả Z3": "✅ PASS",
+      "Lượt Hội Tụ": "Pass@1",
+      "Thời Gian (s)": 46.88,
+      "Hình Thái": "NESTED_LOOP"
+    },
+    {
+      "STT": 14,
+      "Bài Toán": "010-is_palindrome",
+      "Tập Benchmark": "HumanEval",
+      "Kết Quả Z3": "❌ FAIL",
+      "Lượt Hội Tụ": ">3",
+      "Thời Gian (s)": 241.61,
+      "Hình Thái": "PURE_FUNC_EQUIV"
+    },
+    {
+      "STT": 15,
+      "Bài Toán": "077-iscube",
+      "Tập Benchmark": "HumanEval",
+      "Kết Quả Z3": "❌ FAIL",
+      "Lượt Hội Tụ": ">3",
+      "Thời Gian (s)": 240.01,
+      "Hình Thái": "NON_LINEAR"
+    },
+    {
+      "STT": 16,
+      "Bài Toán": "088-sort_array",
+      "Tập Benchmark": "HumanEval",
+      "Kết Quả Z3": "❌ FAIL",
+      "Lượt Hội Tụ": ">3",
+      "Thời Gian (s)": 551.06,
+      "Hình Thái": "PERMUTATION_SORT"
     }
   ]
 }

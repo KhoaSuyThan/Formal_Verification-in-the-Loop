@@ -101,10 +101,35 @@ class TopologyDetector:
 
         if topology == AlgorithmTopology.NESTED_LOOP:
             return (
-                "[RÀNG BUỘC CẤU TRÚC - TÌM KIẾM CẶP PHẦN TỬ (NESTED LOOP)]:\n"
-                "- Cần 2 vòng lặp `while` lồng nhau: vòng ngoài biến `i`, vòng trong biến `j := i + 1`.\n"
-                "- Cả 2 vòng lặp đều phải có invariant chặn biên và bất biến tiền tố."
+                "[RÀNG BUỘC CẤU TRÚC - TÌM KIẾM CẶP PHẦN TỬ 2 CHIỀU (NESTED PAIRWISE SEARCH)]:\n"
+                "- Phương thức kiểm tra sự tồn tại của cặp chỉ số (i, j) với i != j thỏa mãn điều kiện P(numbers[i], numbers[j]).\n"
+                "- BẮT BUỘC sử dụng mẫu hình bất biến quy nạp 2 chiều phủ định chuẩn xác để Z3 chứng minh được trường hợp flag == false:\n"
+                "  ```dafny\n"
+                "  flag := false;\n"
+                "  var i := 0;\n"
+                "  while i < |numbers|\n"
+                "    invariant 0 <= i <= |numbers|\n"
+                "    invariant forall a: int, b: int :: 0 <= a < i && 0 <= b < |numbers| && a != b ==> !P(numbers[a], numbers[b])\n"
+                "    decreases |numbers| - i\n"
+                "  {\n"
+                "    var j := 0;\n"
+                "    while j < |numbers|\n"
+                "      invariant 0 <= j <= |numbers|\n"
+                "      invariant forall b: int :: 0 <= b < j && b != i ==> !P(numbers[i], numbers[b])\n"
+                "      decreases |numbers| - j\n"
+                "    {\n"
+                "      if i != j && P(numbers[i], numbers[j]) {\n"
+                "        flag := true;\n"
+                "        return;\n"
+                "      }\n"
+                "      j := j + 1;\n"
+                "    }\n"
+                "    i := i + 1;\n"
+                "  }\n"
+                "  return;\n"
+                "  ```"
             )
+
 
         if topology == AlgorithmTopology.NUMBER_THEORY:
             return (

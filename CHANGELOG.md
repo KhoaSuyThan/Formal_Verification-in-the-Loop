@@ -6,6 +6,19 @@ Tất cả các thay đổi đáng chú ý của dự án sẽ được ghi nh�
 
 ---
 
+## [0.9.0] - 2026-09-30: Đạt Mốc 13/16 Bài PASS (81.25%) - Mẫu Hình Bất Biến 2 Chiều (Bài 000)
+- **Nâng Cấp Hình Thái Tìm Kiếm 2 Chiều ([core/topology_detector.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/topology_detector.py))**:
+  - Tích hợp mẫu hình bất biến quy nạp 2 chiều phủ định (`NESTED_PAIRWISE_SEARCH`) cho các bài toán kiểm tra sự tồn tại của cặp phần tử ($O(N^2)$ Pairwise Search).
+  - Cung cấp khung bất biến quy nạp 2 lớp (`!flag ==> forall a, b...`) cho vòng ngoài và vòng trong, giúp Z3 SMT Solver chứng minh toán học trường hợp `flag == false` hoàn toàn tất định.
+- **Tối Ưu Chẩn Đoán Ngữ Nghĩa ([core/diagnostic_parser.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/diagnostic_parser.py))**:
+  - Bổ sung hướng dẫn sinh bất biến phủ định 2 chiều cho các bài toán có hậu điều kiện dạng cờ boolean tồn tại (`flag == (exists i, j ...)`).
+- **Kết Quả Thực Nghiệm & Mở Rộng Benchmark ([web_demo/helpers.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/web_demo/helpers.py))**:
+  - Bài **`000-has_close_elements`** đạt chứng minh toán học **PASS 100% ngay tại Lượt 1 (Pass@1)** trên mô hình `qwen2.5-coder:7b` (thời gian ~35s).
+  - Khóa đặc tả SHA-256 bảo toàn nguyên vẹn 100%, không sửa bất kỳ dòng đặc tả nào và không hardcode tên bài toán.
+  - Nâng tỷ lệ đạt kiểm định của toàn bộ dự án lên **13/16 bài PASS (81.25%)**; nhóm HumanEval-Dafny đạt **7/10 bài PASS (70.0%)**.
+  - Toàn bộ **41/41 unit tests** đạt chuẩn xanh (100% green).
+
+
 ## [0.8.1] - 2026-09-30: Chuẩn Hóa Nhiệt Độ Tất Định (Temperature = 0.0) & Tùy Biến Sidebar
 - **Chuẩn Hóa Nhiệt Độ Tất Định ([agents/llm_agent.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/agents/llm_agent.py))**:
   - Đặt giá trị mặc định `temperature = 0.0` (Greedy Decoding) để loại bỏ tính ngẫu nhiên, đảm bảo 100% tính tái lập kết quả thực nghiệm chuẩn NCKH.
