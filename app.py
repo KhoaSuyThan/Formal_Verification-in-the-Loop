@@ -32,13 +32,21 @@ from core.pipeline_controller import PipelineController, PipelineResult
 from core.spec_locker import SpecLocker
 from core.topology_detector import TopologyDetector
 from web_demo.helpers import (
+    clear_last_batch_run,
+    clear_last_single_run,
+    dict_to_pipeline_result,
     generate_code_diff_html,
     get_benchmark_tasks,
     get_flat_task_registry,
     get_preset_labels,
+    load_last_batch_run,
+    load_last_single_run,
     load_latest_summary_metrics,
     load_task_spec,
+    save_last_batch_run,
+    save_last_single_run,
 )
+
 
 # ==============================================================================
 # CẤU HÌNH TRANG WEB STREAMLIT
@@ -534,8 +542,17 @@ with st.sidebar:
         )
         max_k = st.slider("Số lượt tự sửa tối đa (Pass@K)", min_value=1, max_value=5, value=3)
         timeout_sec = st.slider("Timeout Z3 Solver (giây/lượt)", min_value=5, max_value=30, value=15)
+        temperature = st.slider(
+            "Độ ngẫu nhiên (Temperature)",
+            min_value=0.0,
+            max_value=0.5,
+            value=0.0,
+            step=0.05,
+            help="0.0: Tất định, kết quả tái lập tuyệt đối (chuẩn NCKH). >0: Cho phép ngẫu nhiên hóa token.",
+        )
 
     st.caption("Đề tài NCKH: Formal Verification-in-the-Loop (2026)")
+
 
 # ==============================================================================
 # NỘI DUNG CHÍNH (MAIN AREA)
@@ -628,7 +645,7 @@ with tab_pipeline:
             status_placeholder.info(f"Đang kích hoạt quy trình Actor-Critic với mô hình `{model_name}`...")
 
             try:
-                agent = LLMAgent(model_name=model_name)
+                agent = LLMAgent(model_name=model_name, temperature=temperature)
                 engine = DafnyEngine(timeout_sec=timeout_sec)
                 controller = PipelineController(agent=agent, engine=engine, max_k=max_k, verbose=False)
 
@@ -642,6 +659,18 @@ with tab_pipeline:
                 # Lưu kết quả vào session_state để phục vụ Tab Diff
                 st.session_state["last_result"] = res
                 st.session_state["spec_content"] = spec_content
+
+                # Lưu trữ kiên cố xuống đĩa để không bị mất khi F5 hoặc đóng tab
+                save_last_single_run(
+                    task_name=task_name,
+                    task_label=selected_task_label,
+                    spec_content=spec_content,
+                    model_name=model_name,
+                    max_k=max_k,
+                    timeout_sec=timeout_sec,
+                    result_obj=res,
+                    elapsed=elapsed,
+                )
 
                 # Hiển thị thông báo trạng thái chung cuộc
                 if res.is_success:
@@ -688,6 +717,77 @@ with tab_pipeline:
 
             except Exception as e:
                 st.error(f"Đã xảy ra lỗi trong quá trình thực thi: {str(e)}")
+
+        else:
+            # Khi người dùng chưa bấm chạy lượt mới: Nạp lịch sử kiểm định gần nhất từ đĩa nếu có
+            saved_single = load_last_single_run()
+            if saved_single:
+                saved_res, saved_meta = dict_to_pipeline_result(saved_single)
+                st.session_state["last_result"] = saved_res
+                st.session_state["spec_content"] = saved_meta.get("spec_content", spec_content)
+
+                col_s_info, col_s_clear = st.columns([4, 1])
+                with col_s_info:
+                    st.markdown(
+                        f"""
+                        <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 8px; padding: 8px 14px; margin-top: 8px;">
+                            <span style="font-weight: 700; color: #38bdf8;">💾 Lịch Sử Lần Chạy Gần Nhất:</span> 
+                            <span style="color: #e2e8f0;">Bài <strong>{saved_meta.get('task_name')}</strong> | Mô hình: <code>{saved_meta.get('model_name')}</code> | Lưu lúc: {saved_meta.get('timestamp')} | Thời gian: {saved_meta.get('elapsed', 0)}s</span>
+                        </div>
+                        """,
+                        unsafe_allow_html=True,
+                    )
+                with col_s_clear:
+                    st.markdown("<div style='margin-top: 8px;'></div>", unsafe_allow_html=True)
+                    if st.button("🗑️ Xóa Lịch Sử", key="btn_clear_single_run", use_container_width=True):
+                        clear_last_single_run()
+                        if "last_result" in st.session_state:
+                            del st.session_state["last_result"]
+                        st.rerun()
+
+                # Hiển thị trạng thái chung cuộc đã lưu
+                if saved_res.is_success:
+                    st.markdown(
+                        f"""
+                        <div class="status-card-pass">
+                            🏆 THÀNH CÔNG (DỮ LIỆU ĐÃ LƯU): Z3 SMT Solver đã chứng minh toán học tính đúng đắn 100%!
+                            <br><small>Thời gian thực thi: {saved_meta.get('elapsed', 0)}s | Đạt chứng nhận tại Lượt {saved_res.total_iterations}/{saved_meta.get('max_k', max_k)}</small>
+                        </div>
+                        """,
+                        unsafe_allow_html=True,
+                    )
+                else:
+                    st.markdown(
+                        f"""
+                        <div class="status-card-fail">
+                            ❌ THẤT BẠI (DỮ LIỆU ĐÃ LƯU): Không thể hội tụ chứng minh sau {saved_res.total_iterations} vòng lặp.
+                            <br><small>Lý do: {saved_res.failure_reason}</small>
+                        </div>
+                        """,
+                        unsafe_allow_html=True,
+                    )
+
+                # Hiển thị chi tiết từng vòng lặp Pass@K đã lưu
+                st.markdown("### 📋 Lịch Sử Các Lượt Kiểm Định & Tự Sửa Lỗi")
+                for entry in saved_res.history:
+                    icon = "✅" if entry.is_verified else "❌"
+                    status_text = "Đã Chứng Minh (Verified)" if entry.is_verified else f"Vi Phạm: {entry.error_taxonomy}"
+
+                    with st.expander(f"Lượt {entry.iteration}: {icon} {status_text}", expanded=True):
+                        col_code, col_diag = st.columns([1.2, 1])
+
+                        with col_code:
+                            st.markdown("**Mã nguồn thuật toán:**")
+                            st.code(entry.code, language="dafny")
+
+                        with col_diag:
+                            st.markdown("**Phản hồi từ Z3 Solver & Bộ Chẩn Đoán:**")
+                            if entry.is_verified:
+                                st.success("✨ Z3 đã thẩm định thành công tất cả Verification Conditions (VCs). Không có ảo giác!")
+                            else:
+                                st.error(f"**Lỗi phát hiện:** `{entry.error_taxonomy}`")
+                                st.markdown(f"**Chi tiết:** {entry.error_message}")
+
 
     else:
         # ======================================================================
@@ -754,10 +854,39 @@ with tab_pipeline:
             batch_status = st.empty()
             batch_table_placeholder = st.empty()
 
-            # Hiển thị lại kết quả lần chạy trước nếu có
-            if "last_batch_results" in st.session_state and not batch_btn:
-                df_prev = pd.DataFrame(st.session_state["last_batch_results"])
-                batch_table_placeholder.dataframe(df_prev, use_container_width=True, hide_index=True)
+            # Hiển thị lại kết quả lần chạy trước từ session_state hoặc file lưu kiên cố nếu có
+            if not batch_btn:
+                saved_batch = None
+                if "last_batch_results" not in st.session_state:
+                    saved_batch = load_last_batch_run()
+                    if saved_batch and saved_batch.get("results_list"):
+                        st.session_state["last_batch_results"] = saved_batch["results_list"]
+
+                if "last_batch_results" in st.session_state:
+                    if saved_batch:
+                        col_b_info, col_b_clear = st.columns([4, 1])
+                        with col_b_info:
+                            st.markdown(
+                                f"""
+                                <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 8px; padding: 8px 14px; margin-bottom: 8px;">
+                                    <span style="font-weight: 700; color: #38bdf8;">💾 Lịch Sử Đợt Chạy Gần Nhất:</span> 
+                                    <span style="color: #e2e8f0;">Lưu lúc: {saved_batch.get('timestamp')} | Mô hình: <code>{saved_batch.get('model_name')}</code> | Thời gian: {saved_batch.get('total_batch_time')}s ({len(saved_batch.get('results_list', []))} bài)</span>
+                                </div>
+                                """,
+                                unsafe_allow_html=True,
+                            )
+                        with col_b_clear:
+                            st.markdown("<div style='margin-top: 8px;'></div>", unsafe_allow_html=True)
+                            if st.button("🗑️ Xóa Lịch Sử", key="btn_clear_batch_run", use_container_width=True):
+                                clear_last_batch_run()
+                                if "last_batch_results" in st.session_state:
+                                    del st.session_state["last_batch_results"]
+                                if "batch_history_dict" in st.session_state:
+                                    del st.session_state["batch_history_dict"]
+                                st.rerun()
+
+                    df_prev = pd.DataFrame(st.session_state["last_batch_results"])
+                    batch_table_placeholder.dataframe(df_prev, use_container_width=True, hide_index=True)
 
             if batch_btn:
                 results_list = []
@@ -765,7 +894,7 @@ with tab_pipeline:
                 total_tasks = len(selected_batch)
 
                 try:
-                    agent = LLMAgent(model_name=model_name)
+                    agent = LLMAgent(model_name=model_name, temperature=temperature)
                     engine = DafnyEngine(timeout_sec=timeout_sec)
                     controller = PipelineController(agent=agent, engine=engine, max_k=max_k, verbose=False)
 
@@ -810,6 +939,15 @@ with tab_pipeline:
                     total_batch_time = time.time() - batch_start_time
                     st.session_state["last_batch_results"] = results_list
                     st.session_state["batch_history_dict"] = batch_history_dict
+
+                    # Lưu kiên cố đợt chạy hàng loạt vào artifacts/results/last_batch_run.json
+                    save_last_batch_run(
+                        results_list=results_list,
+                        total_batch_time=total_batch_time,
+                        model_name=model_name,
+                        max_k=max_k,
+                        timeout_sec=timeout_sec,
+                    )
 
                     # Đếm số lượng pass
                     passed_count = sum(1 for r in results_list if "PASS" in r["Kết Quả Z3"])
@@ -883,6 +1021,15 @@ with tab_pipeline:
 with tab_diff:
     st.markdown("### 🔍 Phân Tích Sự Khác Biệt & Bất Biến Toán Học")
 
+    # Tự động nạp từ lịch sử kiên cố nếu session_state chưa có
+    if "last_result" not in st.session_state or not getattr(st.session_state["last_result"], "history", []):
+        saved_diff_data = load_last_single_run()
+        if saved_diff_data:
+            res_diff, meta_diff = dict_to_pipeline_result(saved_diff_data)
+            st.session_state["last_result"] = res_diff
+            st.session_state["spec_content"] = meta_diff.get("spec_content", "")
+            st.caption(f"💾 Đang phân tích kết quả lưu kiên cố của bài: **{meta_diff.get('task_name')}** ({meta_diff.get('timestamp')})")
+
     if "last_result" in st.session_state and st.session_state["last_result"].history:
         res: PipelineResult = st.session_state["last_result"]
 
@@ -896,6 +1043,7 @@ with tab_diff:
 
             diff_html = generate_code_diff_html(initial_code, final_code)
             st.markdown(diff_html, unsafe_allow_html=True)
+
 
             st.markdown("#### 💡 Các bất biến quy nạp toán học đóng vai trò quyết định:")
             invariants = [line.strip() for line in final_code.splitlines() if line.strip().startswith("invariant ")]

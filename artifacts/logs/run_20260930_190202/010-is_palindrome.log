@@ -1,0 +1,230 @@
+=== BÀI TOÁN: 010-is_palindrome ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 418.62s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 43, Cột 19: type of left argument to + (seq<char>) must agree with the result type (char)
+-> Dòng mã vi phạm: `rev := rev + s[|s| - 1 - i];`
+-> Hướng dẫn khắc phục: LỖI LỆCH KIỂU SỐ NGUYÊN VÀ SỐ THỰC (real vs int): Thuộc tính `.Floor` trả về kiểu `int`, trong khi biến cần tính có kiểu `real`. Trong Dafny, phép toán giữa real và int KHÔNG TỰ ĐỘNG ÉP KIỂU. BẮT BUỘC phải ép kiểu số nguyên sang số thực: `(x.Floor as real)`. Câu lệnh gán chuẩn xác: `d := x - (x.Floor as real);`.
+Code:
+lemma palindrome_concat_lemma(s: string, rev: string)
+    requires |rev| == |s|
+    requires forall k :: 0 <= k < |s| ==> rev[k] == s[|s| - 1 - k]
+    ensures is_palindrome(s + rev)
+{
+    var res := s + rev;
+    forall k | 0 <= k < |res|
+        ensures res[k] == res[|res| - 1 - k]
+    {
+        if k < |s| {
+            assert res[k] == s[k];
+            assert res[|res| - 1 - k] == rev[|s| - 1 - k];
+        } else {
+            var j := k - |s|;
+            assert res[k] == rev[j];
+            assert res[|res| - 1 - k] == s[|s| - 1 - j];
+        }
+    }
+}
+
+function is_palindrome(s : string) : bool {
+    forall k :: 0 <= k < |s| ==> s[k] == s[|s| - 1 - k]
+}
+// pure-end
+function starts_with(result : string, s : string) : bool {
+    |result| >= |s| && forall k :: 0 <= k < |s| ==> result[k] == s[k]
+}
+// pure-end
+method make_palindrome(s: string) returns (result: string)
+    // post-conditions-start
+    ensures |result| <= 2 * |s|
+    ensures is_palindrome(result)
+    ensures starts_with(result, s)
+    // post-conditions-end
+{
+    var rev := ""; var i := 0;
+    while i < |s|
+        invariant 0 <= i <= |s|
+        invariant |rev| == i
+        invariant forall k :: 0 <= k < i ==> rev[k] == s[|s| - 1 - k]
+        decreases |s| - i
+    {
+        rev := rev + s[|s| - 1 - i];
+        i := i + 1;
+    }
+    palindrome_concat_lemma(s, rev);
+    result := s + rev;
+}
+
+method reverse(str: string) returns (rev: string)
+    // post-conditions-start
+    ensures |rev| == |str|
+    ensures forall k :: 0 <= k < |str| ==> rev[k] == str[|str| - 1 - k]
+    // post-conditions-end
+{
+    rev := ""; var i := 0;
+    while i < |str|
+        invariant 0 <= i <= |str|
+        invariant |rev| == i
+        invariant forall k :: 0 <= k < i ==> rev[k] == str[|str| - 1 - k]
+        decreases |str| - i
+    {
+        rev := rev + str[|str| - 1 - i];
+        i := i + 1;
+    }
+    return;
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 43, Cột 19: type of left argument to + (seq<char>) must agree with the result type (char)
+-> Dòng mã vi phạm: `rev := rev + s[|s| - 1 - i];`
+-> Hướng dẫn khắc phục: LỖI LỆCH KIỂU SỐ NGUYÊN VÀ SỐ THỰC (real vs int): Thuộc tính `.Floor` trả về kiểu `int`, trong khi biến cần tính có kiểu `real`. Trong Dafny, phép toán giữa real và int KHÔNG TỰ ĐỘNG ÉP KIỂU. BẮT BUỘC phải ép kiểu số nguyên sang số thực: `(x.Floor as real)`. Câu lệnh gán chuẩn xác: `d := x - (x.Floor as real);`.
+Code:
+lemma palindrome_concat_lemma(s: string, rev: string)
+    requires |rev| == |s|
+    requires forall k :: 0 <= k < |s| ==> rev[k] == s[|s| - 1 - k]
+    ensures is_palindrome(s + rev)
+{
+    var res := s + rev;
+    forall k | 0 <= k < |res|
+        ensures res[k] == res[|res| - 1 - k]
+    {
+        if k < |s| {
+            assert res[k] == s[k];
+            assert res[|res| - 1 - k] == rev[|s| - 1 - k];
+        } else {
+            var j := k - |s|;
+            assert res[k] == rev[j];
+            assert res[|res| - 1 - k] == s[|s| - 1 - j];
+        }
+    }
+}
+
+function is_palindrome(s : string) : bool {
+    forall k :: 0 <= k < |s| ==> s[k] == s[|s| - 1 - k]
+}
+
+function starts_with(result : string, s : string) : bool {
+    |result| >= |s| && forall k :: 0 <= k < |s| ==> result[k] == s[k]
+}
+
+method make_palindrome(s: string) returns (result: string)
+    // post-conditions-start
+    ensures |result| <= 2 * |s|
+    ensures is_palindrome(result)
+    ensures starts_with(result, s)
+    // post-conditions-end
+{
+    var rev := ""; var i := 0;
+    while i < |s|
+        invariant 0 <= i <= |s|
+        invariant |rev| == i
+        invariant forall k :: 0 <= k < i ==> rev[k] == s[|s| - 1 - k]
+        decreases |s| - i
+    {
+        rev := rev + s[|s| - 1 - i];
+        i := i + 1;
+    }
+    palindrome_concat_lemma(s, rev);
+    result := s + rev;
+}
+
+method reverse(str: string) returns (rev: string)
+    // post-conditions-start
+    ensures |rev| == |str|
+    ensures forall k :: 0 <= k < |str| ==> rev[k] == str[|str| - 1 - k]
+    // post-conditions-end
+{
+    rev := ""; var i := 0;
+    while i < |str|
+        invariant 0 <= i <= |str|
+        invariant |rev| == i
+        invariant forall k :: 0 <= k < i ==> rev[k] == str[|str| - 1 - k]
+        decreases |str| - i
+    {
+        rev := rev + str[|str| - 1 - i];
+        i := i + 1;
+    }
+    return;
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 43, Cột 19: type of left argument to + (seq<char>) must agree with the result type (char)
+-> Dòng mã vi phạm: `rev := rev + s[|s| - 1 - i];`
+-> Hướng dẫn khắc phục: LỖI LỆCH KIỂU SỐ NGUYÊN VÀ SỐ THỰC (real vs int): Thuộc tính `.Floor` trả về kiểu `int`, trong khi biến cần tính có kiểu `real`. Trong Dafny, phép toán giữa real và int KHÔNG TỰ ĐỘNG ÉP KIỂU. BẮT BUỘC phải ép kiểu số nguyên sang số thực: `(x.Floor as real)`. Câu lệnh gán chuẩn xác: `d := x - (x.Floor as real);`.
+Code:
+lemma palindrome_concat_lemma(s: string, rev: string)
+    requires |rev| == |s|
+    requires forall k :: 0 <= k < |s| ==> rev[k] == s[|s| - 1 - k]
+    ensures is_palindrome(s + rev)
+{
+    var res := s + rev;
+    forall k | 0 <= k < |res|
+        ensures res[k] == res[|res| - 1 - k]
+    {
+        if k < |s| {
+            assert res[k] == s[k];
+            assert res[|res| - 1 - k] == rev[|s| - 1 - k];
+        } else {
+            var j := k - |s|;
+            assert res[k] == rev[j];
+            assert res[|res| - 1 - k] == s[|s| - 1 - j];
+        }
+    }
+}
+
+function is_palindrome(s : string) : bool {
+    forall k :: 0 <= k < |s| ==> s[k] == s[|s| - 1 - k]
+}
+
+function starts_with(result : string, s : string) : bool {
+    |result| >= |s| && forall k :: 0 <= k < |s| ==> result[k] == s[k]
+}
+
+method make_palindrome(s: string) returns (result: string)
+    // post-conditions-start
+    ensures |result| <= 2 * |s|
+    ensures is_palindrome(result)
+    ensures starts_with(result, s)
+    // post-conditions-end
+{
+    var rev := ""; var i := 0;
+    while i < |s|
+        invariant 0 <= i <= |s|
+        invariant |rev| == i
+        invariant forall k :: 0 <= k < i ==> rev[k] == s[|s| - 1 - k]
+        decreases |s| - i
+    {
+        rev := rev + s[|s| - 1 - i];
+        i := i + 1;
+    }
+    palindrome_concat_lemma(s, rev);
+    result := s + rev;
+}
+
+method reverse(str: string) returns (rev: string)
+    // post-conditions-start
+    ensures |rev| == |str|
+    ensures forall k :: 0 <= k < |str| ==> rev[k] == str[|str| - 1 - k]
+    // post-conditions-end
+{
+    rev := ""; var i := 0;
+    while i < |str|
+        invariant 0 <= i <= |str|
+        invariant |rev| == i
+        invariant forall k :: 0 <= k < i ==> rev[k] == str[|str| - 1 - k]
+        decreases |str| - i
+    {
+        rev := rev + str[|str| - 1 - i];
+        i := i + 1;
+    }
+    return;
+}
+

@@ -22,7 +22,7 @@ class LLMAgent:
         self,
         model_name: str = "ollama/qwen2.5-coder:7b",
         api_base: Optional[str] = None,
-        temperature: float = 0.2
+        temperature: float = 0.0
     ):
         """Khởi tạo agent với model và cấu hình kết nối."""
         self.model = model_name

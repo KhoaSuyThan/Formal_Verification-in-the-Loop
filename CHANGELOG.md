@@ -6,6 +6,17 @@ Tất cả các thay đổi đáng chú ý của dự án sẽ được ghi nh�
 
 ---
 
+## [0.8.1] - 2026-09-30: Chuẩn Hóa Nhiệt Độ Tất Định (Temperature = 0.0) & Tùy Biến Sidebar
+- **Chuẩn Hóa Nhiệt Độ Tất Định ([agents/llm_agent.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/agents/llm_agent.py))**:
+  - Đặt giá trị mặc định `temperature = 0.0` (Greedy Decoding) để loại bỏ tính ngẫu nhiên, đảm bảo 100% tính tái lập kết quả thực nghiệm chuẩn NCKH.
+- **Tùy Biến Trực Quan Sidebar ([app.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/app.py))**:
+  - Tích hợp thanh trượt `Temperature (0.0 - 0.5)` trong container "Cấu Hình Mô Hình" cho phép tùy biến trực tiếp trên Web Demo Streamlit.
+  - Đồng bộ truyền tham số `temperature` vào `LLMAgent` trong cả chế độ Đơn Lẻ và Hàng Loạt.
+- **Lưu Trữ Kiên Cố Lịch Sử Kiểm Định ([web_demo/helpers.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/web_demo/helpers.py))**:
+  - Bổ sung các hàm lưu và tải kiên cố kết quả đợt chạy đơn lẻ và hàng loạt vào `artifacts/results/last_single_run.json` và `last_batch_run.json`.
+  - Bộ kiểm thử `tests/test_persistent_history.py` đạt chuẩn 41/41 unit tests passed (100% green).
+
+
 ## [0.7.0] - 2026-09-29: Web Demo Streamlit Tương Tác & Chạy Hàng Loạt
 - **Giao Diện Streamlit ([app.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/app.py))**:
   - Hỗ trợ chế độ chạy Đơn Lẻ & Hàng Loạt (Batch Mode) với bảng tiến trình thời gian thực.
