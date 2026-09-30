@@ -228,14 +228,21 @@ class DiagnosticParser:
                 # Kiểm tra xem có phải hậu điều kiện dạng boolean cờ flag == (exists ...) không
                 if re.search(r'\b\w+\s*==\s*\(?\s*exists', related_content) or "returns (flag : bool)" in code:
                     return (
-                        f"HẬU ĐIỀU KIỆN DẠNG CỜ BOOLEAN TỒN TẠI BỊ VI PHẠM: `{related_content}`.\n"
-                        "[HÀNH ĐỘNG BẮT BUỘC]:\n"
-                        "Phương thức trả về kiểu boolean `flag` kiểm tra sự tồn tại của cặp phần tử thỏa mãn điều kiện.\n"
-                        "- Sử dụng 2 vòng lặp while: vòng ngoài `var i := 0; while i < |numbers| decreases |numbers| - i`, "
-                        "vòng trong `var j := i + 1; while j < |numbers| decreases |numbers| - j`.\n"
-                        "- Khi tìm thấy cặp thỏa mãn điều kiện: gán `flag := true; return;` ngay lập tức!\n"
-                        "- Nếu duyệt hết toàn bộ 2 vòng lặp mà không tìm thấy: gán `flag := false; return;`."
+                        f"HẬU ĐIỀU KIỆN DẠNG CỜ BOOLEAN TỒN TẠI (2-DIMENSIONAL SEARCH) BỊ VI PHẠM: `{related_content}`.\n"
+                        "[HÀNH ĐỘNG BẮT BUỘC - MẪU HÌNH BẤT BIẾN QUY NẠP 2 CHIỀU PHỦ ĐỊNH]:\n"
+                        "Để Z3 chứng minh được khi vòng lặp kết thúc mà `flag == false`, BẮT BUỘC phải có bất biến phủ định 2 lớp:\n"
+                        "1. Vòng lặp ngoài duyệt `i` từ `0` đến `|numbers|`:\n"
+                        "   `invariant 0 <= i <= |numbers|`\n"
+                        "   `invariant forall a: int, b: int :: 0 <= a < i && 0 <= b < |numbers| && a != b ==> !Condition(numbers[a], numbers[b])`\n"
+                        "   `decreases |numbers| - i`\n"
+                        "2. Vòng lặp trong duyệt `j` từ `0` đến `|numbers|`:\n"
+                        "   `invariant 0 <= j <= |numbers|`\n"
+                        "   `invariant forall b: int :: 0 <= b < j && b != i ==> !Condition(numbers[i], numbers[b])`\n"
+                        "   `decreases |numbers| - j`\n"
+                        "3. Khi tìm thấy phần tử thỏa mãn: `if i != j && Condition(numbers[i], numbers[j]) { flag := true; return; }`\n"
+                        "4. Ra khỏi 2 vòng lặp: `return;` (flag đã mang giá trị false ban đầu)."
                     )
+
                 seq_match = re.search(r'\|\s*(\w+)\s*\|', related_content)
                 seq_var = seq_match.group(1) if seq_match else "l"
                 elem_match = re.search(r'\b\w+\[\w+\]\s*==\s*(\w+)', related_content)
