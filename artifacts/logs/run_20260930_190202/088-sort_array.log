@@ -1,0 +1,147 @@
+=== BÀI TOÁN: 088-sort_array ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 91.27s
+Kết quả cuối: PASS
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: True
+Error Taxonomy: None
+Error Message: 
+Code:
+function insert(x: int, s: seq<int>): seq<int>
+  decreases |s|
+{
+  if |s| == 0 then [x]
+  else if x <= s[0] then [x] + s
+  else [s[0]] + insert(x, s[1..])
+}
+
+lemma insert_multiset(x: int, s: seq<int>)
+  ensures multiset(insert(x, s)) == multiset(s) + multiset{x}
+{
+  if |s| == 0 {
+  } else if x <= s[0] {
+    assert insert(x, s) == [x] + s;
+  } else {
+    insert_multiset(x, s[1..]);
+    assert s == [s[0]] + s[1..];
+    assert insert(x, s) == [s[0]] + insert(x, s[1..]);
+  }
+}
+
+lemma insert_len(x: int, s: seq<int>)
+  ensures |insert(x, s)| == |s| + 1
+{
+  if |s| == 0 {
+  } else if x <= s[0] {
+  } else {
+    insert_len(x, s[1..]);
+  }
+}
+
+predicate is_sorted(s: seq<int>) {
+  forall i, j :: 0 <= i < j < |s| ==> s[i] <= s[j]
+}
+
+lemma insert_sorted(x: int, s: seq<int>)
+  requires is_sorted(s)
+  ensures is_sorted(insert(x, s))
+{
+  if |s| == 0 {
+  } else if x <= s[0] {
+    forall i, j | 0 <= i < j < |insert(x, s)|
+      ensures insert(x, s)[i] <= insert(x, s)[j]
+    {
+      if i == 0 {
+      }
+    }
+  } else {
+    insert_sorted(x, s[1..]);
+    insert_len(x, s[1..]);
+    var rest := insert(x, s[1..]);
+    forall i, j | 0 <= i < j < |insert(x, s)|
+      ensures insert(x, s)[i] <= insert(x, s)[j]
+    {
+      if i == 0 {
+        if |s[1..]| == 0 || x <= s[1..][0] {
+          assert rest[0] == x;
+        } else {
+          assert rest[0] == s[1];
+        }
+      }
+    }
+  }
+}
+
+lemma reverse_sorted_lemma(asc: seq<int>, rev: seq<int>)
+  requires |rev| == |asc|
+  requires forall k :: 0 <= k < |asc| ==> rev[k] == asc[|asc| - 1 - k]
+  requires forall i, j :: 0 <= i < j < |asc| ==> asc[i] <= asc[j]
+  ensures forall i, j :: 0 <= i < j < |rev| ==> rev[i] >= rev[j]
+{
+  forall i, j | 0 <= i < j < |rev|
+    ensures rev[i] >= rev[j]
+  {
+    var a := |asc| - 1 - j;
+    var b := |asc| - 1 - i;
+    assert asc[a] <= asc[b];
+  }
+}
+
+method reverse(s: seq<int>) returns (rev: seq<int>)
+  // post-conditions-start
+  ensures |rev| == |s|
+  ensures forall k :: 0 <= k < |s| ==> rev[k] == s[|s| - 1 - k]
+  // post-conditions-end
+{
+  rev := [];
+  var i := 0;
+  while i < |s|
+        invariant 0 <= i <= |s|
+        invariant |rev| == i
+        invariant forall k :: 0 <= k < i ==> rev[k] == s[|s| - 1 - k]
+        decreases |s| - i
+    {rev := rev + [s[|s| - 1 - i]];
+    i := i + 1;
+  }
+}
+
+method SortSeq(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  ensures |sorted| == |s|
+  ensures multiset(s) == multiset(sorted)
+  // post-conditions-end
+{
+  sorted := [];
+  var i := 0;
+  while i < |s|
+        invariant 0 <= i <= |s|
+        invariant |sorted| == i
+        invariant is_sorted(sorted)
+        invariant multiset(sorted) == multiset(s[..i])
+        decreases |s| - i
+    {insert_len(s[i], sorted);
+    insert_sorted(s[i], sorted);
+    insert_multiset(s[i], sorted);
+    sorted := insert(s[i], sorted);
+    assert s[..i+1] == s[..i] + [s[i]];
+    i := i + 1;
+  }
+  assert s[..|s|] == s;
+}
+
+method sort_array(s: seq<int>) returns (sorted: seq<int>)
+  // post-conditions-start
+  ensures |sorted| == |s|
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 == 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] >= sorted[j]
+  ensures |s| > 0 && (s[0] + s[|s| - 1]) % 2 != 0 ==>
+    forall i, j :: 0 <= i < j < |sorted| ==> sorted[i] <= sorted[j]
+  // post-conditions-end
+{
+  if |s| == 0 { sorted := []; return; }
+  var asc := SortSeq(s);
+  if (s[0] + s[|s| - 1]) % 2 == 0 { var rev := reverse(asc); reverse_sorted_lemma(asc, rev); sorted := rev; } else { sorted := asc; }
+}
+

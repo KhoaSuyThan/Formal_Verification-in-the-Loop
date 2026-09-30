@@ -6,9 +6,9 @@ và trích xuất dữ liệu khoa học từ các file kết quả thực nghi�
 
 import difflib
 import json
-import os
+from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -170,3 +170,159 @@ def load_latest_summary_metrics() -> Optional[dict]:
             return json.load(f)
     except Exception:
         return None
+
+
+def save_last_single_run(
+    task_name: str,
+    task_label: str,
+    spec_content: str,
+    model_name: str,
+    max_k: int,
+    timeout_sec: int,
+    result_obj: Any,
+    elapsed: float,
+) -> None:
+    """Lưu trữ kiên cố kết quả kiểm định lượt đơn lẻ gần nhất vào artifacts/results/last_single_run.json."""
+    results_dir = PROJECT_ROOT / "artifacts" / "results"
+    results_dir.mkdir(parents=True, exist_ok=True)
+    target_file = results_dir / "last_single_run.json"
+
+    # Trích xuất lịch sử các lượt chạy từ đối tượng PipelineResult
+    history_data = []
+    if hasattr(result_obj, "history"):
+        for item in result_obj.history:
+            history_data.append({
+                "iteration": item.iteration,
+                "code": item.code,
+                "is_verified": item.is_verified,
+                "error_taxonomy": item.error_taxonomy,
+                "error_message": item.error_message,
+            })
+
+    data = {
+        "timestamp": datetime.now().strftime("%H:%M:%S %d/%m/%Y"),
+        "task_name": task_name,
+        "task_label": task_label,
+        "spec_content": spec_content,
+        "model_name": model_name,
+        "max_k": max_k,
+        "timeout_sec": timeout_sec,
+        "elapsed": round(elapsed, 2),
+        "is_success": getattr(result_obj, "is_success", False),
+        "total_iterations": getattr(result_obj, "total_iterations", 0),
+        "final_code": getattr(result_obj, "final_code", ""),
+        "failure_reason": getattr(result_obj, "failure_reason", ""),
+        "history": history_data,
+    }
+
+    try:
+        with open(target_file, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"Lỗi khi lưu last_single_run.json: {e}")
+
+
+def load_last_single_run() -> Optional[dict]:
+    """Tải kết quả kiểm định đơn lẻ gần nhất từ artifacts/results/last_single_run.json."""
+    target_file = PROJECT_ROOT / "artifacts" / "results" / "last_single_run.json"
+    if not target_file.is_file():
+        return None
+    try:
+        with open(target_file, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return None
+
+
+def clear_last_single_run() -> bool:
+    """Xóa bỏ file lưu trữ lịch sử lượt chạy đơn lẻ gần nhất."""
+    target_file = PROJECT_ROOT / "artifacts" / "results" / "last_single_run.json"
+    if target_file.is_file():
+        try:
+            target_file.unlink()
+            return True
+        except Exception:
+            return False
+    return False
+
+
+def dict_to_pipeline_result(data: dict) -> Tuple[Any, dict]:
+    """Chuyển đổi dữ liệu dict từ last_single_run.json thành đối tượng PipelineResult để hiển thị."""
+    from core.pipeline_controller import IterationLog, PipelineResult
+
+    history_logs = []
+    for h in data.get("history", []):
+        history_logs.append(
+            IterationLog(
+                iteration=h.get("iteration", 1),
+                code=h.get("code", ""),
+                is_spec_valid=h.get("is_spec_valid", True),
+                is_verified=h.get("is_verified", False),
+                error_message=h.get("error_message", ""),
+                error_taxonomy=h.get("error_taxonomy", ""),
+            )
+        )
+
+    res = PipelineResult(
+        task_name=data.get("task_name", ""),
+        is_success=data.get("is_success", False),
+        total_iterations=data.get("total_iterations", 0),
+        final_code=data.get("final_code", ""),
+        history=history_logs,
+        failure_reason=data.get("failure_reason", ""),
+    )
+    return res, data
+
+
+
+def save_last_batch_run(
+    results_list: List[dict],
+    total_batch_time: float,
+    model_name: str,
+    max_k: int,
+    timeout_sec: int,
+) -> None:
+    """Lưu trữ kiên cố kết quả đợt chạy hàng loạt gần nhất vào artifacts/results/last_batch_run.json."""
+    results_dir = PROJECT_ROOT / "artifacts" / "results"
+    results_dir.mkdir(parents=True, exist_ok=True)
+    target_file = results_dir / "last_batch_run.json"
+
+    data = {
+        "timestamp": datetime.now().strftime("%H:%M:%S %d/%m/%Y"),
+        "model_name": model_name,
+        "max_k": max_k,
+        "timeout_sec": timeout_sec,
+        "total_batch_time": round(total_batch_time, 2),
+        "results_list": results_list,
+    }
+
+    try:
+        with open(target_file, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"Lỗi khi lưu last_batch_run.json: {e}")
+
+
+def load_last_batch_run() -> Optional[dict]:
+    """Tải kết quả đợt chạy hàng loạt gần nhất từ artifacts/results/last_batch_run.json."""
+    target_file = PROJECT_ROOT / "artifacts" / "results" / "last_batch_run.json"
+    if not target_file.is_file():
+        return None
+    try:
+        with open(target_file, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return None
+
+
+def clear_last_batch_run() -> bool:
+    """Xóa bỏ file lưu trữ lịch sử đợt chạy hàng loạt gần nhất."""
+    target_file = PROJECT_ROOT / "artifacts" / "results" / "last_batch_run.json"
+    if target_file.is_file():
+        try:
+            target_file.unlink()
+            return True
+        except Exception:
+            return False
+    return False
+
