@@ -1,0 +1,38 @@
+{
+  "timestamp": "2026-10-01T20:33:07.393058",
+  "task_count": 1,
+  "max_attempts": 3,
+  "models_evaluated": [
+    "ollama/qwen2.5-coder:7b"
+  ],
+  "summaries": [
+    {
+      "model_name": "ollama/qwen2.5-coder:7b",
+      "display_name": "Qwen2.5-Coder-7B",
+      "model_type": "Local (Ollama)",
+      "total_tasks": 1,
+      "passed_tasks": 1,
+      "pass_at_1_count": 1,
+      "pass_at_k_count": 1,
+      "pass_at_1_rate": 100.0,
+      "pass_at_k_rate": 100.0,
+      "avg_duration_sec": 0.0,
+      "avg_repair_loops": 0.0,
+      "total_duration_sec": 0.0
+    }
+  ],
+  "detailed_results": {
+    "ollama/qwen2.5-coder:7b": [
+      {
+        "task_key": "[Clover] abs_val - Tìm giá trị tuyệt đối",
+        "task_name": "abs_val",
+        "group": "Clover",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 0.0,
+        "repair_loops": 0
+      }
+    ]
+  },
+  "latex_table": "\\begin{table}[htbp]\n\\centering\n\\caption{Cross-Model Verification Performance Comparison}\n\\label{tab:cross_model_eval}\n\\begin{tabular}{lcccccc}\n\\toprule\n\\textbf{Model} & \\textbf{Type} & \\textbf{Tasks} & \\textbf{Pass@1 (\\%)} & \\textbf{Pass@K (\\%)} & \\textbf{$T_{avg}$ (s)} & \\textbf{Avg Loops} \\\\\n\\midrule\nQwen2.5-Coder-7B & Local (Ollama) & 1 & 100.0\\% & 100.0\\% & 0.0 & 0.0 \\\\\n\\bottomrule\n\\end{tabular}\n\\end{table}"
+}

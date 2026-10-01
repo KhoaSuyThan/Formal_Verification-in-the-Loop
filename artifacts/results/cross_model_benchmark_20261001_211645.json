@@ -1,0 +1,333 @@
+{
+  "timestamp": "2026-10-01T20:46:35.213109",
+  "task_count": 10,
+  "max_attempts": 3,
+  "models_evaluated": [
+    "ollama/qwen2.5-coder:7b",
+    "gemini-3.6-flash",
+    "ollama/llama3.1:8b"
+  ],
+  "summaries": [
+    {
+      "model_name": "ollama/qwen2.5-coder:7b",
+      "display_name": "Qwen2.5-Coder-7B",
+      "model_type": "Local (Ollama)",
+      "total_tasks": 10,
+      "passed_tasks": 10,
+      "pass_at_1_count": 9,
+      "pass_at_k_count": 10,
+      "pass_at_1_rate": 90.0,
+      "pass_at_k_rate": 100.0,
+      "avg_duration_sec": 47.6,
+      "avg_repair_loops": 0.1,
+      "total_duration_sec": 475.96
+    },
+    {
+      "model_name": "gemini-3.6-flash",
+      "display_name": "Gemini 3.6 Flash",
+      "model_type": "Cloud (Google AI)",
+      "total_tasks": 10,
+      "passed_tasks": 1,
+      "pass_at_1_count": 1,
+      "pass_at_k_count": 1,
+      "pass_at_1_rate": 10.0,
+      "pass_at_k_rate": 10.0,
+      "avg_duration_sec": 24.47,
+      "avg_repair_loops": 0.0,
+      "total_duration_sec": 244.7
+    },
+    {
+      "model_name": "ollama/llama3.1:8b",
+      "display_name": "LLaMA-3.1-8B",
+      "model_type": "Local (Ollama)",
+      "total_tasks": 10,
+      "passed_tasks": 6,
+      "pass_at_1_count": 5,
+      "pass_at_k_count": 6,
+      "pass_at_1_rate": 50.0,
+      "pass_at_k_rate": 60.0,
+      "avg_duration_sec": 108.96,
+      "avg_repair_loops": 0.6,
+      "total_duration_sec": 1089.6
+    }
+  ],
+  "detailed_results": {
+    "ollama/qwen2.5-coder:7b": [
+      {
+        "task_key": "[HumanEval] 002-truncate - Tách phần thập phân số thực",
+        "task_name": "002-truncate",
+        "group": "HumanEval",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 29.24,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[HumanEval] 013-greatest_common_divisor - Thuật toán Euclid tìm GCD",
+        "task_name": "013-greatest_common_divisor",
+        "group": "HumanEval",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 27.11,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[HumanEval] 031-is-prime - Kiểm tra số nguyên tố tuyến tính",
+        "task_name": "031-is-prime",
+        "group": "HumanEval",
+        "success": true,
+        "iterations": 2,
+        "duration_sec": 83.3,
+        "repair_loops": 1
+      },
+      {
+        "task_key": "[HumanEval] 035-max-element - Cực đại mảng với bất biến song hành",
+        "task_name": "035-max-element",
+        "group": "HumanEval",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 31.7,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[HumanEval] 052-below-threshold - Kiểm tra ngưỡng toàn thể của mảng",
+        "task_name": "052-below-threshold",
+        "group": "HumanEval",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 23.9,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[HumanEval] 055-fib - Thuật toán lặp đồng bộ đệ quy Fibonacci",
+        "task_name": "055-fib",
+        "group": "HumanEval",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 28.71,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[HumanEval] 000-has_close_elements - Kiểm tra khoảng cách 2 phần tử",
+        "task_name": "000-has_close_elements",
+        "group": "HumanEval",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 43.12,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[HumanEval] 010-is_palindrome - Kiểm tra chuỗi đối xứng",
+        "task_name": "010-is_palindrome",
+        "group": "HumanEval",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 65.84,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[HumanEval] 077-iscube - Kiểm tra số lập phương",
+        "task_name": "077-iscube",
+        "group": "HumanEval",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 51.99,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[HumanEval] 088-sort_array - Sắp xếp mảng",
+        "task_name": "088-sort_array",
+        "group": "HumanEval",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 91.04,
+        "repair_loops": 0
+      }
+    ],
+    "gemini-3.6-flash": [
+      {
+        "task_key": "[HumanEval] 002-truncate - Tách phần thập phân số thực",
+        "task_name": "002-truncate",
+        "group": "HumanEval",
+        "success": false,
+        "iterations": 1,
+        "duration_sec": 7.74,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[HumanEval] 013-greatest_common_divisor - Thuật toán Euclid tìm GCD",
+        "task_name": "013-greatest_common_divisor",
+        "group": "HumanEval",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 11.95,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[HumanEval] 031-is-prime - Kiểm tra số nguyên tố tuyến tính",
+        "task_name": "031-is-prime",
+        "group": "HumanEval",
+        "success": false,
+        "iterations": 1,
+        "duration_sec": 4.36,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[HumanEval] 035-max-element - Cực đại mảng với bất biến song hành",
+        "task_name": "035-max-element",
+        "group": "HumanEval",
+        "success": false,
+        "iterations": 1,
+        "duration_sec": 31.5,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[HumanEval] 052-below-threshold - Kiểm tra ngưỡng toàn thể của mảng",
+        "task_name": "052-below-threshold",
+        "group": "HumanEval",
+        "success": false,
+        "iterations": 1,
+        "duration_sec": 31.62,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[HumanEval] 055-fib - Thuật toán lặp đồng bộ đệ quy Fibonacci",
+        "task_name": "055-fib",
+        "group": "HumanEval",
+        "success": false,
+        "iterations": 1,
+        "duration_sec": 31.41,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[HumanEval] 000-has_close_elements - Kiểm tra khoảng cách 2 phần tử",
+        "task_name": "000-has_close_elements",
+        "group": "HumanEval",
+        "success": false,
+        "iterations": 1,
+        "duration_sec": 31.41,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[HumanEval] 010-is_palindrome - Kiểm tra chuỗi đối xứng",
+        "task_name": "010-is_palindrome",
+        "group": "HumanEval",
+        "success": false,
+        "iterations": 1,
+        "duration_sec": 31.37,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[HumanEval] 077-iscube - Kiểm tra số lập phương",
+        "task_name": "077-iscube",
+        "group": "HumanEval",
+        "success": false,
+        "iterations": 1,
+        "duration_sec": 31.88,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[HumanEval] 088-sort_array - Sắp xếp mảng",
+        "task_name": "088-sort_array",
+        "group": "HumanEval",
+        "success": false,
+        "iterations": 1,
+        "duration_sec": 31.46,
+        "repair_loops": 0
+      }
+    ],
+    "ollama/llama3.1:8b": [
+      {
+        "task_key": "[HumanEval] 002-truncate - Tách phần thập phân số thực",
+        "task_name": "002-truncate",
+        "group": "HumanEval",
+        "success": true,
+        "iterations": 2,
+        "duration_sec": 61.32,
+        "repair_loops": 1
+      },
+      {
+        "task_key": "[HumanEval] 013-greatest_common_divisor - Thuật toán Euclid tìm GCD",
+        "task_name": "013-greatest_common_divisor",
+        "group": "HumanEval",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 30.08,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[HumanEval] 031-is-prime - Kiểm tra số nguyên tố tuyến tính",
+        "task_name": "031-is-prime",
+        "group": "HumanEval",
+        "success": false,
+        "iterations": 3,
+        "duration_sec": 156.68,
+        "repair_loops": 2
+      },
+      {
+        "task_key": "[HumanEval] 035-max-element - Cực đại mảng với bất biến song hành",
+        "task_name": "035-max-element",
+        "group": "HumanEval",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 39.86,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[HumanEval] 052-below-threshold - Kiểm tra ngưỡng toàn thể của mảng",
+        "task_name": "052-below-threshold",
+        "group": "HumanEval",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 25.33,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[HumanEval] 055-fib - Thuật toán lặp đồng bộ đệ quy Fibonacci",
+        "task_name": "055-fib",
+        "group": "HumanEval",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 42.26,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[HumanEval] 000-has_close_elements - Kiểm tra khoảng cách 2 phần tử",
+        "task_name": "000-has_close_elements",
+        "group": "HumanEval",
+        "success": false,
+        "iterations": 3,
+        "duration_sec": 342.49,
+        "repair_loops": 2
+      },
+      {
+        "task_key": "[HumanEval] 010-is_palindrome - Kiểm tra chuỗi đối xứng",
+        "task_name": "010-is_palindrome",
+        "group": "HumanEval",
+        "success": false,
+        "iterations": 2,
+        "duration_sec": 252.88,
+        "repair_loops": 1
+      },
+      {
+        "task_key": "[HumanEval] 077-iscube - Kiểm tra số lập phương",
+        "task_name": "077-iscube",
+        "group": "HumanEval",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 65.77,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[HumanEval] 088-sort_array - Sắp xếp mảng",
+        "task_name": "088-sort_array",
+        "group": "HumanEval",
+        "success": false,
+        "iterations": 1,
+        "duration_sec": 72.94,
+        "repair_loops": 0
+      }
+    ]
+  },
+  "latex_table": "\\begin{table}[htbp]\n\\centering\n\\caption{Cross-Model Verification Performance Comparison}\n\\label{tab:cross_model_eval}\n\\begin{tabular}{lcccccc}\n\\toprule\n\\textbf{Model} & \\textbf{Type} & \\textbf{Tasks} & \\textbf{Pass@1 (\\%)} & \\textbf{Pass@K (\\%)} & \\textbf{$T_{avg}$ (s)} & \\textbf{Avg Loops} \\\\\n\\midrule\nQwen2.5-Coder-7B & Local (Ollama) & 10 & 90.0\\% & 100.0\\% & 47.6 & 0.1 \\\\\nGemini 3.6 Flash & Cloud (Google AI) & 10 & 10.0\\% & 10.0\\% & 24.47 & 0.0 \\\\\nLLaMA-3.1-8B & Local (Ollama) & 10 & 50.0\\% & 60.0\\% & 108.96 & 0.6 \\\\\n\\bottomrule\n\\end{tabular}\n\\end{table}"
+}
