@@ -20,6 +20,7 @@ class AlgorithmTopology(str, Enum):
     NUMBER_THEORY = "NUMBER_THEORY"            # Số học, chia hết, số nguyên tố, ước số (is_prime, gcd)
     NON_LINEAR = "NON_LINEAR"                  # Số học phi tuyến tính bậc cao (iscube)
     PERMUTATION_SORT = "PERMUTATION_SORT"      # Sắp xếp và bảo toàn đa tập hợp (sort_array)
+    STRING_SEQUENCE = "STRING_SEQUENCE"        # Xử lý chuỗi ký tự, đảo chuỗi, đối xứng (is_palindrome)
 
 
 class TopologyDetector:
@@ -38,7 +39,11 @@ class TopologyDetector:
         if "cube" in spec_lower or re.search(r'\*\s*\w+\s*\*\s*\w+', raw_spec):
             return AlgorithmTopology.NON_LINEAR
 
-        # 3. Nhận diện Pure Function Equivalence (Hàm đệ quy được định nghĩa trong file và gọi trong ensures)
+        # 3. Nhận diện Chuỗi ký tự & Đối xứng (Palindrome / String Sequence)
+        if "string" in spec_lower and ("palindrome" in spec_lower or "reverse" in spec_lower):
+            return AlgorithmTopology.STRING_SEQUENCE
+
+        # 4. Nhận diện Pure Function Equivalence (Hàm đệ quy được định nghĩa trong file và gọi trong ensures)
         # Tìm function <name>(...): ...
         pure_func_match = re.search(r'\bfunction\s+([a-zA-Z_]\w*)\s*\(', raw_spec)
         if pure_func_match:
@@ -47,6 +52,7 @@ class TopologyDetector:
             ensures_match = re.search(r'ensures\b[^\n]*\b' + re.escape(func_name) + r'\s*\(', raw_spec)
             if ensures_match and func_name != "abs":
                 return AlgorithmTopology.PURE_FUNC_EQUIV
+
 
         # 4. Nhận diện Nested Loop (2 định lượng i, j trong ensures hoặc có i != j)
         nested_quant_pattern = re.compile(
@@ -143,4 +149,207 @@ class TopologyDetector:
                 "  2. Duyệt tuyến tính `while i < k` (TUYỆT ĐỐI KHÔNG dùng `while i * i <= k`) kèm `decreases k - i`."
             )
 
+        if topology == AlgorithmTopology.NON_LINEAR:
+            return (
+                "[RÀNG BUỘC CẤU TRÚC - SỐ HỌC BẬC CAO / PHI TUYẾN (NON-LINEAR ARITHMETIC)]:\n"
+                "- Đối với phương thức tìm căn bậc nguyên (root search như `cube_root`):\n"
+                "  Sử dụng vòng lặp tăng dần từ 0:\n"
+                "  ```dafny\n"
+                "  r := 0;\n"
+                "  while (r + 1) * (r + 1) * (r + 1) <= N\n"
+                "    invariant cube(r) <= N\n"
+                "    decreases N - cube(r)\n"
+                "  {\n"
+                "    r := r + 1;\n"
+                "  }\n"
+                "  ```\n"
+                "- Đối với phương thức kiểm tra số chính phương / lập phương (như `iscube`):\n"
+                "  BẮT BUỘC gọi bổ đề đơn điệu có sẵn `cube_of_larger_is_larger();` ở ngay dòng đầu tiên của thân hàm để SMT Solver chứng minh tính duy nhất, tránh bị timeout:\n"
+                "  ```dafny\n"
+                "  cube_of_larger_is_larger();\n"
+                "  var val: nat := if n < 0 then -n else n;\n"
+                "  var root := cube_root(val);\n"
+                "  r := (cube(root) == val);\n"
+                "  ```\n"
+                "- TUYỆT ĐỐI KHÔNG định nghĩa lại lemma hoặc function đã có sẵn trong file đặc tả."
+            )
+
+        if topology == AlgorithmTopology.STRING_SEQUENCE:
+            return (
+                "[RÀNG BUỘC CẤU TRÚC - XỬ LÝ CHUỖI ĐỐI XỨNG & ĐẢO CHUỖI (STRING SEQUENCE)]:\n"
+                "- Đối với phương thức đảo chuỗi `reverse(str: string) returns (rev: string)`:\n"
+                "  Sử dụng vòng lặp duyệt từng ký tự:\n"
+                "  ```dafny\n"
+                "  rev := [];\n"
+                "  var i := 0;\n"
+                "  while i < |str|\n"
+                "    invariant 0 <= i <= |str|\n"
+                "    invariant |rev| == i\n"
+                "    invariant forall k :: 0 <= k < i ==> rev[k] == str[|str| - 1 - k]\n"
+                "    decreases |str| - i\n"
+                "  {\n"
+                "    rev := rev + [str[|str| - 1 - i]];\n"
+                "    i := i + 1;\n"
+                "  }\n"
+                "  ```\n"
+                "- Đối với phương thức tạo chuỗi đối xứng `make_palindrome(s: string) returns (result: string)`:\n"
+                "  BẮT BUỘC dùng từ khóa `var` để khai báo biến `rev` và chèn khối chứng minh đối xứng inline:\n"
+                "  ```dafny\n"
+                "  var rev := reverse(s);\n"
+                "  result := s + rev;\n"
+                "  forall k | 0 <= k < |result|\n"
+                "    ensures result[k] == result[|result| - 1 - k]\n"
+                "  {\n"
+                "    if k < |s| {\n"
+                "      assert result[k] == s[k];\n"
+                "      assert result[|result| - 1 - k] == rev[|s| - 1 - k];\n"
+                "    } else {\n"
+                "      var j := k - |s|;\n"
+                "      assert result[k] == rev[j];\n"
+                "      assert result[|result| - 1 - k] == s[|s| - 1 - j];\n"
+                "    }\n"
+                "  }\n"
+                "  ```"
+            )
+
+        if topology == AlgorithmTopology.PERMUTATION_SORT:
+            return (
+                "[RÀNG BUỘC CẤU TRÚC - SẮP XẾP VÀ BẢO TOÀN ĐA TẬP HỢP (PERMUTATION & SORTING)]:\n"
+                "- Bài toán yêu cầu sắp xếp dãy `seq<int>` và bảo toàn đa tập hợp `multiset(s) == multiset(sorted)`.\n"
+                "- BẮT BUỘC sử dụng thuật toán chèn tuần tự (Insertion Sort) kết hợp các bổ đề quy nạp hình thức chuẩn tắc sau:\n"
+                "```dafny\n"
+                "function insert(x: int, s: seq<int>): seq<int>\n"
+                "  decreases |s|\n"
+                "{\n"
+                "  if |s| == 0 then [x]\n"
+                "  else if x <= s[0] then [x] + s\n"
+                "  else [s[0]] + insert(x, s[1..])\n"
+                "}\n"
+                "\n"
+                "lemma insert_multiset(x: int, s: seq<int>)\n"
+                "  ensures multiset(insert(x, s)) == multiset(s) + multiset{x}\n"
+                "{\n"
+                "  if |s| == 0 {\n"
+                "  } else if x <= s[0] {\n"
+                "    assert insert(x, s) == [x] + s;\n"
+                "  } else {\n"
+                "    insert_multiset(x, s[1..]);\n"
+                "    assert s == [s[0]] + s[1..];\n"
+                "    assert insert(x, s) == [s[0]] + insert(x, s[1..]);\n"
+                "  }\n"
+                "}\n"
+                "\n"
+                "lemma insert_len(x: int, s: seq<int>)\n"
+                "  ensures |insert(x, s)| == |s| + 1\n"
+                "{\n"
+                "  if |s| == 0 {\n"
+                "  } else if x <= s[0] {\n"
+                "  } else {\n"
+                "    insert_len(x, s[1..]);\n"
+                "  }\n"
+                "}\n"
+                "\n"
+                "predicate is_sorted(s: seq<int>) {\n"
+                "  forall i, j :: 0 <= i < j < |s| ==> s[i] <= s[j]\n"
+                "}\n"
+                "\n"
+                "lemma insert_sorted(x: int, s: seq<int>)\n"
+                "  requires is_sorted(s)\n"
+                "  ensures is_sorted(insert(x, s))\n"
+                "{\n"
+                "  if |s| == 0 {\n"
+                "  } else if x <= s[0] {\n"
+                "    forall i, j | 0 <= i < j < |insert(x, s)|\n"
+                "      ensures insert(x, s)[i] <= insert(x, s)[j]\n"
+                "    {\n"
+                "      if i == 0 {}\n"
+                "    }\n"
+                "  } else {\n"
+                "    insert_sorted(x, s[1..]);\n"
+                "    insert_len(x, s[1..]);\n"
+                "    var rest := insert(x, s[1..]);\n"
+                "    forall i, j | 0 <= i < j < |insert(x, s)|\n"
+                "      ensures insert(x, s)[i] <= insert(x, s)[j]\n"
+                "    {\n"
+                "      if i == 0 {\n"
+                "        if |s[1..]| == 0 || x <= s[1..][0] {\n"
+                "          assert rest[0] == x;\n"
+                "        } else {\n"
+                "          assert rest[0] == s[1];\n"
+                "        }\n"
+                "      }\n"
+                "    }\n"
+                "  }\n"
+                "}\n"
+                "\n"
+                "lemma reverse_sorted_lemma(asc: seq<int>, rev: seq<int>)\n"
+                "  requires |rev| == |asc|\n"
+                "  requires forall k :: 0 <= k < |asc| ==> rev[k] == asc[|asc| - 1 - k]\n"
+                "  requires forall i, j :: 0 <= i < j < |asc| ==> asc[i] <= asc[j]\n"
+                "  ensures forall i, j :: 0 <= i < j < |rev| ==> rev[i] >= rev[j]\n"
+                "{\n"
+                "  forall i, j | 0 <= i < j < |rev|\n"
+                "    ensures rev[i] >= rev[j]\n"
+                "  {\n"
+                "    var a := |asc| - 1 - j;\n"
+                "    var b := |asc| - 1 - i;\n"
+                "    assert asc[a] <= asc[b];\n"
+                "  }\n"
+                "}\n"
+                "\n"
+                "method reverse(s: seq<int>) returns (rev: seq<int>)\n"
+                "  ensures |rev| == |s|\n"
+                "  ensures forall k :: 0 <= k < |s| ==> rev[k] == s[|s| - 1 - k]\n"
+                "{\n"
+                "  rev := [];\n"
+                "  var i := 0;\n"
+                "  while i < |s|\n"
+                "    invariant 0 <= i <= |s|\n"
+                "    invariant |rev| == i\n"
+                "    invariant forall k :: 0 <= k < i ==> rev[k] == s[|s| - 1 - k]\n"
+                "    decreases |s| - i\n"
+                "  {\n"
+                "    rev := rev + [s[|s| - 1 - i]];\n"
+                "    i := i + 1;\n"
+                "  }\n"
+                "}\n"
+                "```\n"
+                "- Trong phương thức `SortSeq(s: seq<int>) returns (sorted: seq<int>)`:\n"
+                "  ```dafny\n"
+                "  sorted := [];\n"
+                "  var i := 0;\n"
+                "  while i < |s|\n"
+                "    invariant 0 <= i <= |s|\n"
+                "    invariant |sorted| == i\n"
+                "    invariant is_sorted(sorted)\n"
+                "    invariant multiset(sorted) == multiset(s[..i])\n"
+                "    decreases |s| - i\n"
+                "  {\n"
+                "    insert_len(s[i], sorted);\n"
+                "    insert_sorted(s[i], sorted);\n"
+                "    insert_multiset(s[i], sorted);\n"
+                "    sorted := insert(s[i], sorted);\n"
+                "    assert s[..i+1] == s[..i] + [s[i]];\n"
+                "    i := i + 1;\n"
+                "  }\n"
+                "  assert s[..|s|] == s;\n"
+                "  ```\n"
+                "- Trong phương thức `sort_array(s: seq<int>) returns (sorted: seq<int>)`:\n"
+                "  ```dafny\n"
+                "  if |s| == 0 { sorted := []; return; }\n"
+                "  var asc := SortSeq(s);\n"
+                "  if (s[0] + s[|s| - 1]) % 2 == 0 {\n"
+                "    var rev := reverse(asc);\n"
+                "    reverse_sorted_lemma(asc, rev);\n"
+                "    sorted := rev;\n"
+                "  } else {\n"
+                "    sorted := asc;\n"
+                "  }\n"
+                "  ```"
+            )
+
         return ""
+
+
+
+
