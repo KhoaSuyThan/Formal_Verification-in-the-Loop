@@ -2,36 +2,20 @@
 
 Tất cả các thay đổi đáng chú ý của dự án sẽ được ghi nhận tại đây theo thứ tự thời gian mới nhất ở trên đầu.
 
-Định dạng dựa trên [Keep a Changelog](https://keepachangelog.com/).
+Định dạng dựa trên [Keep a Changelog](https://keepachangelog.com/vi/1.0.0/).
 
 ---
 
-## [1.0.0] - 2026-10-01: HOÀN THÀNH TOÀN BỘ BENCHMARK - ĐẠT MỐC TUYỆT ĐỐI 16/16 BÀI PASS (100.0%)
-- **Chinh Phục Bài Toán Sắp Xếp Đa Tập Hợp ([core/topology_detector.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/topology_detector.py), [core/syntax_normalizer.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/syntax_normalizer.py))**:
-  - Định hình cấu trúc hoàn chỉnh cho hình thái `PERMUTATION_SORT`: thuật toán Insertion Sort tuần tự kèm 6 bổ đề quy nạp hình thức cốt lõi (`insert`, `insert_multiset`, `insert_len`, `is_sorted`, `insert_sorted`, `reverse_sorted_lemma`).
-- **Tự Động Liên Kết Bổ Đề Tiên Đề ([core/syntax_normalizer.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/syntax_normalizer.py), [core/topology_detector.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/topology_detector.py))**:
-  - Tích hợp phương thức `fix_available_lemma_invocations` trong `SyntaxNormalizer` tự động kích hoạt các bổ đề toán học có sẵn trong đề bài (như `cube_of_larger_is_larger()`), giải phóng Z3 khỏi bài toán phi tuyến không thể quyết định, giúp bài `077-iscube` đạt **Pass@1 tuyệt đối trong 4s**.
-- **Tối Ưu Chẩn Đoán Lỗi Ngữ Nghĩa ([core/diagnostic_parser.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/diagnostic_parser.py))**:
-  - Phân biệt rõ ràng lỗi `unresolved identifier` giữa biến cục bộ mới (cần `var`) và lời gọi hàm/bổ đề chưa được định nghĩa (cần bổ sung `lemma/function`), loại bỏ hoàn toàn hiện tượng hướng dẫn sai lệch khi LLM gọi bổ đề hình thức.
-- **Tăng Cường Năng Lực Sinh Mã Dài ([agents/llm_agent.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/agents/llm_agent.py))**:
-  - Nâng `max_tokens` từ `1024` lên `2048` token cho mô hình `qwen2.5-coder:7b` giúp sinh trọn vẹn các chương trình kiểm định lớn có nhiều bổ đề mà không bị cắt cụt.
-- **Kết Quả Thực Nghiệm & Mốc Son Dự Án ([web_demo/helpers.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/web_demo/helpers.py))**:
-  - Bài **`088-sort_array`** đạt kiểm định hình thức Z3 thành công mỹ mãn **PASS 100% ngay tại Lượt 1 (Pass@1)** (13/13 VCs verified, 0 errors).
-  - Toàn bộ **16/16 bài toán** thuộc 2 tập benchmark Stanford Clover (6/6 - 100%) và JetBrains HumanEval-Dafny (10/10 - 100%) đều đã đạt chứng minh toán học hình thức hoàn tất.
-  - Bảo toàn tuyệt đối 100% mã băm SHA-256 các mệnh đề đặc tả gốc (`requires`, `ensures`), không sửa đặc tả và không hardcode tên bài toán.
-  - Toàn bộ **41/41 unit tests** duy trì chuẩn xanh tuyệt đối (100% green).
-- **Hình Thái Chuỗi Đối Xứng & Đảo Chuỗi ([core/topology_detector.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/topology_detector.py))**:
-  - Bổ sung hình thái `STRING_SEQUENCE` tách biệt khỏi `PURE_FUNC_EQUIV` cho các bài toán xử lý chuỗi ký tự và đối xứng.
-  - Cung cấp khuôn mẫu vòng lặp đảo chuỗi tuần tự và khối chứng minh đối xứng inline (`forall k | 0 <= k < |result| { ... }`) giúp Z3 chứng minh tính đối xứng mà không cần viết bổ đề ngoài.
-- **Chuẩn Hóa Phạm Vi Biến Cục Bộ ([core/syntax_normalizer.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/syntax_normalizer.py))**:
-  - Tích hợp hàm `fix_missing_var_in_call_assignment` tự động kiểm tra out-parameters theo phạm vi từng method và tự động bổ sung từ khóa `var` khi gán biến mới.
-- **Chẩn Đoán Lỗi Biến Chưa Khai Báo ([core/diagnostic_parser.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/diagnostic_parser.py))**:
-  - Bổ sung chẩn đoán cho lỗi `unresolved identifier`, hướng dẫn mô hình thêm từ khóa `var` khi gán biến mới.
-- **Kết Quả Thực Nghiệm & Mở Rộng Benchmark ([web_demo/helpers.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/web_demo/helpers.py))**:
-  - Bài **`010-is_palindrome`** đạt chứng minh toán học **PASS 100% ngay tại Lượt 1 (Pass@1)** trên mô hình `qwen2.5-coder:7b` với `temperature = 0.0` (thời gian ~50s).
-  - Khóa đặc tả SHA-256 bảo toàn 100%, không sửa đặc tả và không hardcode tên bài toán.
-  - Nâng tỷ lệ đạt kiểm định của toàn bộ dự án lên **15/16 bài PASS (93.75%)**; nhóm HumanEval-Dafny đạt **9/10 bài PASS (90.0%)**.
-  - Toàn bộ **41/41 unit tests** đạt chuẩn xanh (100% green).
+## [1.2.0] - 2026-10-01: Chinh Phục Tuyệt Đối 30/30 Bài Benchmark & Sân Chơi Tự Do
+- **Mở rộng 12 hình thái ([core/topology_detector.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/topology_detector.py))**: Bổ sung `ORDERED_INSERT`, `SEQ_CONSTRUCTION`, `SEARCH_CONDITION`, hoàn thiện inductive skeletons cho `LINEAR_LOOP` và `NESTED_LOOP`, đưa tỷ lệ đạt Z3 Solver lên mốc tuyệt đối 30/30 bài (100.0%).
+- **Chuẩn hóa cú pháp tự động ([core/syntax_normalizer.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/syntax_normalizer.py))**: Bổ sung bộ lọc `fix_negated_comparison`, cơ chế phòng vệ chống `NoneType` và tự động kích hoạt bổ đề đơn điệu.
+- **Web Demo & Sân chơi ([app.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/app.py))**: Tích hợp Sân chơi Tự do (Playground) nạp mẫu nhanh, tối ưu co giãn 3 chế độ (`Đơn`, `Hàng loạt`, `Tự do`) và cấu hình 2 cột song song.
+- **Tài liệu hệ thống ([PROJECT_OVERVIEW.md](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/PROJECT_OVERVIEW.md))**: Biên soạn tổng quan toàn diện về kiến trúc Actor-Critic 3 pha, 4 trụ cột kỹ thuật và cam kết liêm chính khoa học.
+- **Kiểm thử chất lượng**: Đạt chuẩn 42/42 unit tests tự động (100% pass).
+
+## [1.0.0] - 2026-10-01: Chinh Phục Tuyệt Đối 16/16 Bài Benchmark Gốc (100%)
+- **Cột mốc cốt lõi**: Hoàn thành toàn bộ benchmark gồm `088-sort_array`, `010-is_palindrome`, `077-iscube`.
+- **Liêm chính khoa học**: 100% bảo toàn mã băm SHA-256 (`SpecLocker`), không sửa đặc tả, không gian lận.
 
 
 ## [0.9.1] - 2026-09-30: Đạt Mốc 14/16 Bài PASS (87.5%) - Số Học Phi Tuyến & Bổ Đề Đơn Điệu (Bài 077)

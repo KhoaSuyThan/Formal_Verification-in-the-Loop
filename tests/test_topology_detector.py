@@ -81,6 +81,36 @@ def test_detect_sort():
     assert TopologyDetector.detect(sort_spec) == AlgorithmTopology.PERMUTATION_SORT
 
 
+def test_detect_advanced_topologies():
+    is_sorted_spec = """method is_array_sorted(s: seq<int>) returns (sorted: bool)
+  ensures sorted <==> forall i, j :: 0 <= i < j < |s| ==> s[i] <= s[j]
+"""
+    assert TopologyDetector.detect(is_sorted_spec) == AlgorithmTopology.NESTED_LOOP
+
+    all_unique_spec = """method all_unique(s: seq<int>) returns (unique: bool)
+  ensures unique <==> forall i, j :: 0 <= i < j < |s| ==> s[i] != s[j]
+"""
+    assert TopologyDetector.detect(all_unique_spec) == AlgorithmTopology.NESTED_LOOP
+
+    sorted_insert_spec = """method sorted_insert(s: seq<int>, x: int) returns (res: seq<int>)
+  ensures |res| == |s| + 1
+  ensures multiset(res) == multiset(s) + multiset{x}
+"""
+    assert TopologyDetector.detect(sorted_insert_spec) == AlgorithmTopology.ORDERED_INSERT
+
+    copy_spec = """method copy_array(s: seq<int>) returns (res: seq<int>)
+  ensures |res| == |s|
+  ensures forall k :: 0 <= k < |s| ==> res[k] == s[k]
+"""
+    assert TopologyDetector.detect(copy_spec) == AlgorithmTopology.SEQ_CONSTRUCTION
+
+    search_last_spec = """method linear_search_last(s: seq<int>, key: int) returns (index: int)
+  ensures -1 <= index < |s|
+  ensures index >= 0 ==> s[index] == key && (forall k :: index < k < |s| ==> s[k] != key)
+"""
+    assert TopologyDetector.detect(search_last_spec) == AlgorithmTopology.SEARCH_CONDITION
+
+
 if __name__ == "__main__":
     test_detect_direct()
     test_detect_pure_func_equiv()
@@ -89,4 +119,5 @@ if __name__ == "__main__":
     test_detect_number_theory()
     test_detect_non_linear()
     test_detect_sort()
+    test_detect_advanced_topologies()
     print("ALL TopologyDetector TESTS PASSED!")

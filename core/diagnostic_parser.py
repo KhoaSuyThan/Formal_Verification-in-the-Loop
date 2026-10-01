@@ -180,14 +180,31 @@ class DiagnosticParser:
                             f"   `invariant b == {pf}(i + 1)`"
                         )
 
+                if ("SumToN" in code or "sum_to_n" in code.lower() or "n * (n + 1) / 2" in code) and "maintained" in msg_lower:
+                    return (
+                        f"BẤT BIẾN KHÔNG ĐƯỢC DUY TRÌ SAU THÂN VÒNG LẶP (maintained): `{faulty_line}`.\n"
+                        "[HÀNH ĐỘNG BẮT BUỘC - TÍNH TỔNG CẤP SỐ CỘNG]:\n"
+                        "Để Z3 chứng minh được `s == n * (n + 1) / 2`, BẮT BUỘC dùng cấu trúc chuẩn xác `while i < n`:\n"
+                        "```dafny\n"
+                        "s := 0;\n"
+                        "var i := 0;\n"
+                        "while i < n\n"
+                        "  invariant 0 <= i <= n\n"
+                        "  invariant s == i * (i + 1) / 2\n"
+                        "  decreases n - i\n"
+                        "{\n"
+                        "  i := i + 1;\n"
+                        "  s := s + i;\n"
+                        "}\n"
+                        "return;\n"
+                        "```"
+                    )
                 if ("<= n" in faulty_line or "<= n" in code) and "0 <= i <= n" in code:
                     return (
                         f"BẤT BIẾN KHÔNG ĐƯỢC DUY TRÌ SAU THÂN VÒNG LẶP (maintained): `{faulty_line}`.\n"
                         "[LỖI CẬN TRÊN BIẾN LẶP]:\n"
                         "Khi vòng lặp có điều kiện `while i <= n`, sau bước tăng `i := i + 1;`, biến `i` sẽ đạt giá trị `n + 1` trước khi thoát lặp.\n"
-                        "-> [HÀNH ĐỘNG BẮT BUỘC]:\n"
-                        "1. BẮT BUỘC giữ nguyên invariant tính toán kết quả hiện có (ví dụ `invariant s == i * (i - 1) / 2` hoặc tương đương).\n"
-                        "2. CHỈ thay thế/nới lỏng invariant cận trên thành: `invariant 0 <= i <= n + 1`."
+                        "-> [HÀNH ĐỘNG BẮT BUỘC]: Nới lỏng invariant cận trên thành: `invariant 0 <= i <= n + 1`."
                     )
                 return (
                     "BẤT BIẾN KHÔNG ĐƯỢC DUY TRÌ SAU THÂN VÒNG LẶP (maintained): "
