@@ -1,0 +1,225 @@
+{
+  "timestamp": "2026-10-01T19:03:08.798127",
+  "task_count": 6,
+  "max_attempts": 3,
+  "models_evaluated": [
+    "ollama/qwen2.5-coder:7b",
+    "gemini-3.6-flash",
+    "ollama/llama3.1:8b"
+  ],
+  "summaries": [
+    {
+      "model_name": "ollama/qwen2.5-coder:7b",
+      "display_name": "Qwen2.5-Coder-7B",
+      "model_type": "Local (Ollama)",
+      "total_tasks": 6,
+      "passed_tasks": 6,
+      "pass_at_1_count": 5,
+      "pass_at_k_count": 6,
+      "pass_at_1_rate": 83.3,
+      "pass_at_k_rate": 100.0,
+      "avg_duration_sec": 24.17,
+      "avg_repair_loops": 0.17,
+      "total_duration_sec": 145.04
+    },
+    {
+      "model_name": "gemini-3.6-flash",
+      "display_name": "Gemini 3.6 Flash",
+      "model_type": "Cloud (Google AI)",
+      "total_tasks": 6,
+      "passed_tasks": 5,
+      "pass_at_1_count": 5,
+      "pass_at_k_count": 5,
+      "pass_at_1_rate": 83.3,
+      "pass_at_k_rate": 83.3,
+      "avg_duration_sec": 7.45,
+      "avg_repair_loops": 0.17,
+      "total_duration_sec": 44.68
+    },
+    {
+      "model_name": "ollama/llama3.1:8b",
+      "display_name": "LLaMA-3.1-8B",
+      "model_type": "Local (Ollama)",
+      "total_tasks": 6,
+      "passed_tasks": 6,
+      "pass_at_1_count": 5,
+      "pass_at_k_count": 6,
+      "pass_at_1_rate": 83.3,
+      "pass_at_k_rate": 100.0,
+      "avg_duration_sec": 28.4,
+      "avg_repair_loops": 0.17,
+      "total_duration_sec": 170.39
+    }
+  ],
+  "detailed_results": {
+    "ollama/qwen2.5-coder:7b": [
+      {
+        "task_key": "[Clover] abs_val - Tìm giá trị tuyệt đối",
+        "task_name": "abs_val",
+        "group": "Clover",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 35.92,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[Clover] find_min - Tìm giá trị nhỏ nhất trong mảng",
+        "task_name": "find_min",
+        "group": "Clover",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 12.59,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[Clover] linear_search - Tìm kiếm phần tử tuyến tính",
+        "task_name": "linear_search",
+        "group": "Clover",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 25.42,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[Clover] sample_max - Tìm cực đại trong 3 số",
+        "task_name": "sample_max",
+        "group": "Clover",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 12.34,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[Clover] sign_function - Hàm dấu số nguyên",
+        "task_name": "sign_function",
+        "group": "Clover",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 16.59,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[Clover] sum_to_n - Tính tổng cấp số cộng 0..n",
+        "task_name": "sum_to_n",
+        "group": "Clover",
+        "success": true,
+        "iterations": 2,
+        "duration_sec": 42.17,
+        "repair_loops": 1
+      }
+    ],
+    "gemini-3.6-flash": [
+      {
+        "task_key": "[Clover] abs_val - Tìm giá trị tuyệt đối",
+        "task_name": "abs_val",
+        "group": "Clover",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 5.82,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[Clover] find_min - Tìm giá trị nhỏ nhất trong mảng",
+        "task_name": "find_min",
+        "group": "Clover",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 6.67,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[Clover] linear_search - Tìm kiếm phần tử tuyến tính",
+        "task_name": "linear_search",
+        "group": "Clover",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 9.4,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[Clover] sample_max - Tìm cực đại trong 3 số",
+        "task_name": "sample_max",
+        "group": "Clover",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 6.58,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[Clover] sign_function - Hàm dấu số nguyên",
+        "task_name": "sign_function",
+        "group": "Clover",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 6.6,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[Clover] sum_to_n - Tính tổng cấp số cộng 0..n",
+        "task_name": "sum_to_n",
+        "group": "Clover",
+        "success": false,
+        "iterations": 2,
+        "duration_sec": 9.6,
+        "repair_loops": 1
+      }
+    ],
+    "ollama/llama3.1:8b": [
+      {
+        "task_key": "[Clover] abs_val - Tìm giá trị tuyệt đối",
+        "task_name": "abs_val",
+        "group": "Clover",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 39.36,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[Clover] find_min - Tìm giá trị nhỏ nhất trong mảng",
+        "task_name": "find_min",
+        "group": "Clover",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 14.27,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[Clover] linear_search - Tìm kiếm phần tử tuyến tính",
+        "task_name": "linear_search",
+        "group": "Clover",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 34.92,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[Clover] sample_max - Tìm cực đại trong 3 số",
+        "task_name": "sample_max",
+        "group": "Clover",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 16.69,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[Clover] sign_function - Hàm dấu số nguyên",
+        "task_name": "sign_function",
+        "group": "Clover",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 17.51,
+        "repair_loops": 0
+      },
+      {
+        "task_key": "[Clover] sum_to_n - Tính tổng cấp số cộng 0..n",
+        "task_name": "sum_to_n",
+        "group": "Clover",
+        "success": true,
+        "iterations": 2,
+        "duration_sec": 47.65,
+        "repair_loops": 1
+      }
+    ]
+  },
+  "latex_table": "\\begin{table}[htbp]\n\\centering\n\\caption{Cross-Model Verification Performance Comparison}\n\\label{tab:cross_model_eval}\n\\begin{tabular}{lcccccc}\n\\toprule\n\\textbf{Model} & \\textbf{Type} & \\textbf{Tasks} & \\textbf{Pass@1 (\\%)} & \\textbf{Pass@K (\\%)} & \\textbf{$T_{avg}$ (s)} & \\textbf{Avg Loops} \\\\\n\\midrule\nQwen2.5-Coder-7B & Local (Ollama) & 6 & 83.3\\% & 100.0\\% & 24.17 & 0.17 \\\\\nGemini 3.6 Flash & Cloud (Google AI) & 6 & 83.3\\% & 83.3\\% & 7.45 & 0.17 \\\\\nLLaMA-3.1-8B & Local (Ollama) & 6 & 83.3\\% & 100.0\\% & 28.4 & 0.17 \\\\\n\\bottomrule\n\\end{tabular}\n\\end{table}"
+}

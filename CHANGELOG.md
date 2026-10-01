@@ -6,6 +6,18 @@ Tất cả các thay đổi đáng chú ý của dự án sẽ được ghi nh�
 
 ---
 
+## [1.3.0] - 2026-10-01: Hệ Thống Đánh Giá Đối Đầu Đa Mô Hình (Cross-Model Evaluation) & Hoàn Thiện Dự Án
+- **Tích hợp Cloud AI thế hệ mới (Google Gemini 3.5/2.5 Flash & OpenAI) ([agents/llm_agent.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/agents/llm_agent.py))**: 
+  - Kết nối REST API Google AI Studio trực tiếp; nâng ngưỡng `maxOutputTokens: 8192` loại bỏ dứt điểm hiện tượng suy luận ngầm (Internal Thinking) nuốt token làm cụt code; xử lý thích ứng lỗi HTTP 429 qua trích xuất thời gian chờ động (`retryDelay`).
+  - Kiểm chứng thực tế: Gemini 3.5 Flash giải quyết thành công hàng loạt bài toán khó (`002-truncate`, `013-gcd`, `031-is-prime`, `035-max-element`, `055-fib`) đạt 100% Z3 Verified với tốc độ vượt trội (~12s/bài).
+- **Module điều phối đối đầu & Token Tracking ([core/cross_model_evaluator.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/cross_model_evaluator.py), [core/token_tracker.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/token_tracker.py))**:
+  - Tự động hóa đánh giá đối kháng giữa Local (Qwen 7B, LLaMA 8B) và Cloud (Gemini, GPT); hỗ trợ lưu Checkpoint lũy tiến (Incremental Checkpoint) bảo toàn kết quả khi gián đoạn mạng; bộ đếm Token lưu trữ bền vững vào JSON.
+- **Giao diện Web Demo & CLI Runner đa năng ([app.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/app.py), [experiments/run_cross_model_benchmark.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/experiments/run_cross_model_benchmark.py))**:
+  - Bổ sung Tab 4 "⚔️ So Sánh Chéo" kèm bảng nhật ký từng bài theo thời gian thực (Live Task Stream Log); công cụ CLI linh hoạt với các bộ chọn `--preset` (`sample`, `humaneval`, `all`).
+- **Hoàn thiện tài liệu chuẩn NCKH ([README.md](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/README.md), [.env.example](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/.env.example))**:
+  - Bổ sung hệ thống huy hiệu trạng thái, bảng chi tiết 30 bài toán benchmark bao phủ 12 hình thái giải thuật, hướng dẫn cài đặt Ollama/Cloud API và ma trận thực nghiệm đối đầu.
+- **Chất lượng kiểm thử**: Toàn bộ 46/46 unit tests đạt 100% Green.
+
 ## [1.2.0] - 2026-10-01: Chinh Phục Tuyệt Đối 30/30 Bài Benchmark & Sân Chơi Tự Do
 - **Mở rộng 12 hình thái ([core/topology_detector.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/topology_detector.py))**: Bổ sung `ORDERED_INSERT`, `SEQ_CONSTRUCTION`, `SEARCH_CONDITION`, hoàn thiện inductive skeletons cho `LINEAR_LOOP` và `NESTED_LOOP`, đưa tỷ lệ đạt Z3 Solver lên mốc tuyệt đối 30/30 bài (100.0%).
 - **Chuẩn hóa cú pháp tự động ([core/syntax_normalizer.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/syntax_normalizer.py))**: Bổ sung bộ lọc `fix_negated_comparison`, cơ chế phòng vệ chống `NoneType` và tự động kích hoạt bổ đề đơn điệu.

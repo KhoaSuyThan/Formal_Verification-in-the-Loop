@@ -1,0 +1,90 @@
+{
+  "timestamp": "2026-10-01T18:51:35.659441",
+  "task_count": 1,
+  "max_attempts": 3,
+  "models_evaluated": [
+    "ollama/qwen2.5-coder:7b",
+    "ollama/deepseek-r1:7b",
+    "gemini-3.6-flash"
+  ],
+  "summaries": [
+    {
+      "model_name": "ollama/qwen2.5-coder:7b",
+      "display_name": "Qwen2.5-Coder-7B",
+      "model_type": "Local (Ollama)",
+      "total_tasks": 1,
+      "passed_tasks": 1,
+      "pass_at_1_count": 1,
+      "pass_at_k_count": 1,
+      "pass_at_1_rate": 100.0,
+      "pass_at_k_rate": 100.0,
+      "avg_duration_sec": 35.55,
+      "avg_repair_loops": 0.0,
+      "total_duration_sec": 35.55
+    },
+    {
+      "model_name": "ollama/deepseek-r1:7b",
+      "display_name": "DeepSeek-R1-7B",
+      "model_type": "Local (Ollama)",
+      "total_tasks": 1,
+      "passed_tasks": 0,
+      "pass_at_1_count": 0,
+      "pass_at_k_count": 0,
+      "pass_at_1_rate": 0.0,
+      "pass_at_k_rate": 0.0,
+      "avg_duration_sec": 256.37,
+      "avg_repair_loops": 2.0,
+      "total_duration_sec": 256.37
+    },
+    {
+      "model_name": "gemini-3.6-flash",
+      "display_name": "Gemini 3.6 Flash",
+      "model_type": "Cloud (Google AI)",
+      "total_tasks": 1,
+      "passed_tasks": 1,
+      "pass_at_1_count": 1,
+      "pass_at_k_count": 1,
+      "pass_at_1_rate": 100.0,
+      "pass_at_k_rate": 100.0,
+      "avg_duration_sec": 6.95,
+      "avg_repair_loops": 0.0,
+      "total_duration_sec": 6.95
+    }
+  ],
+  "detailed_results": {
+    "ollama/qwen2.5-coder:7b": [
+      {
+        "task_key": "[Clover] abs_val - Tìm giá trị tuyệt đối",
+        "task_name": "abs_val",
+        "group": "Clover",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 35.55,
+        "repair_loops": 0
+      }
+    ],
+    "ollama/deepseek-r1:7b": [
+      {
+        "task_key": "[Clover] abs_val - Tìm giá trị tuyệt đối",
+        "task_name": "abs_val",
+        "group": "Clover",
+        "success": false,
+        "iterations": 3,
+        "duration_sec": 256.37,
+        "repair_loops": 2
+      }
+    ],
+    "gemini-3.6-flash": [
+      {
+        "task_key": "[Clover] abs_val - Tìm giá trị tuyệt đối",
+        "task_name": "abs_val",
+        "group": "Clover",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 6.95,
+        "repair_loops": 0
+      }
+    ]
+  },
+  "latex_table": "\\begin{table}[htbp]\n\\centering\n\\caption{Cross-Model Verification Performance Comparison}\n\\label{tab:cross_model_eval}\n\\begin{tabular}{lcccccc}\n\\toprule\n\\textbf{Model} & \\textbf{Type} & \\textbf{Tasks} & \\textbf{Pass@1 (\\%)} & \\textbf{Pass@K (\\%)} & \\textbf{$T_{avg}$ (s)} & \\textbf{Avg Loops} \\\\\n\\midrule\nQwen2.5-Coder-7B & Local (Ollama) & 1 & 100.0\\% & 100.0\\% & 35.55 & 0.0 \\\\\nDeepSeek-R1-7B & Local (Ollama) & 1 & 0.0\\% & 0.0\\% & 256.37 & 2.0 \\\\\nGemini 3.6 Flash & Cloud (Google AI) & 1 & 100.0\\% & 100.0\\% & 6.95 & 0.0 \\\\\n\\bottomrule\n\\end{tabular}\n\\end{table}"
+}

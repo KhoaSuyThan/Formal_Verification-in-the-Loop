@@ -8,6 +8,7 @@ import os
 import sys
 import time
 from pathlib import Path
+from typing import Optional, Dict, Any, List
 
 # pyrefly: ignore [missing-import]
 import pandas as pd
@@ -31,6 +32,8 @@ from core.diagnostic_parser import DiagnosticParser
 from core.pipeline_controller import PipelineController, PipelineResult
 from core.spec_locker import SpecLocker
 from core.topology_detector import TopologyDetector
+from core.cross_model_evaluator import CrossModelEvaluator
+from core.token_tracker import get_gemini_token_usage
 from web_demo.helpers import (
     clear_last_batch_run,
     clear_last_single_run,
@@ -588,10 +591,12 @@ with st.sidebar:
             "Mô hình LLM",
             [
                 "ollama/qwen2.5-coder:7b",
-                "deepseek/deepseek-coder",
-                "openai/gpt-4o-mini",
+                "gemini-3.6-flash",
+                "ollama/llama3.1:8b",
+                "ollama/deepseek-r1:7b",
             ],
             index=0,
+            help="Hỗ trợ mô hình Local (Ollama) và Cloud (Google AI Free Tier đã lưu key trong .env).",
         )
         col_cfg1, col_cfg2 = st.columns(2)
         with col_cfg1:
@@ -614,14 +619,38 @@ with st.sidebar:
 # ==============================================================================
 # NỘI DUNG CHÍNH (MAIN AREA)
 # ==============================================================================
+# Lấy dữ liệu thống kê lượng token Gemini đã dùng
+gemini_tokens = get_gemini_token_usage()
+gem_total = gemini_tokens.get("total_tokens", 0)
+gem_prompt = gemini_tokens.get("prompt_tokens", 0)
+gem_completion = gemini_tokens.get("completion_tokens", 0)
+gem_reqs = gemini_tokens.get("total_requests", 0)
+
 st.markdown(
-    """
-    <div class="hero-container">
-        <div class="hero-badge-top">🛡️ Formal Verification-in-the-Loop • Z3 SMT Powered</div>
-        <div class="hero-title">Formal Verification Studio</div>
-        <div class="hero-subtitle">
-            Khung sinh mã nguồn và tự sửa lỗi khép kín loại bỏ hoàn toàn ảo giác (Zero-Hallucination)
-            dựa trên kiểm định logic toán học tất định <strong>Dafny 4.x</strong> và <strong>Z3 SMT Solver</strong>.
+    f"""
+    <div class="hero-container" style="display: flex; justify-content: space-between; align-items: center; gap: 24px;">
+        <div style="flex: 1; min-width: 0;">
+            <div class="hero-badge-top">🛡️ Formal Verification-in-the-Loop • Z3 SMT Powered</div>
+            <div class="hero-title">Formal Verification Studio</div>
+            <div class="hero-subtitle">
+                Khung sinh mã nguồn và tự sửa lỗi khép kín loại bỏ hoàn toàn ảo giác (Zero-Hallucination)
+                dựa trên kiểm định logic toán học tất định <strong>Dafny 4.x</strong> và <strong>Z3 SMT Solver</strong>.
+            </div>
+        </div>
+        <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 14px 20px; min-width: 220px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                <span style="font-size: 0.8rem; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.05em;">💎 Gemini Token</span>
+                <span style="font-size: 0.72rem; padding: 2px 7px; border-radius: 6px; background: rgba(34, 197, 94, 0.15); color: #86efac; font-weight: 700; border: 1px solid rgba(34, 197, 94, 0.3);">FREE</span>
+            </div>
+            <div style="font-size: 1.6rem; font-weight: 800; color: #ffffff; line-height: 1.15; font-family: 'JetBrains Mono', monospace;">
+                {gem_total:,}
+            </div>
+            <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 5px;">
+                In: <span style="color: #cbd5e1; font-weight: 600;">{gem_prompt:,}</span> | Out: <span style="color: #cbd5e1; font-weight: 600;">{gem_completion:,}</span>
+            </div>
+            <div style="font-size: 0.72rem; color: #64748b; margin-top: 3px;">
+                Tổng yêu cầu: <strong style="color: #94a3b8;">{gem_reqs}</strong> calls
+            </div>
         </div>
     </div>
     """,
@@ -635,12 +664,13 @@ if exec_mode == "Đơn":
     detected_topology = TopologyDetector.detect(spec_content)
     spec_hash = SpecLocker.get_hash(spec_content)
 
-# Phân bố 3 Tab chức năng
-tab_pipeline, tab_diff, tab_metrics = st.tabs(
+# Phân bố 4 Tab chức năng gọn gàng, súc tích
+tab_pipeline, tab_diff, tab_metrics, tab_cross_model = st.tabs(
     [
-        "🔄 Vòng Lặp Kiểm Định Trực Tiếp (Live Studio)",
-        "🔍 So Sánh Mã Nguồn & Phân Tích (Code Diff)",
-        "📊 Báo Cáo Nghiên Cứu Khoa Học (Scientific Dashboard)",
+        "⚡ Kiểm Định Trực Tiếp",
+        "🔍 So Sánh Mã",
+        "📊 Báo Cáo NCKH",
+        "⚔️ So Sánh Chéo",
     ]
 )
 
@@ -1343,4 +1373,240 @@ with tab_metrics:
     )
     st.dataframe(df_target_tasks, width="stretch", hide_index=True)
 
-# Formal Verification-in-the-Loop Web Demo v1.2.2 - Hot Reload Activated
+
+# ==============================================================================
+# TAB 4: MA TRẬN ĐÁNH GIÁ ĐỐI ĐẦU ĐA MÔ HÌNH (CROSS-MODEL EVALUATION)
+# ==============================================================================
+with tab_cross_model:
+    st.markdown("### ⚔️ So Sánh Đối Đầu Mô Hình")
+    st.caption("Đo lường năng lực sinh mã kèm kiểm chứng hình thức giữa Local AI (Ollama) và Cloud AI (Google Gemini).")
+
+    # Lựa chọn mô hình tham gia thi đấu (Hỗ trợ Gemini 3.5 và Gemini 2.5)
+    eval_models = [
+        ("ollama/qwen2.5-coder:7b", "Qwen 7B (Local)"),
+        ("gemini-3.5-flash", "Gemini 3.5 (Cloud - Đã kiểm chứng)"),
+        ("gemini-2.5-flash", "Gemini 2.5 (Cloud - Quota cao)"),
+        ("ollama/llama3.1:8b", "LLaMA 8B (Local)"),
+        ("gemini-3.6-flash", "Gemini 3.6 (Preview - Hạn ngạch 20 req/ngày)"),
+        ("ollama/deepseek-r1:7b", "DeepSeek 7B (Local)"),
+    ]
+    selected_eval_models = st.multiselect(
+        "Mô hình tham gia:",
+        options=[m[0] for m in eval_models],
+        default=["ollama/qwen2.5-coder:7b", "gemini-3.5-flash", "ollama/llama3.1:8b"],
+        format_func=lambda x: next((m[1] for m in eval_models if m[0] == x), x),
+        help="Tick chọn các mô hình muốn so tài."
+    )
+
+    # Đồng bộ trực tiếp danh sách bài toán đã chọn từ Sidebar bên trái (tránh trùng lặp cấu hình)
+    if exec_mode == "Hàng loạt" and selected_batch:
+        target_keys = selected_batch
+        source_note = f"Đang áp dụng **{len(target_keys)} bài** đã tick chọn ở mục 'Danh Mục Benchmark' bên trái."
+    elif exec_mode == "Đơn":
+        target_keys = [k for k in flat_registry.keys() if selected_task_label.split(" - ")[0] in k][:1]
+        source_note = f"Đang áp dụng **1 bài** ({selected_task_label.split(' - ')[0]}) đang chọn ở menu bên trái."
+    else:
+        target_keys = [
+            k for k in flat_registry.keys()
+            if any(name in k for name in ["abs_val", "sample_max", "002-truncate", "013-greatest_common_divisor", "binary_search"])
+        ][:5]
+        source_note = f"Mặc định chạy **5 bài tiêu biểu** (hoặc chuyển sang chế độ 'Hàng loạt' bên trái để tự chọn bài)."
+
+    col_btn_run, col_btn_load = st.columns([3, 2])
+    with col_btn_run:
+        btn_start_benchmark = st.button("🚀 Bắt Đầu So Sánh", type="primary", width="stretch")
+    with col_btn_load:
+        btn_load_cached = st.button("📂 Tải Kết Quả Cũ", width="stretch")
+
+    st.caption(f"📌 {source_note}")
+
+    # Xử lý khi bấm nút chạy
+    if btn_start_benchmark:
+        if not selected_eval_models:
+            st.warning("⚠️ Vui lòng chọn ít nhất một mô hình để chạy benchmark!")
+        elif not target_keys:
+            st.warning("⚠️ Chưa có bài toán nào được chọn từ menu bên trái!")
+        else:
+            dafny_exe_path = os.getenv("DAFNY_PATH")
+            evaluator = CrossModelEvaluator(dafny_path=dafny_exe_path)
+
+            progress_bar = st.progress(0.0)
+            status_text = st.empty()
+            live_table_placeholder = st.empty()
+            live_detail_placeholder = st.empty()
+
+            def update_progress(model_id: str, cur_step: int, total_steps: int, msg: str, latest_data: Optional[dict] = None):
+                frac = min(1.0, cur_step / max(1, total_steps))
+                progress_bar.progress(frac)
+                status_text.markdown(f"**[{cur_step}/{total_steps}]** {msg}")
+                if latest_data and "summaries" in latest_data and latest_data["summaries"]:
+                    st.session_state["cross_model_data"] = latest_data
+                    try:
+                        # 1. Cập nhật bảng tổng quan đối đầu
+                        df_live = pd.DataFrame(latest_data["summaries"])[[
+                            "display_name", "model_type", "total_tasks",
+                            "passed_tasks", "pass_at_1_rate", "pass_at_k_rate",
+                            "avg_duration_sec", "avg_repair_loops"
+                        ]]
+                        df_live.columns = [
+                            "Mô Hình", "Loại", "Số Bài Đã Chạy", "Bài Đạt",
+                            "Pass@1 (%)", "Pass@K (%)", "Thời Gian TB (s)", "Số Vòng Lặp TB"
+                        ]
+                        live_table_placeholder.dataframe(df_live, width="stretch", hide_index=True)
+
+                        # 2. Cập nhật bảng chi tiết từng bài vừa giải xong (mới nhất lên đầu)
+                        all_detailed = []
+                        for m_key, t_list in latest_data.get("detailed_results", {}).items():
+                            m_name = next((s["display_name"] for s in latest_data["summaries"] if s["model_name"] == m_key), m_key)
+                            for t in t_list:
+                                all_detailed.append({
+                                    "Mô Hình": m_name,
+                                    "Bài Toán": t["task_name"],
+                                    "Tập": t.get("group", ""),
+                                    "Kết Quả Z3": "✅ PASS" if t["success"] else "❌ FAIL",
+                                    "Lượt Thử": f"Pass@{t['iterations']}" if t["success"] else ">3",
+                                    "Thời Gian (s)": t["duration_sec"],
+                                })
+                        if all_detailed:
+                            df_tasks = pd.DataFrame(all_detailed)
+                            with live_detail_placeholder.container():
+                                st.markdown("##### 📝 Nhật Ký Từng Bài Vừa Giải Xong (Mới Nhất Ở Trên):")
+                                st.dataframe(df_tasks.iloc[::-1], width="stretch", hide_index=True)
+                    except Exception:
+                        pass
+
+            with st.spinner("Đang tiến hành kiểm chứng hình thức đa mô hình (kết quả tự động lưu sau mỗi bài)..."):
+                benchmark_data = evaluator.run_benchmark(
+                    model_ids=selected_eval_models,
+                    task_keys=target_keys,
+                    max_attempts=max_k,
+                    progress_callback=update_progress
+                )
+                st.session_state["cross_model_data"] = benchmark_data
+                progress_bar.progress(1.0)
+                status_text.success("🎉 Đã hoàn thành toàn bộ chu trình đánh giá đối đầu!")
+                st.rerun()
+
+    # Tự động nạp kết quả đã lưu gần nhất nếu session_state chưa có
+    latest_file = os.path.join("artifacts", "results", "cross_model_benchmark_latest.json")
+    if "cross_model_data" not in st.session_state and os.path.exists(latest_file):
+        try:
+            import json
+            with open(latest_file, "r", encoding="utf-8") as f:
+                st.session_state["cross_model_data"] = json.load(f)
+        except Exception:
+            pass
+
+    # Quét danh sách các file lịch sử benchmark đã lưu
+    res_dir = os.path.join("artifacts", "results")
+    bench_files = []
+    if os.path.exists(res_dir):
+        for f in os.listdir(res_dir):
+            if f.startswith("cross_model_benchmark_") and f.endswith(".json") and f != "cross_model_benchmark_latest.json":
+                bench_files.append(f)
+    bench_files.sort(reverse=True)
+
+    if bench_files:
+        col_hist1, col_hist2 = st.columns([7, 3])
+        with col_hist1:
+            selected_hist = st.selectbox(
+                "📂 Xem lại các lần chạy trong lịch sử:",
+                ["Mới nhất (Latest)"] + bench_files,
+                index=0,
+                help="Chọn file để xem lại kết quả các đợt so sánh trước đó mà không sợ bị mất số liệu."
+            )
+        with col_hist2:
+            st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
+            if st.button("🔄 Nạp Bản Này", width="stretch"):
+                target_fname = "cross_model_benchmark_latest.json" if selected_hist == "Mới nhất (Latest)" else selected_hist
+                target_path = os.path.join(res_dir, target_fname)
+                if os.path.exists(target_path):
+                    import json
+                    with open(target_path, "r", encoding="utf-8") as f_in:
+                        st.session_state["cross_model_data"] = json.load(f_in)
+                    st.toast(f"✅ Đã tải: {selected_hist}")
+                    st.rerun()
+
+    # Hiển thị bảng kết quả và đồ thị khi đã có dữ liệu
+    active_data = st.session_state.get("cross_model_data")
+    if active_data and "summaries" in active_data and active_data["summaries"]:
+        summaries = active_data["summaries"]
+        st.markdown("---")
+        st.markdown("#### 📊 Bảng Ma Trận Đối Đầu Khoa Học (Benchmark Matrix)")
+
+        df_summary = pd.DataFrame(summaries)
+        df_display = df_summary[[
+            "display_name", "model_type", "total_tasks",
+            "passed_tasks", "pass_at_1_rate", "pass_at_k_rate",
+            "avg_duration_sec", "avg_repair_loops"
+        ]].copy()
+        df_display.columns = [
+            "Mô Hình", "Loại", "Số Bài",
+            "Bài Đạt", "Pass@1 (%)", "Pass@K (%)",
+            "Thời Gian TB (s)", "Số Vòng Lặp TB"
+        ]
+        st.dataframe(df_display, width="stretch", hide_index=True)
+
+        # Hai biểu đồ đối đầu
+        col_fig1, col_fig2 = st.columns(2)
+        with col_fig1:
+            st.markdown("##### 🎯 Tỷ Lệ Chứng Minh Thành Công (Pass Rate)")
+            fig_pass = px.bar(
+                df_summary,
+                x="display_name",
+                y=["pass_at_1_rate", "pass_at_k_rate"],
+                barmode="group",
+                labels={"value": "Tỷ lệ (%)", "variable": "Chỉ số", "display_name": "Mô hình"},
+                color_discrete_sequence=["#38bdf8", "#22c55e"],
+                text_auto=True
+            )
+            fig_pass.update_layout(
+                legend_title_text="",
+                margin=dict(l=20, r=20, t=30, b=20),
+                height=320,
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)"
+            )
+            st.plotly_chart(fig_pass, width="stretch")
+
+        with col_fig2:
+            st.markdown("##### ⏱️ Thời Gian Giải Trung Bình Một Bài (Latency $T_{avg}$)")
+            fig_time = px.bar(
+                df_summary,
+                x="display_name",
+                y="avg_duration_sec",
+                labels={"avg_duration_sec": "Giây (s)", "display_name": "Mô hình"},
+                color="avg_duration_sec",
+                color_continuous_scale="Purples",
+                text_auto=True
+            )
+            fig_time.update_layout(
+                margin=dict(l=20, r=20, t=30, b=20),
+                height=320,
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)"
+            )
+            st.plotly_chart(fig_time, width="stretch")
+
+        # Khung xuất mã bảng LaTeX cho bài báo khoa học
+        with st.expander("📝 Bảng Mã LaTeX Chuẩn Cho Bài Báo Khoa Học (Nhấn để sao chép)"):
+            st.caption("Sao chép đoạn mã LaTeX sau đây và dán trực tiếp vào tệp .tex của bài báo:")
+            latex_code = active_data.get("latex_table", "")
+            st.code(latex_code, language="latex")
+            st.download_button(
+                "📥 Tải File LaTeX (.tex)",
+                data=latex_code,
+                file_name="cross_model_evaluation_table.tex",
+                mime="text/plain"
+            )
+
+        # Chi tiết từng bài toán
+        if "detailed_results" in active_data:
+            with st.expander("🔍 Xem Bảng Kết Quả Chi Tiết Từng Bài Toán Theo Mô Hình"):
+                for m_id, records in active_data["detailed_results"].items():
+                    m_info = next((s["display_name"] for s in summaries if s["model_name"] == m_id), m_id)
+                    st.markdown(f"**Mô hình: {m_info}**")
+                    df_det = pd.DataFrame(records)
+                    st.dataframe(df_det, width="stretch", hide_index=True)
+
+# Formal Verification-in-the-Loop Web Demo v1.3.0 - Cross-Model Evaluation Matrix Ready

@@ -35,8 +35,85 @@ class LLMAgent:
         else:
             self.api_base = None
 
-    def _call_model(self, system_prompt: str, user_prompt: str, timeout_sec: int = 240) -> str:
-        """Thực hiện gọi API thông qua litellm.completion có giới hạn thời gian và số token an toàn."""
+    def _call_gemini_rest(self, system_prompt: str, user_prompt: str, timeout_sec: int = 120) -> Optional[str]:
+        """Gọi trực tiếp Google Generative Language v1beta REST API cho các dòng mô hình Gemini."""
+        import requests
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key:
+            return None
+
+        # Chuẩn hóa tên model: loại bỏ tiền tố 'gemini/' nếu có
+        raw_name = self.model
+        if raw_name.startswith("gemini/"):
+            raw_name = raw_name[len("gemini/"):]
+        elif raw_name.startswith("models/"):
+            raw_name = raw_name[len("models/"):]
+
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{raw_name}:generateContent?key={api_key}"
+        combined_prompt = f"{system_prompt}\n\n{user_prompt}"
+        payload = {
+            "contents": [
+                {"parts": [{"text": combined_prompt}]}
+            ],
+            "generationConfig": {
+                "temperature": self.temperature,
+                "maxOutputTokens": 8192
+            }
+        }
+        import time
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                res = requests.post(url, json=payload, timeout=timeout_sec)
+                if res.status_code == 200:
+                    data = res.json()
+
+                    # Ghi nhận chính xác lượng token từ máy chủ Google (bao gồm cả thoughts token)
+                    usage = data.get("usageMetadata", {})
+                    p_tok = usage.get("promptTokenCount", 0)
+                    c_tok = usage.get("candidatesTokenCount", 0)
+                    t_tok = usage.get("totalTokenCount", p_tok + c_tok)
+                    if p_tok or c_tok or t_tok:
+                        try:
+                            from core.token_tracker import record_gemini_tokens
+                            record_gemini_tokens(p_tok, c_tok, t_tok)
+                        except Exception as err:
+                            print(f"[CẢNH BÁO TOKEN]: {err}")
+
+                    candidates = data.get("candidates", [])
+                    if candidates:
+                        parts = candidates[0].get("content", {}).get("parts", [])
+                        if parts and "text" in parts[0]:
+                            return self._clean_markdown(parts[0]["text"])
+                elif res.status_code == 429:
+                    # Trích xuất thời gian chờ chuẩn xác theo yêu cầu từ Google AI Studio
+                    wait_time = 35
+                    try:
+                        err_json = res.json()
+                        details = err_json.get("error", {}).get("details", [])
+                        for d in details:
+                            if "retryDelay" in d:
+                                wait_time = int(d["retryDelay"].rstrip("s")) + 2
+                                break
+                    except Exception:
+                        pass
+                    print(f"[CẢNH BÁO GEMINI 429]: Hạn ngạch Google yêu cầu giãn cách {wait_time}s, đang tự động chờ để thử lại (lần {attempt + 1}/{max_retries})...")
+                    time.sleep(wait_time)
+                    continue
+                else:
+                    print(f"[CẢNH BÁO GEMINI REST]: HTTP {res.status_code} - {res.text[:200]}")
+                    break
+            except Exception as e:
+                print(f"[CẢNH BÁO GEMINI REST]: Gặp lỗi kết nối: {e}")
+                time.sleep(3)
+        return ""
+
+    def _call_model(self, system_prompt: str, user_prompt: str, timeout_sec: int = 90) -> str:
+        """Thực hiện gọi API thông qua litellm.completion hoặc REST API với cơ chế timeout an toàn."""
+        # Gọi trực tiếp REST API độc lập cho họ mô hình Gemini (chống lỗi Vertex AI)
+        if "gemini" in self.model.lower():
+            return self._call_gemini_rest(system_prompt, user_prompt, timeout_sec=timeout_sec) or ""
+
         kwargs = {
             "model": self.model,
             "messages": [
@@ -71,13 +148,14 @@ class LLMAgent:
             "- Tham số đầu vào (in-parameters): Mọi tham số đầu vào trong khai báo `method (a: int, b: int)` là HẰNG SỐ BẤT BIẾN (immutable). "
             "TUYỆT ĐỐI KHÔNG gán lại giá trị cho tham số đầu vào (như `a := -a;`). "
             "Nếu cần thay đổi, BẮT BUỘC phải tạo biến cục bộ sao chép: `var cur_a := a; var cur_b := b;` rồi thao tác trên biến cục bộ.\n"
-            "- Giữ nguyên vẹn toàn bộ các mệnh đề ensures gốc và tất cả các hàm phụ trợ (function, predicate, lemma).\n"
+            "- Giữ nguyên vẹn 100% tất cả các mệnh đề ensures gốc và tất cả các hàm phụ trợ (function, predicate, lemma). TUYỆT ĐỐI KHÔNG tự ý thêm, bớt hoặc sửa đổi bất kỳ mệnh đề ensures nào, chỉ hoàn thiện thân method bên trong `{ ... }`.\n"
+            "- Hoàn thiện toàn bộ thân hàm và đóng ngoặc nhọn `}` đầy đủ, TUYỆT ĐỐI KHÔNG dừng dở dang giữa chừng.\n"
             "- Câu lệnh rẽ nhánh: Dùng `if điều_kiện { ... } else { ... }` (KHÔNG dùng từ khóa `then` trong method).\n"
             "- Vòng lặp: Bắt buộc dùng `while` (KHÔNG dùng từ khóa `loop` hoặc `for`).\n"
             "- Mệnh đề `invariant` và `decreases` BẮT BUỘC phải đặt ngay TRƯỚC dấu mở ngoặc `{` của vòng lặp `while` (KHÔNG đặt bên trong thân vòng lặp).\n"
             "- Biên của vòng lặp và bất biến: Khi duyệt `while i < n` (hoặc `while i < |s|`), sau khi vòng lặp kết thúc thì `i == n`. "
             "Bất biến cận trên BẮT BUỘC là `invariant 0 <= i <= n` (hoặc `0 <= i <= |s|`). "
-            "Biến kết quả thường được gán sau khi vòng lặp kết thúc (`result := a;`).\n"
+            "Gán giá trị cho biến kết quả ngõ ra phù hợp với phạm vi biến (scope) trước khi thoát hàm.\n"
             "- Khi duyệt mảng/chuỗi: Luôn luôn có `invariant 0 <= i <= |s|` (hoặc `a.Length`) để Z3 đảm bảo an toàn truy xuất chỉ số (tránh OutOfBounds).\n"
             "- Nguyên lý Bất biến Quy nạp Song hành (Co-existing Invariants): Khi method có đồng thời cả hậu điều kiện toàn thể `forall` và tồn tại `exists`, "
             "vòng lặp duyệt mảng/chuỗi bắt buộc cần CẢ 3 invariant song song: "
