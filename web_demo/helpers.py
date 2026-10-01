@@ -36,6 +36,22 @@ def get_benchmark_tasks() -> Dict[str, Dict[str, str]]:
             "010-is_palindrome - Kiểm tra chuỗi đối xứng": "data/benchmarks/humaneval_dafny/010-is_palindrome.dfy",
             "077-iscube - Kiểm tra số lập phương": "data/benchmarks/humaneval_dafny/077-iscube.dfy",
             "088-sort_array - Sắp xếp mảng": "data/benchmarks/humaneval_dafny/088-sort_array.dfy",
+        },
+        "Advanced Algorithms (Mở Rộng)": {
+            "binary_search - Tìm kiếm nhị phân": "data/benchmarks/advanced/binary_search.dfy",
+            "linear_search_last - Tìm vị trí phần tử cuối cùng": "data/benchmarks/advanced/linear_search_last.dfy",
+            "find_first_negative - Tìm số âm đầu tiên": "data/benchmarks/advanced/find_first_negative.dfy",
+            "array_reverse - Đảo ngược dãy tuần tự": "data/benchmarks/advanced/array_reverse.dfy",
+            "is_array_sorted - Kiểm tra dãy sắp xếp tăng dần": "data/benchmarks/advanced/is_array_sorted.dfy",
+            "remove_element - Lọc bỏ phần tử theo giá trị": "data/benchmarks/advanced/remove_element.dfy",
+            "copy_array - Sao chép dãy bảo toàn phần tử": "data/benchmarks/advanced/copy_array.dfy",
+            "count_elements - Đếm số lần xuất hiện đệ quy": "data/benchmarks/advanced/count_elements.dfy",
+            "sum_positive - Tính tổng các số nguyên dương": "data/benchmarks/advanced/sum_positive.dfy",
+            "product_of_array - Tính tích các phần tử trong dãy": "data/benchmarks/advanced/product_of_array.dfy",
+            "all_unique - Kiểm tra dãy không có phần tử trùng": "data/benchmarks/advanced/all_unique.dfy",
+            "matrix_row_sum - Tính tổng từng hàng ma trận 2D": "data/benchmarks/advanced/matrix_row_sum.dfy",
+            "matrix_diagonal_sum - Tính tổng đường chéo ma trận vuông": "data/benchmarks/advanced/matrix_diagonal_sum.dfy",
+            "sorted_insert - Chèn phần tử vào dãy đã sắp xếp": "data/benchmarks/advanced/sorted_insert.dfy",
         }
     }
     return tasks
@@ -68,7 +84,7 @@ TARGET_12_TASK_NAMES = {
 
 
 def get_flat_task_registry() -> Dict[str, dict]:
-    """Trả về bảng danh mục phẳng của toàn bộ 16 bài toán thuộc 2 tập benchmark.
+    """Trả về bảng danh mục phẳng của toàn bộ 30 bài toán thuộc 3 tập benchmark.
     
     Khóa (Key) là chuỗi hiển thị có gắn thẻ tập dữ liệu để người dùng dễ chọn,
     Giá trị (Value) chứa metadata của bài toán: tên mã, đường dẫn, tập dữ liệu, cờ target.
@@ -77,7 +93,13 @@ def get_flat_task_registry() -> Dict[str, dict]:
     registry = {}
 
     for group_name, tasks in groups.items():
-        tag = "Clover" if "Clover" in group_name else "HumanEval"
+        if "Clover" in group_name:
+            tag = "Clover"
+        elif "HumanEval" in group_name:
+            tag = "HumanEval"
+        else:
+            tag = "Advanced"
+
         for label, rel_path in tasks.items():
             short_name = label.split(" - ")[0].strip()
             display_label = f"[{tag}] {label}"
@@ -98,10 +120,11 @@ def get_preset_labels(preset_type: str = "target_12") -> List[str]:
     """Lấy danh sách các nhãn bài toán theo bộ thiết lập sẵn (preset).
     
     Tham số preset_type:
-    - 'target_12': 12 bài toán mục tiêu đạt chứng nhận 100% (6 Clover + 6 HumanEval)
+    - 'target_12': 16 bài toán mục tiêu cốt lõi (Clover + HumanEval)
     - 'clover': Toàn bộ 6 bài toán tập Clover
     - 'humaneval': Toàn bộ 10 bài toán tập HumanEval
-    - 'all': Toàn bộ 16 bài toán trong kho benchmark
+    - 'advanced': Toàn bộ 14 bài toán tập Mở Rộng Advanced
+    - 'all': Toàn bộ 30 bài toán trong kho benchmark
     """
     registry = get_flat_task_registry()
     if preset_type == "target_12":
@@ -110,6 +133,8 @@ def get_preset_labels(preset_type: str = "target_12") -> List[str]:
         return [k for k, v in registry.items() if v["group"] == "Clover"]
     elif preset_type == "humaneval":
         return [k for k, v in registry.items() if v["group"] == "HumanEval"]
+    elif preset_type == "advanced":
+        return [k for k, v in registry.items() if v["group"] == "Advanced"]
     elif preset_type == "all":
         return list(registry.keys())
     return []

@@ -835,34 +835,73 @@ class SyntaxNormalizer:
         return result
 
     @classmethod
-    def normalize(cls, code: str) -> str:
-        """Áp dụng toàn bộ các phép chuẩn hóa cú pháp theo thứ tự an toàn."""
-        if not code or not code.strip():
+    def fix_negated_comparison(cls, code: str) -> str:
+        """Tự động sửa lỗi cú pháp phủ định toán tử so sánh (ví dụ: !a <= b thành a > b).
+        
+        Trong Dafny, dấu `!` có độ ưu tiên cao nhất và chỉ áp dụng cho bool.
+        Viết `!s[i] <= s[j]` sẽ gây lỗi kiểu (bitwise negation on int).
+        """
+        if not code:
             return code
 
+        # Thay thế các dạng phủ định sai cú pháp
+        pattern = re.compile(
+            r'!\s*([a-zA-Z0-9_]+(?:\[[^\]]+\])?)\s*(<=|>=|<|>|==|!=)\s*([a-zA-Z0-9_]+(?:\[[^\]]+\])?)'
+        )
+        op_map = {
+            "<=": ">",
+            ">=": "<",
+            "<": ">=",
+            ">": "<=",
+            "==": "!=",
+            "!=": "=="
+        }
+        def repl(m):
+            left = m.group(1)
+            op = m.group(2)
+            right = m.group(3)
+            inv_op = op_map.get(op, op)
+            return f"{left} {inv_op} {right}"
+
+        return pattern.sub(repl, code)
+
+    @classmethod
+    def normalize(cls, code: str) -> str:
+        """Áp dụng toàn bộ các phép chuẩn hóa cú pháp theo thứ tự an toàn."""
+        if not code or not isinstance(code, str) or not code.strip():
+            return code or ""
+
         result = code
-        result = cls.fix_commented_invariants(result)
-        result = cls.fix_bool_definite_assignment(result)
-        result = cls.fix_below_threshold_bool_invariant(result)
-        result = cls.fix_linear_search_result_var(result)
-        result = cls.fix_fib_inductive_step(result)
-        result = cls.fix_if_then_in_method(result)
-        result = cls.fix_missing_semicolon(result)
-        result = cls.fix_floor_real_cast(result)
-        result = cls.fix_sum_range_expr(result)
-        result = cls.fix_decreases_max_min(result)
-        result = cls.fix_gcd_strict_pos_invariant(result)
-        result = cls.fix_intermediate_acc_var(result)
-        result = cls.fix_misplaced_loop_invariants(result)
-        result = cls.fix_duplicate_out_params(result)
-        result = cls.fix_ternary_operator(result)
-        result = cls.fix_return_expr(result)
-        result = cls.fix_seq_assignment(result)
-        result = cls.fix_missing_out_param_assignment(result)
-        result = cls.fix_missing_var_in_call_assignment(result)
-        result = cls.fix_sorting_inductive_lemmas(result)
-        result = cls.fix_available_lemma_invocations(result)
-        return result
+        transformers = [
+            cls.fix_commented_invariants,
+            cls.fix_bool_definite_assignment,
+            cls.fix_below_threshold_bool_invariant,
+            cls.fix_linear_search_result_var,
+            cls.fix_fib_inductive_step,
+            cls.fix_if_then_in_method,
+            cls.fix_missing_semicolon,
+            cls.fix_floor_real_cast,
+            cls.fix_sum_range_expr,
+            cls.fix_decreases_max_min,
+            cls.fix_gcd_strict_pos_invariant,
+            cls.fix_intermediate_acc_var,
+            cls.fix_misplaced_loop_invariants,
+            cls.fix_duplicate_out_params,
+            cls.fix_ternary_operator,
+            cls.fix_return_expr,
+            cls.fix_seq_assignment,
+            cls.fix_missing_out_param_assignment,
+            cls.fix_missing_var_in_call_assignment,
+            cls.fix_sorting_inductive_lemmas,
+            cls.fix_available_lemma_invocations,
+            cls.fix_negated_comparison,
+        ]
+        for fn in transformers:
+            out = fn(result)
+            if out is not None:
+                result = out
+
+        return result or ""
 
 
 
