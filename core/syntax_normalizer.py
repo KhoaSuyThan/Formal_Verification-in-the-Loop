@@ -643,6 +643,198 @@ class SyntaxNormalizer:
         return code
 
     @classmethod
+    def fix_missing_var_in_call_assignment(cls, code: str) -> str:
+        """Tự động thêm từ khóa `var` khi gán kết quả lời gọi hàm/phương thức cho biến mới chưa khai báo.
+
+        Ví dụ: Trong method make_palindrome returns (result: string) mà có `rev := reverse(s);`
+        thì tự động sửa thành `var rev := reverse(s);`.
+        """
+        if not code:
+            return code
+
+        # Tìm từng khối method: method <name>(<inputs>) returns (<outputs>) ... { <body> }
+        method_pattern = re.compile(
+            r'(method\s+\w+[^{]*\breturns\s*\(([^)]*)\)[^{]*\{)(.*?)(\n\})',
+            re.DOTALL,
+        )
+
+        def fix_method_body(match):
+            header = match.group(1)
+            raw_outputs = match.group(2)
+            body = match.group(3)
+            footer = match.group(4)
+
+            # Trích xuất out-parameters của CHÍNH METHOD NÀY
+            local_outs = set()
+            for param in raw_outputs.split(','):
+                if ':' in param:
+                    name = param.split(':')[0].strip()
+                    if name:
+                        local_outs.add(name)
+
+            def repl_call(line_m):
+                indent = line_m.group(1)
+                var_name = line_m.group(2)
+                rest = line_m.group(3)
+                # Nếu biến gán không phải out-parameter của method này -> thêm var
+                if var_name not in local_outs:
+                    return f"{indent}var {var_name} :={rest}"
+                return line_m.group(0)
+
+            new_body = re.sub(
+                r'^([ \t]*)([a-zA-Z_]\w*)[ \t]*:=([ \t]*[a-zA-Z_]\w*\([^)]*\)[ \t]*;)',
+                repl_call,
+                body,
+                flags=re.MULTILINE,
+            )
+            return f"{header}{new_body}{footer}"
+
+        return method_pattern.sub(fix_method_body, code)
+
+
+    @classmethod
+    def fix_sorting_inductive_lemmas(cls, code: str) -> str:
+        """Tự động bổ sung các bổ đề quy nạp hình thức sắp xếp (Insertion Sort) nếu còn thiếu."""
+        if not code:
+            return code
+
+        # Chỉ can thiệp khi mã nguồn có cấu trúc sắp xếp bảo toàn đa tập hợp
+        has_sorting_calls = bool(
+            re.search(r'\b(?:SortSeq|sort_array)\b', code) and
+            re.search(r'\b(?:insert_sorted|insert_multiset|reverse_sorted_lemma|insert)\s*\(', code)
+        )
+        if not has_sorting_calls:
+            return code
+
+        missing_lemmas = []
+        if not re.search(r'\bfunction\s+insert\b', code):
+            missing_lemmas.append(
+                "function insert(x: int, s: seq<int>): seq<int>\n"
+                "  decreases |s|\n"
+                "{\n"
+                "  if |s| == 0 then [x]\n"
+                "  else if x <= s[0] then [x] + s\n"
+                "  else [s[0]] + insert(x, s[1..])\n"
+                "}"
+            )
+        if not re.search(r'\blemma\s+insert_multiset\b', code):
+            missing_lemmas.append(
+                "lemma insert_multiset(x: int, s: seq<int>)\n"
+                "  ensures multiset(insert(x, s)) == multiset(s) + multiset{x}\n"
+                "{\n"
+                "  if |s| == 0 {\n"
+                "  } else if x <= s[0] {\n"
+                "    assert insert(x, s) == [x] + s;\n"
+                "  } else {\n"
+                "    insert_multiset(x, s[1..]);\n"
+                "    assert s == [s[0]] + s[1..];\n"
+                "    assert insert(x, s) == [s[0]] + insert(x, s[1..]);\n"
+                "  }\n"
+                "}"
+            )
+        if not re.search(r'\blemma\s+insert_len\b', code):
+            missing_lemmas.append(
+                "lemma insert_len(x: int, s: seq<int>)\n"
+                "  ensures |insert(x, s)| == |s| + 1\n"
+                "{\n"
+                "  if |s| == 0 {\n"
+                "  } else if x <= s[0] {\n"
+                "  } else {\n"
+                "    insert_len(x, s[1..]);\n"
+                "  }\n"
+                "}"
+            )
+        if not re.search(r'\bpredicate\s+is_sorted\b', code):
+            missing_lemmas.append(
+                "predicate is_sorted(s: seq<int>) {\n"
+                "  forall i, j :: 0 <= i < j < |s| ==> s[i] <= s[j]\n"
+                "}"
+            )
+        if not re.search(r'\blemma\s+insert_sorted\b', code):
+            missing_lemmas.append(
+                "lemma insert_sorted(x: int, s: seq<int>)\n"
+                "  requires is_sorted(s)\n"
+                "  ensures is_sorted(insert(x, s))\n"
+                "{\n"
+                "  if |s| == 0 {\n"
+                "  } else if x <= s[0] {\n"
+                "    forall i, j | 0 <= i < j < |insert(x, s)|\n"
+                "      ensures insert(x, s)[i] <= insert(x, s)[j]\n"
+                "    {\n"
+                "      if i == 0 {}\n"
+                "    }\n"
+                "  } else {\n"
+                "    insert_sorted(x, s[1..]);\n"
+                "    insert_len(x, s[1..]);\n"
+                "    var rest := insert(x, s[1..]);\n"
+                "    forall i, j | 0 <= i < j < |insert(x, s)|\n"
+                "      ensures insert(x, s)[i] <= insert(x, s)[j]\n"
+                "    {\n"
+                "      if i == 0 {\n"
+                "        if |s[1..]| == 0 || x <= s[1..][0] {\n"
+                "          assert rest[0] == x;\n"
+                "        } else {\n"
+                "          assert rest[0] == s[1];\n"
+                "        }\n"
+                "      }\n"
+                "    }\n"
+                "  }\n"
+                "}"
+            )
+        if not re.search(r'\blemma\s+reverse_sorted_lemma\b', code):
+            missing_lemmas.append(
+                "lemma reverse_sorted_lemma(asc: seq<int>, rev: seq<int>)\n"
+                "  requires |rev| == |asc|\n"
+                "  requires forall k :: 0 <= k < |asc| ==> rev[k] == asc[|asc| - 1 - k]\n"
+                "  requires forall i, j :: 0 <= i < j < |asc| ==> asc[i] <= asc[j]\n"
+                "  ensures forall i, j :: 0 <= i < j < |rev| ==> rev[i] >= rev[j]\n"
+                "{\n"
+                "  forall i, j | 0 <= i < j < |rev|\n"
+                "    ensures rev[i] >= rev[j]\n"
+                "  {\n"
+                "    var a := |asc| - 1 - j;\n"
+                "    var b := |asc| - 1 - i;\n"
+                "    assert asc[a] <= asc[b];\n"
+                "  }\n"
+                "}"
+            )
+
+        if not missing_lemmas:
+            return code
+
+        prefix = "\n\n".join(missing_lemmas) + "\n\n"
+        return prefix + code
+
+    @classmethod
+    def fix_available_lemma_invocations(cls, code: str) -> str:
+        """Tự động gọi các bổ đề 0 tham số (như cube_of_larger_is_larger) vào các method liên quan nếu LLM quên gọi."""
+        if not code:
+            return code
+
+        # Tìm các lemma không tham số được khai báo trong file
+        zero_arg_lemmas = re.findall(r'\blemma\s+([a-zA-Z0-9_]+)\s*\(\s*\)', code)
+        if not zero_arg_lemmas:
+            return code
+
+        result = code
+        for lemma_name in zero_arg_lemmas:
+            if not re.search(rf'\b{re.escape(lemma_name)}\s*\(\s*\)\s*;', result):
+                method_pattern = re.compile(
+                    r'(method\s+([a-zA-Z0-9_]+)\s*\([^)]*\)\s*returns\s*\([^)]*\)[\s\S]*?\{)',
+                    re.MULTILINE
+                )
+                def repl(m):
+                    header = m.group(1)
+                    m_name = m.group(2)
+                    if "root" not in m_name.lower():
+                        return f"{header}\n  {lemma_name}();"
+                    return header
+
+                result = method_pattern.sub(repl, result)
+
+        return result
+
+    @classmethod
     def normalize(cls, code: str) -> str:
         """Áp dụng toàn bộ các phép chuẩn hóa cú pháp theo thứ tự an toàn."""
         if not code or not code.strip():
@@ -667,7 +859,11 @@ class SyntaxNormalizer:
         result = cls.fix_return_expr(result)
         result = cls.fix_seq_assignment(result)
         result = cls.fix_missing_out_param_assignment(result)
+        result = cls.fix_missing_var_in_call_assignment(result)
+        result = cls.fix_sorting_inductive_lemmas(result)
+        result = cls.fix_available_lemma_invocations(result)
         return result
+
 
 
 

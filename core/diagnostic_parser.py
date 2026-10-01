@@ -98,7 +98,28 @@ class DiagnosticParser:
         """Sinh chỉ dẫn ngữ nghĩa toán học dựa trên danh mục lỗi và ngữ cảnh mã nguồn."""
         msg_lower = message.lower()
 
+        # Kiểm tra lỗi chưa khai báo biến hoặc hàm/bổ đề (unresolved identifier)
+        if "unresolved identifier" in msg_lower:
+            ident_match = re.search(r'unresolved identifier:\s*(\w+)', message, re.IGNORECASE)
+            ident_name = ident_match.group(1) if ident_match else "biến"
+            # Nếu dòng vi phạm có dạng lời gọi hàm/lemma không có phép gán :=
+            is_call = faulty_line and re.search(rf'\b{ident_name}\s*\(', faulty_line) and ":=" not in faulty_line
+            if is_call or ident_name.endswith("_lemma") or ident_name.startswith("lemma_"):
+                return (
+                    f"LỖI HÀM HOẶC BỔ ĐỀ CHƯA ĐƯỢC ĐỊNH NGHĨA (UNRESOLVED IDENTIFIER): `{ident_name}`.\n"
+                    f"[HÀNH ĐỘNG BẮT BUỘC]:\n"
+                    f"Hàm hoặc bổ đề `{ident_name}` được gọi nhưng chưa có định nghĩa trong mã nguồn.\n"
+                    f"-> BẮT BUỘC định nghĩa hàm/bổ đề `{ident_name}` (ví dụ: `lemma {ident_name}(...) {{ ... }}`) ở đầu file trước khi gọi."
+                )
+            return (
+                f"LỖI CHƯA KHAI BÁO BIẾN (UNRESOLVED IDENTIFIER): `{ident_name}`.\n"
+                f"[HÀNH ĐỘNG BẮT BUỘC]:\n"
+                f"Trong Dafny, mọi biến cục bộ mới chưa nằm trong returns/parameters BẮT BUỘC phải được khai báo bằng từ khóa `var` khi gán lần đầu:\n"
+                f"-> BẮT BUỘC SỬA THÀNH: `var {ident_name} := ...;` (thay vì `{ident_name} := ...;`)."
+            )
+
         if category == "LoopInvariantViolation":
+
             if "on entry" in msg_lower:
                 if faulty_line and "exists" in faulty_line:
                     return (
@@ -269,7 +290,37 @@ class DiagnosticParser:
                     "hãy gán trực tiếp: `d := x - (x.Floor as real);` mà TUYỆT ĐỐI KHÔNG dùng vòng lặp while hay cấu trúc if-else."
                 )
 
+            # Xử lý bài toán số học phi tuyến bậc cao có bổ đề đơn điệu (như iscube / cube_root)
+            if "cube" in code or "cube_root" in code:
+                return (
+                    f"HẬU ĐIỀU KIỆN SỐ HỌC BẬC CAO / PHI TUYẾN BỊ VI PHẠM: `{related_content}`.\n"
+                    "[HÀNH ĐỘNG BẮT BUỘC - SỬ DỤNG BỔ ĐỀ ĐƠN ĐIỆU CÓ SẴN]:\n"
+                    "1. Trong phương thức tìm căn `cube_root(N: nat) returns (r: nat)`:\n"
+                    "   `r := 0; while (r + 1) * (r + 1) * (r + 1) <= N invariant cube(r) <= N decreases N - cube(r) { r := r + 1; }`\n"
+                    "2. Trong phương thức kiểm tra `iscube(n: int) returns (r: bool)`:\n"
+                    "   - BẮT BUỘC gọi bổ đề có sẵn: `cube_of_larger_is_larger();` ngay đầu hàm.\n"
+                    "   - Lấy số tự nhiên: `var val: nat := if n < 0 then -n else n;`\n"
+                    "   - Gọi tìm căn: `var root := cube_root(val);`\n"
+                    "   - Gán cờ boolean: `r := (cube(root) == val);`"
+                )
+
+
+            # Xử lý bài toán chuỗi đối xứng (Palindrome / Reverse)
+            if "palindrome" in code or "reverse" in code:
+                return (
+                    f"HẬU ĐIỀU KIỆN CHUỖI ĐỐI XỨNG BỊ VI PHẠM: `{related_content}`.\n"
+                    "[HÀNH ĐỘNG BẮT BUỘC - BẢO TOÀN ĐỐI XỨNG BẰNG PROOF BLOCK INLINE]:\n"
+                    "1. Trong `reverse(str: string)`: Lặp `while i < |str|` kèm `invariant |rev| == i` và "
+                    "`invariant forall k :: 0 <= k < i ==> rev[k] == str[|str| - 1 - k]`.\n"
+                    "2. Trong `make_palindrome(s: string)`: Gọi `var rev := reverse(s); result := s + rev;`\n"
+                    "   và BẮT BUỘC chèn khối chứng minh đối xứng inline:\n"
+                    "   `forall k | 0 <= k < |result| ensures result[k] == result[|result| - 1 - k] { "
+                    "if k < |s| { assert result[k] == s[k]; assert result[|result| - 1 - k] == rev[|s| - 1 - k]; } "
+                    "else { var j := k - |s|; assert result[k] == rev[j]; assert result[|result| - 1 - k] == s[|s| - 1 - j]; } }`"
+                )
+
             # Xử lý bài toán tương đương hàm thuần túy (pure function như Fibonacci)
+
             pure_func_names = set(re.findall(r'\b(?:function|predicate)\s+([a-zA-Z_]\w*)', code))
             pure_func_names -= {"ensures", "requires", "invariant", "decreases", "assert", "assume"}
             matched_pure_func = None

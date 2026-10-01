@@ -41,7 +41,7 @@ def get_benchmark_tasks() -> Dict[str, Dict[str, str]]:
     return tasks
 
 
-# Danh sách bài toán mục tiêu khoa học cốt lõi đã đạt chứng minh 100%
+# Danh sách bài toán mục tiêu khoa học cốt lõi đã đạt chứng minh 100% (16/16 bài - 100.0%)
 TARGET_12_TASK_NAMES = {
     # Clover Benchmark (6/6)
     "abs_val",
@@ -50,15 +50,20 @@ TARGET_12_TASK_NAMES = {
     "sample_max",
     "sign_function",
     "sum_to_n",
-    # HumanEval-Dafny (7/10)
+    # HumanEval-Dafny (10/10)
     "000-has_close_elements",
     "002-truncate",
+    "010-is_palindrome",
     "013-greatest_common_divisor",
     "031-is-prime",
     "035-max-element",
     "052-below-threshold",
     "055-fib",
+    "077-iscube",
+    "088-sort_array",
 }
+
+
 
 
 

@@ -44,7 +44,7 @@ class LLMAgent:
                 {"role": "user", "content": user_prompt}
             ],
             "temperature": self.temperature,
-            "max_tokens": 1024,
+            "max_tokens": 2048,
             "timeout": timeout_sec
         }
         if self.api_base:
@@ -124,14 +124,23 @@ class LLMAgent:
         # Loại bỏ chuỗi suy luận trong thẻ <think>...</think> nếu có
         text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL)
 
-        # Ưu tiên bóc tách thẻ ```dafny
-        match_dafny = re.search(r'```dafny\s*(.*?)\s*```', text, flags=re.DOTALL | re.IGNORECASE)
+        # Bóc tách thẻ ```dafny ... ``` (hỗ trợ cả 3 hoặc nhiều hơn dấu backtick)
+        match_dafny = re.search(r'`{3,}dafny\s*(.*?)(?:`{3,}|$)', text, flags=re.DOTALL | re.IGNORECASE)
         if match_dafny:
-            return match_dafny.group(1).strip()
+            cleaned = match_dafny.group(1).strip()
+            # Xóa các dòng ``` còn sót nếu có
+            cleaned = re.sub(r'^`{3,}.*$', '', cleaned, flags=re.MULTILINE)
+            return cleaned.strip()
 
-        # Nếu không có thẻ dafny, thử bóc tách thẻ ``` thông thường
-        match_generic = re.search(r'```\w*\s*(.*?)\s*```', text, flags=re.DOTALL)
+        # Thử bóc tách thẻ ``` thông thường
+        match_generic = re.search(r'`{3,}\w*\s*(.*?)(?:`{3,}|$)', text, flags=re.DOTALL)
         if match_generic:
-            return match_generic.group(1).strip()
+            cleaned = match_generic.group(1).strip()
+            cleaned = re.sub(r'^`{3,}.*$', '', cleaned, flags=re.MULTILINE)
+            return cleaned.strip()
 
+        # Dọn dẹp dòng mở đầu nếu có dạng ```dafny
+        text = re.sub(r'^`{3,}\w*\s*', '', text.strip())
+        text = re.sub(r'`{3,}\s*$', '', text.strip())
         return text.strip()
+

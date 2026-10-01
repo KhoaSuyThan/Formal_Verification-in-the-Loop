@@ -1,27 +1,20 @@
 {
-  "timestamp": "20:56:00 30/09/2026",
-  "task_name": "055-fib",
-  "task_label": "055-fib - Thuật toán lặp đồng bộ đệ quy Fibonacci",
-  "spec_content": "function fib(n: nat): nat\n  decreases n\n{\n  if n == 0 then 0\n  else if n == 1 then 1\n  else fib(n - 1) + fib(n - 2)\n}\n// pure-end\nmethod ComputeFib(n: nat) returns (result: nat)\n  // post-conditions-start\n  ensures result == fib(n)\n  // post-conditions-end\n{\n  // impl-start\n    // Thân hàm để trống cho LLM tự sinh mã thuật toán\n    // impl-end\n}\n",
+  "timestamp": "10:21:05 01/10/2026",
+  "task_name": "abs_val",
+  "task_label": "abs_val - Tìm giá trị tuyệt đối",
+  "spec_content": "// Bài toán: Tính giá trị tuyệt đối của số nguyên x\n// Đặc tả ensures được khóa cứng bằng SHA-256 qua SpecLocker\n\nmethod Abs(x: int) returns (y: int)\n    ensures x >= 0 ==> y == x\n    ensures x < 0 ==> y == -x\n    ensures y >= 0\n{\n    // Thân hàm để trống cho LLM hoàn thiện\n}\n",
   "model_name": "ollama/qwen2.5-coder:7b",
   "max_k": 3,
   "timeout_sec": 15,
-  "elapsed": 24.18,
+  "elapsed": 14.38,
   "is_success": true,
-  "total_iterations": 2,
-  "final_code": "function fib(n: nat): nat\n  decreases n\n{\n  if n == 0 then 0\n  else if n == 1 then 1\n  else fib(n - 1) + fib(n - 2)\n}\n\nmethod ComputeFib(n: nat) returns (result: nat)\n  ensures result == fib(n)\n{\n  if n == 0 {\n    return 0;\n  }\n  var i := 1;\n  var a := 0;\n  var b := 1;\n  while i < n\n    invariant 1 <= i <= n\n    invariant a == fib(i - 1)\n    invariant b == fib(i)\n    decreases n - i\n  {\n    var temp := a + b;\n    a := b;\n    b := temp;\n    i := i + 1;\n  }\n  return b;\n}",
+  "total_iterations": 1,
+  "final_code": "method Abs(x: int) returns (y: int)\n    ensures x >= 0 ==> y == x\n    ensures x < 0 ==> y == -x\n    ensures y >= 0\n{\n    if x >= 0 {\n        y := x;\n    } else {\n        y := -x;\n    }\n}",
   "failure_reason": "",
   "history": [
     {
       "iteration": 1,
-      "code": "function fib(n: nat): nat\n  decreases n\n{\n  if n == 0 then 0\n  else if n == 1 then 1\n  else fib(n - 1) + fib(n - 2)\n}\n\nmethod ComputeFib(n: nat) returns (result: nat)\n  ensures result == fib(n)\n{\n  if n == 0 {\n    return 0;\n  }\n  var i := 1;\n  var a := 0;\n  var b := 1;\n  while i < n\n    invariant 1 <= i <= n\n    decreases n - i\n  {\n    var temp := a + b;\n    a := b;\n    b := temp;\n    i := i + 1;\n  }\n  return b;\n}",
-      "is_verified": false,
-      "error_taxonomy": "LoopInvariantViolation",
-      "error_message": "a postcondition could not be proved on this return path"
-    },
-    {
-      "iteration": 2,
-      "code": "function fib(n: nat): nat\n  decreases n\n{\n  if n == 0 then 0\n  else if n == 1 then 1\n  else fib(n - 1) + fib(n - 2)\n}\n\nmethod ComputeFib(n: nat) returns (result: nat)\n  ensures result == fib(n)\n{\n  if n == 0 {\n    return 0;\n  }\n  var i := 1;\n  var a := 0;\n  var b := 1;\n  while i < n\n    invariant 1 <= i <= n\n    invariant a == fib(i - 1)\n    invariant b == fib(i)\n    decreases n - i\n  {\n    var temp := a + b;\n    a := b;\n    b := temp;\n    i := i + 1;\n  }\n  return b;\n}",
+      "code": "method Abs(x: int) returns (y: int)\n    ensures x >= 0 ==> y == x\n    ensures x < 0 ==> y == -x\n    ensures y >= 0\n{\n    if x >= 0 {\n        y := x;\n    } else {\n        y := -x;\n    }\n}",
       "is_verified": true,
       "error_taxonomy": "None",
       "error_message": ""

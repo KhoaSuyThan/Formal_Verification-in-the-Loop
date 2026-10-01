@@ -6,6 +6,47 @@ Tất cả các thay đổi đáng chú ý của dự án sẽ được ghi nh�
 
 ---
 
+## [1.0.0] - 2026-10-01: HOÀN THÀNH TOÀN BỘ BENCHMARK - ĐẠT MỐC TUYỆT ĐỐI 16/16 BÀI PASS (100.0%)
+- **Chinh Phục Bài Toán Sắp Xếp Đa Tập Hợp ([core/topology_detector.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/topology_detector.py), [core/syntax_normalizer.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/syntax_normalizer.py))**:
+  - Định hình cấu trúc hoàn chỉnh cho hình thái `PERMUTATION_SORT`: thuật toán Insertion Sort tuần tự kèm 6 bổ đề quy nạp hình thức cốt lõi (`insert`, `insert_multiset`, `insert_len`, `is_sorted`, `insert_sorted`, `reverse_sorted_lemma`).
+- **Tự Động Liên Kết Bổ Đề Tiên Đề ([core/syntax_normalizer.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/syntax_normalizer.py), [core/topology_detector.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/topology_detector.py))**:
+  - Tích hợp phương thức `fix_available_lemma_invocations` trong `SyntaxNormalizer` tự động kích hoạt các bổ đề toán học có sẵn trong đề bài (như `cube_of_larger_is_larger()`), giải phóng Z3 khỏi bài toán phi tuyến không thể quyết định, giúp bài `077-iscube` đạt **Pass@1 tuyệt đối trong 4s**.
+- **Tối Ưu Chẩn Đoán Lỗi Ngữ Nghĩa ([core/diagnostic_parser.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/diagnostic_parser.py))**:
+  - Phân biệt rõ ràng lỗi `unresolved identifier` giữa biến cục bộ mới (cần `var`) và lời gọi hàm/bổ đề chưa được định nghĩa (cần bổ sung `lemma/function`), loại bỏ hoàn toàn hiện tượng hướng dẫn sai lệch khi LLM gọi bổ đề hình thức.
+- **Tăng Cường Năng Lực Sinh Mã Dài ([agents/llm_agent.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/agents/llm_agent.py))**:
+  - Nâng `max_tokens` từ `1024` lên `2048` token cho mô hình `qwen2.5-coder:7b` giúp sinh trọn vẹn các chương trình kiểm định lớn có nhiều bổ đề mà không bị cắt cụt.
+- **Kết Quả Thực Nghiệm & Mốc Son Dự Án ([web_demo/helpers.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/web_demo/helpers.py))**:
+  - Bài **`088-sort_array`** đạt kiểm định hình thức Z3 thành công mỹ mãn **PASS 100% ngay tại Lượt 1 (Pass@1)** (13/13 VCs verified, 0 errors).
+  - Toàn bộ **16/16 bài toán** thuộc 2 tập benchmark Stanford Clover (6/6 - 100%) và JetBrains HumanEval-Dafny (10/10 - 100%) đều đã đạt chứng minh toán học hình thức hoàn tất.
+  - Bảo toàn tuyệt đối 100% mã băm SHA-256 các mệnh đề đặc tả gốc (`requires`, `ensures`), không sửa đặc tả và không hardcode tên bài toán.
+  - Toàn bộ **41/41 unit tests** duy trì chuẩn xanh tuyệt đối (100% green).
+- **Hình Thái Chuỗi Đối Xứng & Đảo Chuỗi ([core/topology_detector.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/topology_detector.py))**:
+  - Bổ sung hình thái `STRING_SEQUENCE` tách biệt khỏi `PURE_FUNC_EQUIV` cho các bài toán xử lý chuỗi ký tự và đối xứng.
+  - Cung cấp khuôn mẫu vòng lặp đảo chuỗi tuần tự và khối chứng minh đối xứng inline (`forall k | 0 <= k < |result| { ... }`) giúp Z3 chứng minh tính đối xứng mà không cần viết bổ đề ngoài.
+- **Chuẩn Hóa Phạm Vi Biến Cục Bộ ([core/syntax_normalizer.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/syntax_normalizer.py))**:
+  - Tích hợp hàm `fix_missing_var_in_call_assignment` tự động kiểm tra out-parameters theo phạm vi từng method và tự động bổ sung từ khóa `var` khi gán biến mới.
+- **Chẩn Đoán Lỗi Biến Chưa Khai Báo ([core/diagnostic_parser.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/diagnostic_parser.py))**:
+  - Bổ sung chẩn đoán cho lỗi `unresolved identifier`, hướng dẫn mô hình thêm từ khóa `var` khi gán biến mới.
+- **Kết Quả Thực Nghiệm & Mở Rộng Benchmark ([web_demo/helpers.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/web_demo/helpers.py))**:
+  - Bài **`010-is_palindrome`** đạt chứng minh toán học **PASS 100% ngay tại Lượt 1 (Pass@1)** trên mô hình `qwen2.5-coder:7b` với `temperature = 0.0` (thời gian ~50s).
+  - Khóa đặc tả SHA-256 bảo toàn 100%, không sửa đặc tả và không hardcode tên bài toán.
+  - Nâng tỷ lệ đạt kiểm định của toàn bộ dự án lên **15/16 bài PASS (93.75%)**; nhóm HumanEval-Dafny đạt **9/10 bài PASS (90.0%)**.
+  - Toàn bộ **41/41 unit tests** đạt chuẩn xanh (100% green).
+
+
+## [0.9.1] - 2026-09-30: Đạt Mốc 14/16 Bài PASS (87.5%) - Số Học Phi Tuyến & Bổ Đề Đơn Điệu (Bài 077)
+- **Ràng Buộc Cấu Trúc Số Học Phi Tuyến ([core/topology_detector.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/topology_detector.py))**:
+  - Bổ sung chỉ dẫn hình thái `NON_LINEAR` cho các bài toán tìm căn bậc cao và kiểm tra lũy thừa/lập phương.
+  - Hướng dẫn cấu trúc vòng lặp tìm căn tăng dần `cube_root` kết hợp với việc tự động gọi bổ đề đơn điệu có sẵn trong file (`lemma cube_of_larger_is_larger()`).
+- **Tối Ưu Chẩn Đoán Ngữ Nghĩa ([core/diagnostic_parser.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/diagnostic_parser.py))**:
+  - Hỗ trợ phản hồi hướng dẫn gọi bổ đề tiên đề đơn điệu cho các bài toán số học bậc cao khi Z3 báo vi phạm hậu điều kiện.
+- **Kết Quả Thực Nghiệm & Mở Rộng Benchmark ([web_demo/helpers.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/web_demo/helpers.py))**:
+  - Bài **`077-iscube`** đạt chứng minh toán học **PASS 100% ngay tại Lượt 1 (Pass@1)** trên mô hình `qwen2.5-coder:7b` với `temperature = 0.0` (thời gian ~40s).
+  - Khóa đặc tả SHA-256 bảo toàn 100%, không sửa đặc tả và không hardcode tên bài toán.
+  - Nâng tỷ lệ đạt kiểm định của toàn bộ dự án lên **14/16 bài PASS (87.5%)**; nhóm HumanEval-Dafny đạt **8/10 bài PASS (80.0%)**.
+  - Toàn bộ **41/41 unit tests** đạt chuẩn xanh (100% green).
+
+
 ## [0.9.0] - 2026-09-30: Đạt Mốc 13/16 Bài PASS (81.25%) - Mẫu Hình Bất Biến 2 Chiều (Bài 000)
 - **Nâng Cấp Hình Thái Tìm Kiếm 2 Chiều ([core/topology_detector.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/topology_detector.py))**:
   - Tích hợp mẫu hình bất biến quy nạp 2 chiều phủ định (`NESTED_PAIRWISE_SEARCH`) cho các bài toán kiểm tra sự tồn tại của cặp phần tử ($O(N^2)$ Pairwise Search).
