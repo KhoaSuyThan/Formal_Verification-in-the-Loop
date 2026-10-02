@@ -591,12 +591,14 @@ with st.sidebar:
             "Mô hình LLM",
             [
                 "ollama/qwen2.5-coder:7b",
+                "gemini-2.5-flash",
+                "gemini-3.5-flash",
                 "gemini-3.6-flash",
                 "ollama/llama3.1:8b",
                 "ollama/deepseek-r1:7b",
             ],
             index=0,
-            help="Hỗ trợ mô hình Local (Ollama) và Cloud (Google AI Free Tier đã lưu key trong .env).",
+            help="Hỗ trợ mô hình Local (Ollama) và Cloud (Google Gemini Flash Free Tier đã lưu key trong .env).",
         )
         col_cfg1, col_cfg2 = st.columns(2)
         with col_cfg1:
@@ -933,11 +935,27 @@ with tab_pipeline:
                     target_badge = "🔥 [100% Target]" if item_info["is_target"] else "🧪 [Extended]"
                     st.markdown(f"**{idx_item}.** `{item_info['short_name']}` ({item_info['group']}) — {target_badge} — *{item_info['rel_path']}*")
 
-            batch_btn = st.button(
-                f"🚀 BẮT ĐẦU CHẠY KIỂM ĐỊNH HÀNG LOẠT ({len(selected_batch)} BÀI TOÁN)",
-                type="primary",
-                width="stretch",
-            )
+            col_b_run, col_b_stop = st.columns([4, 2])
+            with col_b_run:
+                batch_btn = st.button(
+                    f"🚀 BẮT ĐẦU CHẠY KIỂM ĐỊNH HÀNG LOẠT ({len(selected_batch)} BÀI TOÁN)",
+                    type="primary",
+                    width="stretch",
+                )
+            with col_b_stop:
+                batch_stop_btn = st.button("⏹️ DỪNG TIẾN TRÌNH", type="secondary", width="stretch", help="Dừng an toàn chu trình kiểm định sau khi hoàn thành bài toán hiện tại")
+
+            batch_stop_flag = os.path.join("artifacts", ".stop_batch_flag")
+            if batch_stop_btn:
+                Path(batch_stop_flag).touch()
+                st.toast("🛑 Đã gửi lệnh dừng! Hệ thống sẽ dừng lại an toàn sau bài toán hiện tại.", icon="🛑")
+                st.warning("🛑 Đã kích hoạt lệnh dừng. Hệ thống đang hoàn tất bài hiện tại và dừng an toàn...")
+
+            if batch_btn and os.path.exists(batch_stop_flag):
+                try:
+                    os.remove(batch_stop_flag)
+                except Exception:
+                    pass
 
             # Khung hiển thị tiến độ và kết quả
             batch_progress_bar = st.progress(0)
@@ -991,6 +1009,14 @@ with tab_pipeline:
                     batch_start_time = time.time()
 
                     for idx, item_key in enumerate(selected_batch):
+                        if os.path.exists(batch_stop_flag):
+                            batch_status.warning(f"🛑 Đã dừng tiến trình kiểm định hàng loạt theo yêu cầu (đã hoàn thành {idx}/{total_tasks} bài).")
+                            try:
+                                os.remove(batch_stop_flag)
+                            except Exception:
+                                pass
+                            break
+
                         task_info = flat_registry[item_key]
                         task_name_item = task_info["short_name"]
                         task_group_item = task_info["group"]
@@ -1381,13 +1407,13 @@ with tab_cross_model:
     st.markdown("### ⚔️ So Sánh Đối Đầu Mô Hình")
     st.caption("Đo lường năng lực sinh mã kèm kiểm chứng hình thức giữa Local AI (Ollama) và Cloud AI (Google Gemini).")
 
-    # Lựa chọn mô hình tham gia thi đấu (Hỗ trợ Gemini 3.5 và Gemini 2.5)
+    # Lựa chọn mô hình tham gia thi đấu (Hỗ trợ các dòng Gemini Flash ổn định)
     eval_models = [
         ("ollama/qwen2.5-coder:7b", "Qwen 7B (Local)"),
-        ("gemini-3.5-flash", "Gemini 3.5 (Cloud - Đã kiểm chứng)"),
-        ("gemini-2.5-flash", "Gemini 2.5 (Cloud - Quota cao)"),
+        ("gemini-2.5-flash", "Gemini 2.5 Flash (Cloud - Quota cao 1500 req/ngày)"),
+        ("gemini-3.5-flash", "Gemini 3.5 Flash (Cloud - Đã kiểm chứng)"),
+        ("gemini-3.6-flash", "Gemini 3.6 Flash (Preview - Hạn ngạch 20 req/ngày)"),
         ("ollama/llama3.1:8b", "LLaMA 8B (Local)"),
-        ("gemini-3.6-flash", "Gemini 3.6 (Preview - Hạn ngạch 20 req/ngày)"),
         ("ollama/deepseek-r1:7b", "DeepSeek 7B (Local)"),
     ]
     selected_eval_models = st.multiselect(
@@ -1412,11 +1438,25 @@ with tab_cross_model:
         ][:5]
         source_note = f"Mặc định chạy **5 bài tiêu biểu** (hoặc chuyển sang chế độ 'Hàng loạt' bên trái để tự chọn bài)."
 
-    col_btn_run, col_btn_load = st.columns([3, 2])
+    col_btn_run, col_btn_stop, col_btn_load = st.columns([3, 2, 2])
     with col_btn_run:
         btn_start_benchmark = st.button("🚀 Bắt Đầu So Sánh", type="primary", width="stretch")
+    with col_btn_stop:
+        btn_stop_benchmark = st.button("⏹️ Dừng So Sánh", type="secondary", width="stretch", help="Dừng an toàn quá trình so sánh sau bài toán hiện tại")
     with col_btn_load:
         btn_load_cached = st.button("📂 Tải Kết Quả Cũ", width="stretch")
+
+    cross_stop_flag = os.path.join("artifacts", ".stop_cross_flag")
+    if btn_stop_benchmark:
+        Path(cross_stop_flag).touch()
+        st.toast("🛑 Đã gửi lệnh dừng! Quá trình so sánh sẽ dừng an toàn sau bài toán hiện tại.", icon="🛑")
+        st.warning("🛑 Đã kích hoạt lệnh dừng. Hệ thống đang hoàn tất bài hiện tại và dừng an toàn...")
+
+    if btn_start_benchmark and os.path.exists(cross_stop_flag):
+        try:
+            os.remove(cross_stop_flag)
+        except Exception:
+            pass
 
     st.caption(f"📌 {source_note}")
 
@@ -1480,11 +1520,19 @@ with tab_cross_model:
                     model_ids=selected_eval_models,
                     task_keys=target_keys,
                     max_attempts=max_k,
-                    progress_callback=update_progress
+                    progress_callback=update_progress,
+                    stop_check=lambda: os.path.exists(cross_stop_flag)
                 )
                 st.session_state["cross_model_data"] = benchmark_data
-                progress_bar.progress(1.0)
-                status_text.success("🎉 Đã hoàn thành toàn bộ chu trình đánh giá đối đầu!")
+                if os.path.exists(cross_stop_flag):
+                    try:
+                        os.remove(cross_stop_flag)
+                    except Exception:
+                        pass
+                    status_text.warning("🛑 Quá trình so sánh đã dừng lại theo yêu cầu! Toàn bộ kết quả đã chạy được lưu trữ đầy đủ.")
+                else:
+                    progress_bar.progress(1.0)
+                    status_text.success("🎉 Đã hoàn thành toàn bộ chu trình đánh giá đối đầu!")
                 st.rerun()
 
     # Tự động nạp kết quả đã lưu gần nhất nếu session_state chưa có

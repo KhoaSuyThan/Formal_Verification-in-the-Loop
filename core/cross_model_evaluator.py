@@ -85,7 +85,8 @@ class CrossModelEvaluator:
         model_ids: List[str],
         task_keys: Optional[List[str]] = None,
         max_attempts: int = 3,
-        progress_callback: Optional[Callable[[str, int, int, str], None]] = None
+        progress_callback: Optional[Callable[[str, int, int, str], None]] = None,
+        stop_check: Optional[Callable[[], bool]] = None
     ) -> Dict[str, Any]:
         """Thực hiện chạy benchmark đối đầu giữa các mô hình được chọn.
         
@@ -138,6 +139,9 @@ class CrossModelEvaluator:
         engine = DafnyEngine(dafny_path=self.dafny_path)
 
         for model_id in model_ids:
+            if stop_check and stop_check():
+                print("[CROSS-MODEL]: Đã nhận tín hiệu dừng, ngắt sớm chuỗi mô hình.")
+                break
             display_info = self._get_model_info(model_id)
             agent = LLMAgent(model_name=model_id)
             controller = PipelineController(
@@ -154,6 +158,9 @@ class CrossModelEvaluator:
             total_loops = 0
 
             for task_label, meta in selected_tasks.items():
+                if stop_check and stop_check():
+                    print(f"[CROSS-MODEL]: Đã nhận tín hiệu dừng tại {model_id} trước bài {meta.get('short_name')}.")
+                    break
                 current_step += 1
                 short_name = meta["short_name"]
                 if progress_callback:
