@@ -6,6 +6,21 @@ Tất cả các thay đổi đáng chú ý của dự án sẽ được ghi nh�
 
 ---
 
+## [1.3.2] - 2026-10-02: Khắc Phục Lỗi DeepSeek-R1 & Bổ Sung Nút Dừng Chạy Tiến Trình
+- **Tối ưu thích ứng mô hình suy luận sâu Chain-of-Thought ([agents/llm_agent.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/agents/llm_agent.py))**:
+  - Khắc phục triệt để lỗi DeepSeek-R1 thất bại 0/10: nâng `max_tokens` từ 2048 lên 8192 và nâng timeout từ 90s lên 240s khi gọi dòng mô hình `deepseek`.
+  - Cải tiến bộ bóc tách `_clean_markdown` với cơ chế phòng vệ chống nuốt code khi thẻ `<think>` chưa kịp đóng do chạm trần token.
+- **Bổ sung Nút Dừng Chạy an toàn ([app.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/app.py), [core/cross_model_evaluator.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/cross_model_evaluator.py))**:
+  - **Tab 1 (Kiểm Định Hàng Loạt)**: Bổ sung nút `⏹️ DỪNG TIẾN TRÌNH`, cho phép dừng sau bài hiện tại và hiển thị bảng kết quả những bài đã hoàn thành.
+  - **Tab 4 (So Sánh Đối Đầu)**: Bổ sung nút `⏹️ Dừng So Sánh`, hỗ trợ callback `stop_check` ngắt sớm chuỗi benchmark và bảo toàn toàn bộ dữ liệu checkpoint.
+
+## [1.3.1] - 2026-10-02: Làm Rõ & Mở Rộng Hỗ Trợ Mô Hình Gemini Flash Trên Giao Diện Web
+- **Làm rõ phân hệ mô hình Flash ([app.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/app.py))**:
+  - Xác nhận toàn bộ cấu hình Cloud AI sử dụng dòng **Gemini Flash** (`gemini-2.5-flash`, `gemini-3.5-flash`) nhằm tối ưu hạn ngạch Free Tier (15 RPM / 1.500 requests/ngày) và chống nghẽn 429 so với dòng Pro (2 RPM).
+  - Cập nhật nhãn hiển thị tại Tab 4 thành rõ ràng `Gemini 2.5 Flash (Cloud - Quota cao 1500 req/ngày)` và `Gemini 3.5 Flash`.
+- **Mở rộng Sidebar ([app.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/app.py))**:
+  - Bổ sung `gemini-2.5-flash` và `gemini-3.5-flash` vào dropdown Mục 3 (Cấu hình mô hình) ở Sidebar bên trái, cho phép chọn trực tiếp khi chạy chế độ Đơn Lẻ hoặc Hàng Loạt.
+
 ## [1.3.0] - 2026-10-01: Hệ Thống Đánh Giá Đối Đầu Đa Mô Hình (Cross-Model Evaluation) & Hoàn Thiện Dự Án
 - **Tích hợp Cloud AI thế hệ mới (Google Gemini 3.5/2.5 Flash & OpenAI) ([agents/llm_agent.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/agents/llm_agent.py))**: 
   - Kết nối REST API Google AI Studio trực tiếp; nâng ngưỡng `maxOutputTokens: 8192` loại bỏ dứt điểm hiện tượng suy luận ngầm (Internal Thinking) nuốt token làm cụt code; xử lý thích ứng lỗi HTTP 429 qua trích xuất thời gian chờ động (`retryDelay`).

@@ -114,6 +114,10 @@ class LLMAgent:
         if "gemini" in self.model.lower():
             return self._call_gemini_rest(system_prompt, user_prompt, timeout_sec=timeout_sec) or ""
 
+        # Điều chỉnh max_tokens và timeout thích ứng cho mô hình suy luận sâu Chain-of-Thought (như DeepSeek-R1)
+        effective_max_tokens = 8192 if "deepseek" in self.model.lower() else 2048
+        effective_timeout = max(timeout_sec, 240) if "deepseek" in self.model.lower() else timeout_sec
+
         kwargs = {
             "model": self.model,
             "messages": [
@@ -121,8 +125,8 @@ class LLMAgent:
                 {"role": "user", "content": user_prompt}
             ],
             "temperature": self.temperature,
-            "max_tokens": 2048,
-            "timeout": timeout_sec
+            "max_tokens": effective_max_tokens,
+            "timeout": effective_timeout
         }
         if self.api_base:
             kwargs["api_base"] = self.api_base
@@ -199,8 +203,15 @@ class LLMAgent:
     @staticmethod
     def _clean_markdown(text: str) -> str:
         """Loại bỏ các định dạng markdown và thẻ suy nghĩ <think> để trích xuất mã thuần."""
-        # Loại bỏ chuỗi suy luận trong thẻ <think>...</think> nếu có
-        text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL)
+        # Loại bỏ chuỗi suy luận trong thẻ <think>...</think> (xử lý cả trường hợp thẻ chưa đóng do chạm trần token)
+        if "</think>" in text:
+            text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL)
+        elif "<think>" in text:
+            match_after_think = re.search(r'`{3,}dafny\s*(.*?)(?:`{3,}|$)', text, flags=re.DOTALL | re.IGNORECASE)
+            if match_after_think:
+                text = match_after_think.group(0)
+            else:
+                text = re.sub(r'<think>.*$', '', text, flags=re.DOTALL)
 
         # Bóc tách thẻ ```dafny ... ``` (hỗ trợ cả 3 hoặc nhiều hơn dấu backtick)
         match_dafny = re.search(r'`{3,}dafny\s*(.*?)(?:`{3,}|$)', text, flags=re.DOTALL | re.IGNORECASE)
