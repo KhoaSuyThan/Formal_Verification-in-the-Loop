@@ -231,6 +231,8 @@ def save_last_single_run(
                 "error_message": item.error_message,
                 "cot_trace": getattr(item, "cot_trace", ""),
                 "cot_tokens": getattr(item, "cot_tokens", 0),
+                "counterexample_desc": getattr(item, "counterexample_desc", ""),
+                "has_cegar": getattr(item, "has_cegar", False),
             })
 
     data = {
@@ -296,6 +298,8 @@ def dict_to_pipeline_result(data: dict) -> Tuple[Any, dict]:
                 error_taxonomy=h.get("error_taxonomy", ""),
                 cot_trace=h.get("cot_trace", ""),
                 cot_tokens=h.get("cot_tokens", 0),
+                counterexample_desc=h.get("counterexample_desc", ""),
+                has_cegar=h.get("has_cegar", False),
             )
         )
 

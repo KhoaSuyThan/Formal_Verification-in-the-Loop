@@ -30,6 +30,8 @@ class IterationLog:
     error_taxonomy: str
     cot_trace: str = ""
     cot_tokens: int = 0
+    counterexample_desc: str = ""
+    has_cegar: bool = False
 
 
 @dataclass
@@ -43,6 +45,8 @@ class PipelineResult:
     failure_reason: str = ""
     total_cot_tokens: int = 0
     final_cot_trace: str = ""
+    has_cegar: bool = False
+    has_cegar_repaired: bool = False
 
 
 class PipelineController:
@@ -152,6 +156,7 @@ class PipelineController:
                     cot_tokens=cur_cot_tokens
                 )
                 history.append(log_entry)
+                has_cegar_repaired = any(l.has_cegar for l in history[:-1])
                 return PipelineResult(
                     task_name=task_name,
                     is_success=True,
@@ -159,17 +164,26 @@ class PipelineController:
                     final_code=current_code,
                     history=history,
                     total_cot_tokens=sum(l.cot_tokens for l in history),
-                    final_cot_trace=cur_cot_trace
+                    final_cot_trace=cur_cot_trace,
+                    has_cegar=any(l.has_cegar for l in history),
+                    has_cegar_repaired=has_cegar_repaired
                 )
 
             # Trường hợp kiểm định thất bại: Dùng Semantic Diagnostic Engine bóc tách lỗi chi tiết
             detailed_feedback, err_cat = DiagnosticParser.format_diagnostic_feedback(current_code, verify_res.output)
             summary_err = DiagnosticParser.extract_error(verify_res.output, current_code)
 
+            # Trích xuất phản ví dụ CEGAR cụ thể từ Z3 SMT Solver
+            ce_data = DiagnosticParser.extract_counterexample(verify_res.output, current_code)
+            ce_desc = ce_data.description if ce_data else ""
+            has_cegar_iter = bool(ce_data)
+
             if self.verbose:
                 print(f"❌ [Dafny Engine]: Kiểm định thất bại.")
                 print(f"   Loại lỗi: {err_cat}")
                 print(f"   Chi tiết: {summary_err}")
+                if ce_desc:
+                    print(f"   🎯 [Z3 CEGAR]: Phản ví dụ vi phạm: {ce_desc}")
 
             log_entry = IterationLog(
                 iteration=k,
@@ -179,7 +193,9 @@ class PipelineController:
                 error_message=summary_err,
                 error_taxonomy=err_cat,
                 cot_trace=cur_cot_trace,
-                cot_tokens=cur_cot_tokens
+                cot_tokens=cur_cot_tokens,
+                counterexample_desc=ce_desc,
+                has_cegar=has_cegar_iter
             )
             history.append(log_entry)
 
@@ -236,6 +252,8 @@ class PipelineController:
             history=history,
             failure_reason=f"Không thể chứng minh tính đúng đắn sau {self.max_k} vòng lặp.",
             total_cot_tokens=sum(l.cot_tokens for l in history),
-            final_cot_trace=history[-1].cot_trace if history else ""
+            final_cot_trace=history[-1].cot_trace if history else "",
+            has_cegar=any(l.has_cegar for l in history),
+            has_cegar_repaired=False
         )
 

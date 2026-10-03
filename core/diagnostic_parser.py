@@ -6,7 +6,17 @@ hướng dẫn sửa lỗi ngữ nghĩa toán học chi tiết (Semantic Diagnos
 
 import re
 from dataclasses import dataclass
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Dict, Any
+
+
+@dataclass
+class CounterexampleData:
+    """Mô hình phản ví dụ cụ thể do Z3 SMT Solver tìm thấy (CEGAR - arXiv:2506.06923)."""
+    initial_state: Dict[str, str]        # Các giá trị đầu vào (ví dụ: {'x': '-1'})
+    failing_state: Dict[str, str]        # Các giá trị khi vi phạm (ví dụ: {'x': '-1', 'y': '-1'})
+    violated_clause: str                 # Mệnh đề bị vi phạm (ví dụ: 'ensures y >= 0')
+    description: str                     # Tóm tắt súc tích cho UI và prompt
+    raw_snippet: str = ""                # Đoạn log thô từ Z3
 
 
 @dataclass
@@ -22,6 +32,7 @@ class DiagnosticError:
     related_line: Optional[int] = None
     related_content: str = ""
     related_message: str = ""
+    counterexample: Optional[CounterexampleData] = None
 
 
 class DiagnosticParser:
@@ -494,7 +505,114 @@ class DiagnosticParser:
                 err.related_content
             )
 
+        # Trích xuất phản ví dụ CEGAR nếu Z3 cung cấp (arXiv:2506.06923)
+        ce_data = cls.extract_counterexample(dafny_output, code)
+        if ce_data and errors:
+            errors[0].counterexample = ce_data
+
         return errors
+
+    @classmethod
+    def extract_counterexample(cls, dafny_output: str, code: str = "") -> Optional[CounterexampleData]:
+        """Trích xuất mô hình phản ví dụ (Counterexample) do Z3 sinh ra khi kiểm định thất bại.
+        
+        Căn cứ theo nguyên lý CEGAR (arXiv:2506.06923):
+        Tìm kiếm các trạng thái gán giá trị biến khiến hậu điều kiện hoặc bất biến bị vi phạm.
+        """
+        if "Related counterexample:" not in dafny_output:
+            return None
+
+        parts = dafny_output.split("Related counterexample:")
+        if len(parts) < 2:
+            return None
+        ce_text = parts[1]
+
+        # Tách cho đến phần Related location hoặc phần kết thúc
+        end_idx = ce_text.find("Related location:")
+        body = ce_text if end_idx == -1 else ce_text[:end_idx]
+
+        initial_vars: Dict[str, str] = {}
+        failing_vars: Dict[str, str] = {}
+        current_state = "unknown"
+
+        for line in body.splitlines():
+            line_str = line.strip()
+            if "initial state:" in line_str:
+                current_state = "initial"
+                continue
+            elif line_str.endswith(":") and ("(" in line_str or "\\" in line_str or "/" in line_str):
+                current_state = "failing"
+                continue
+
+            if line_str.startswith("assume "):
+                assume_content = line_str[len("assume "):].rstrip(";")
+                clauses = [c.strip() for c in assume_content.split("&&")]
+                for c in clauses:
+                    eq_match = re.match(r'^(-?[0-9a-zA-Z_#\'\.\"]+)\s*==\s*(-?[0-9a-zA-Z_#\'\.\"]+)$', c)
+                    if eq_match:
+                        left, right = eq_match.group(1), eq_match.group(2)
+                        var_name = None
+                        var_val = None
+                        if re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', right) and not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', left):
+                            var_name = right
+                            var_val = left
+                        elif re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', left) and not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', right):
+                            var_name = left
+                            var_val = right
+                        elif re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', right):
+                            var_name = right
+                            var_val = left
+                        elif re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', left):
+                            var_name = left
+                            var_val = right
+
+                        if var_name and var_val and not var_name.startswith("_"):
+                            if current_state == "initial":
+                                initial_vars[var_name] = var_val
+                            failing_vars[var_name] = var_val
+
+        # Trích xuất mệnh đề vi phạm từ phần Related location
+        violated_clause = ""
+        rel_loc_match = re.search(r'Related location: this is the [^\n]+\n\s*\|\s*\n[0-9]+\s*\|\s*([^\n]+)', ce_text)
+        if rel_loc_match:
+            violated_clause = rel_loc_match.group(1).strip()
+        elif "Related location:" in ce_text:
+            rel_part = ce_text.split("Related location:")[1]
+            for rline in rel_part.splitlines():
+                clean_rline = rline.strip()
+                if clean_rline and not clean_rline.startswith("|") and not clean_rline.startswith("^") and not clean_rline.startswith("this is the"):
+                    if "ensures " in clean_rline or "invariant " in clean_rline or "requires " in clean_rline:
+                        violated_clause = clean_rline
+                        break
+
+        if not violated_clause:
+            clause_match = re.search(r'(ensures\s+[^\n;]+|invariant\s+[^\n;]+)', dafny_output)
+            if clause_match:
+                violated_clause = clause_match.group(1).strip()
+
+        # Tạo mô tả súc tích cho UI và prompt
+        desc_parts = []
+        if initial_vars:
+            init_str = ", ".join(f"{k} = {v}" for k, v in initial_vars.items())
+            desc_parts.append(f"Đầu vào: [{init_str}]")
+        if failing_vars and failing_vars != initial_vars:
+            fail_str = ", ".join(f"{k} = {v}" for k, v in failing_vars.items() if k not in initial_vars or initial_vars[k] != v)
+            if fail_str:
+                desc_parts.append(f"Kết quả: [{fail_str}]")
+            else:
+                desc_parts.append(f"Tại: [{', '.join(f'{k} = {v}' for k, v in failing_vars.items())}]")
+        if violated_clause:
+            desc_parts.append(f"Vi phạm: `{violated_clause}`")
+
+        description = " ➔ ".join(desc_parts) if desc_parts else "Phản ví dụ do Z3 SMT Solver phát hiện"
+
+        return CounterexampleData(
+            initial_state=initial_vars,
+            failing_state=failing_vars if failing_vars else initial_vars,
+            violated_clause=violated_clause,
+            description=description,
+            raw_snippet=body.strip()
+        )
 
     @classmethod
     def extract_error(cls, dafny_output: str, code: str = "") -> str:
@@ -508,6 +626,8 @@ class DiagnosticParser:
                 res += f"\n-> Dòng mã vi phạm: `{top.faulty_line_content}`"
             if top.related_content:
                 res += f"\n-> Mệnh đề liên quan: `{top.related_content}`"
+            if top.counterexample:
+                res += f"\n-> Phản ví dụ Z3 (CEGAR): {top.counterexample.description}"
             if top.semantic_hint:
                 res += f"\n-> Hướng dẫn khắc phục: {top.semantic_hint}"
             return res
@@ -551,6 +671,24 @@ class DiagnosticParser:
             f"❌ LOẠI LỖI: [{top.error_type}] tại Dòng {top.line}, Cột {top.column}",
             f"THÔNG BÁO CHI TIẾT: {top.message}"
         ]
+
+        # Khối phản ví dụ CEGAR từ Z3 SMT Solver
+        if top.counterexample:
+            ce = top.counterexample
+            ce_block = [
+                "🎯 PHẢN VÍ DỤ CỤ THỂ TỪ Z3 SMT SOLVER (CEGAR - arXiv:2506.06923):",
+                f"- Tóm tắt ca vi phạm: {ce.description}"
+            ]
+            if ce.initial_state:
+                init_vals = ", ".join(f"{k} = {v}" for k, v in ce.initial_state.items())
+                ce_block.append(f"- Đầu vào ban đầu: [{init_vals}]")
+            if ce.failing_state and ce.failing_state != ce.initial_state:
+                fail_vals = ", ".join(f"{k} = {v}" for k, v in ce.failing_state.items())
+                ce_block.append(f"- Trạng thái biến khi vi phạm: [{fail_vals}]")
+            if ce.violated_clause:
+                ce_block.append(f"- Mệnh đề đặc tả bị phá vỡ: `{ce.violated_clause}`")
+            ce_block.append("👉 BẮT BUỘC: Bạn phải sửa mã nguồn thuật toán để xử lý chính xác ca biên (Edge Case) này!")
+            feedback_parts.append("\n".join(ce_block))
 
         if top.faulty_line_content:
             feedback_parts.append(f"DÒNG MÃ GÂY LỖI: `{top.faulty_line_content}`")
