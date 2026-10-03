@@ -33,6 +33,7 @@ class ModelBenchmarkSummary:
     avg_duration_sec: float
     avg_repair_loops: float
     total_duration_sec: float
+    avg_cot_tokens: float = 0.0  # Chỉ số L_CoT trung bình phục vụ nghiên cứu Overthinking (Trục 2)
 
 
 class CrossModelEvaluator:
@@ -254,6 +255,12 @@ class CrossModelEvaluator:
                     error_message=last_err
                 )
 
+                # Ghi nhận chỉ số suy luận sâu Chain-of-Thought (Trục 2 - arXiv:2505.12886)
+                cot_tokens = getattr(res, "total_cot_tokens", 0)
+                cot_trace = getattr(res, "final_cot_trace", "")
+                has_cot = cot_tokens > 0 or bool(cot_trace)
+                cot_preview = (cot_trace[:140].replace("\n", " ") + "...") if len(cot_trace) > 140 else cot_trace.replace("\n", " ")
+
                 task_records.append({
                     "task_key": task_label,
                     "task_name": short_name,
@@ -264,7 +271,11 @@ class CrossModelEvaluator:
                     "repair_loops": loops,
                     "h_code": h_report["code"],
                     "h_badge": h_report["badge"],
-                    "h_name": h_report["name"]
+                    "h_name": h_report["name"],
+                    "has_cot": has_cot,
+                    "cot_tokens": cot_tokens,
+                    "cot_preview": cot_preview,
+                    "cot_trace": cot_trace
                 })
 
                 # --- CHECKPOINT LŨY TIẾN: Lưu ngay lập tức sau mỗi bài toán ---
@@ -282,7 +293,8 @@ class CrossModelEvaluator:
                     pass_at_k_rate=round((pass_at_k / cur_n * 100.0) if cur_n > 0 else 0.0, 1),
                     avg_duration_sec=round((total_duration / cur_n) if cur_n > 0 else 0.0, 2),
                     avg_repair_loops=round((total_loops / cur_n) if cur_n > 0 else 0.0, 2),
-                    total_duration_sec=round(total_duration, 2)
+                    total_duration_sec=round(total_duration, 2),
+                    avg_cot_tokens=round((sum(r.get("cot_tokens", 0) for r in task_records) / cur_n) if cur_n > 0 else 0.0, 1)
                 )
                 
                 # Cập nhật summary của model hiện tại trong danh sách tạm
@@ -342,22 +354,31 @@ class CrossModelEvaluator:
     @staticmethod
     def generate_latex_table(summaries: List[Dict[str, Any]]) -> str:
         """Tạo bảng LaTeX chuẩn bài báo khoa học từ tóm tắt benchmark."""
+        has_cot = any(s.get("avg_cot_tokens", 0) > 0 for s in summaries)
+        col_align = "lccccccc" if has_cot else "lcccccc"
+        header_line = (
+            r"\textbf{Model} & \textbf{Type} & \textbf{Tasks} & \textbf{Pass@1 (\%)} & \textbf{Pass@K (\%)} & \textbf{$T_{avg}$ (s)} & \textbf{Avg Loops} & \textbf{$L_{CoT}$ (tok)} \\"
+            if has_cot else
+            r"\textbf{Model} & \textbf{Type} & \textbf{Tasks} & \textbf{Pass@1 (\%)} & \textbf{Pass@K (\%)} & \textbf{$T_{avg}$ (s)} & \textbf{Avg Loops} \\"
+        )
+
         latex_lines = [
             r"\begin{table}[htbp]",
             r"\centering",
             r"\caption{Cross-Model Verification Performance Comparison}",
             r"\label{tab:cross_model_eval}",
-            r"\begin{tabular}{lcccccc}",
+            f"\\begin{{tabular}}{{{col_align}}}",
             r"\toprule",
-            r"\textbf{Model} & \textbf{Type} & \textbf{Tasks} & \textbf{Pass@1 (\%)} & \textbf{Pass@K (\%)} & \textbf{$T_{avg}$ (s)} & \textbf{Avg Loops} \\",
+            header_line,
             r"\midrule"
         ]
 
         for s in summaries:
+            cot_part = f" & {s.get('avg_cot_tokens', 0):.0f}" if has_cot else ""
             line = (
                 f"{s['display_name']} & {s['model_type']} & {s['total_tasks']} & "
                 f"{s['pass_at_1_rate']}\\% & {s['pass_at_k_rate']}\\% & "
-                f"{s['avg_duration_sec']} & {s['avg_repair_loops']} \\\\"
+                f"{s['avg_duration_sec']} & {s['avg_repair_loops']}{cot_part} \\\\"
             )
             latex_lines.append(line)
 

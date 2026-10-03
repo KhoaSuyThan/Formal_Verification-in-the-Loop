@@ -6,7 +6,21 @@ Tất cả các thay đổi đáng chú ý của dự án sẽ được ghi nh�
 
 ---
 
-## [1.3.5] - 2026-10-03: Tinh Chỉnh Bố Cục 3 Biểu Đồ Dashboard Ngang (Tab 4 So Sánh Chéo)
+## [1.3.6] - 2026-10-03: Định Lượng Chuỗi Suy Luận CoT & Phân Tích Hiện Tượng Overthinking (Trục 2)
+- **Module Bóc Tách & Định Lượng CoT ([core/cot_extractor.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/cot_extractor.py))**:
+  - Triển khai hàm `extract_cot_trace` bóc tách độc lập giữa chuỗi suy luận bên trong `<think>...</think>` và mã nguồn Dafny sạch để đưa vào Z3 SMT Solver (xử lý an toàn cả trường hợp thẻ suy nghĩ bị cắt cụt do chạm trần token).
+  - Thuật toán `analyze_cot_density` phân tích mật độ các từ khóa toán học cốt lõi (`invariant`, `ensures`, `boundary`, `decreases`) và nhận diện ngưỡng suy nghĩ quá độ (*Overthinking Threshold* > 800 tokens theo *arXiv:2505.12886*).
+- **Tích hợp sâu vào Agent & Pipeline ([agents/llm_agent.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/agents/llm_agent.py), [core/pipeline_controller.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/pipeline_controller.py))**:
+  - Ghi nhận `last_cot_trace` và `last_cot_tokens` qua từng vòng lặp tự sửa lỗi Pass@K của [PipelineController](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/pipeline_controller.py), lưu kiên cố trong `IterationLog` và `PipelineResult`.
+- **Nâng cấp đối chuẩn Benchmark ([core/cross_model_evaluator.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/cross_model_evaluator.py))**:
+  - Bổ sung trường `avg_cot_tokens` vào `ModelBenchmarkSummary` và chi tiết `cot_tokens`, `has_cot`, `cot_preview`, `cot_trace` trong từng bản ghi bài toán.
+- **Nâng cấp giao diện trực quan Tab 4 ([app.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/app.py))**:
+  - Bổ sung cột *CoT Token TB ($L_{CoT}$)* trong Bảng Ma Trận Đối Đầu khi có mô hình suy luận tham gia.
+  - Bổ sung cột *Suy Luận CoT* trong Bảng Nhật Ký Chi Tiết.
+  - Thêm khung phân tích: **Phân Tích Hiện Tượng 'Overthinking' & Chuỗi Suy Luận CoT (arXiv:2505.12886)** so sánh số token trung bình giữa nhóm bài Đạt ($H_0$) và Thất Bại ($H_1 \to H_4$), tích hợp **Kính Soi Chuỗi Suy Luận (CoT Inspector)** để xem toàn văn đoạn suy nghĩ của mô hình.
+- **Kiểm thử tự động ([tests/test_cot_extractor.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/tests/test_cot_extractor.py))**:
+  - 6 ca kiểm thử bao phủ toàn bộ các tình huống CoT đầy đủ, cắt cụt, mã giả bên trong think, và mô hình non-reasoning (100% test passed).
+
 - **Tái cấu trúc bố cục Dashboard Tab 4 ([app.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/app.py))**:
   - Gộp chung 3 biểu đồ (*Tỷ Lệ Đạt*, *Thời Gian TB*, *Phân Bố Ảo Giác*) vào **1 hàng ngang duy nhất** với 3 cột cân xứng (`st.columns([1, 1, 1.15])`), giải quyết triệt để tình trạng biểu đồ cột bị kéo giãn quá rộng.
   - Chuẩn hóa khoảng cách cột (`bargap=0.35` - `0.45`) giúp thanh bar thon gọn, thanh thoát, hiển thị cân đối bất kể so sánh 2 hay nhiều mô hình.

@@ -1,0 +1,106 @@
+{
+  "timestamp": "2026-10-03 13:00:00",
+  "summaries": [
+    {
+      "model_name": "ollama/qwen2.5-coder:7b",
+      "display_name": "Qwen2.5-Coder-7B",
+      "model_type": "Local (Ollama)",
+      "total_tasks": 2,
+      "passed_tasks": 2,
+      "pass_at_1_count": 2,
+      "pass_at_k_count": 2,
+      "pass_at_1_rate": 100.0,
+      "pass_at_k_rate": 100.0,
+      "avg_duration_sec": 2.15,
+      "avg_repair_loops": 0.0,
+      "total_duration_sec": 4.3,
+      "avg_cot_tokens": 0.0
+    },
+    {
+      "model_name": "ollama/deepseek-r1:7b",
+      "display_name": "DeepSeek-R1-7B (Reasoning)",
+      "model_type": "Local (Ollama)",
+      "total_tasks": 2,
+      "passed_tasks": 1,
+      "pass_at_1_count": 1,
+      "pass_at_k_count": 1,
+      "pass_at_1_rate": 50.0,
+      "pass_at_k_rate": 50.0,
+      "avg_duration_sec": 18.5,
+      "avg_repair_loops": 1.0,
+      "total_duration_sec": 37.0,
+      "avg_cot_tokens": 826.0
+    }
+  ],
+  "detailed_results": {
+    "ollama/qwen2.5-coder:7b": [
+      {
+        "task_key": "[Clover] abs_val - Tìm giá trị tuyệt đối",
+        "task_name": "abs_val",
+        "group": "Clover",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 2.1,
+        "repair_loops": 0,
+        "h_code": "H0",
+        "h_badge": "✅ H0: Zero-Hallucination",
+        "h_name": "Tuyệt Đối Không Ảo Giác",
+        "has_cot": false,
+        "cot_tokens": 0,
+        "cot_preview": "",
+        "cot_trace": ""
+      },
+      {
+        "task_key": "[Clover] sample_max - Tìm phần tử lớn nhất",
+        "task_name": "sample_max",
+        "group": "Clover",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 2.2,
+        "repair_loops": 0,
+        "h_code": "H0",
+        "h_badge": "✅ H0: Zero-Hallucination",
+        "h_name": "Tuyệt Đối Không Ảo Giác",
+        "has_cot": false,
+        "cot_tokens": 0,
+        "cot_preview": "",
+        "cot_trace": ""
+      }
+    ],
+    "ollama/deepseek-r1:7b": [
+      {
+        "task_key": "[Clover] abs_val - Tìm giá trị tuyệt đối",
+        "task_name": "abs_val",
+        "group": "Clover",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 8.4,
+        "repair_loops": 0,
+        "h_code": "H0",
+        "h_badge": "✅ H0: Zero-Hallucination",
+        "h_name": "Tuyệt Đối Không Ảo Giác",
+        "has_cot": true,
+        "cot_tokens": 412,
+        "cot_preview": "We need to compute the absolute value of integer x in Dafny. The specification says ensures x >= 0 ==> y == x and ensures x < 0 ==> y == -x...",
+        "cot_trace": "We need to compute the absolute value of integer x in Dafny.\nThe specification says:\nensures x >= 0 ==> y == x\nensures x < 0 ==> y == -x\nLet's check if a conditional assignment suffices:\nif x >= 0 { y := x; } else { y := -x; }\nBoth branches directly satisfy the respective postconditions. Z3 should verify this without invariants."
+      },
+      {
+        "task_key": "[HumanEval] 013-greatest_common_divisor - Ước chung lớn nhất",
+        "task_name": "013-greatest_common_divisor",
+        "group": "HumanEval",
+        "success": false,
+        "iterations": 3,
+        "duration_sec": 28.6,
+        "repair_loops": 2,
+        "h_code": "H2",
+        "h_badge": "🌀 H2: Ngụy Biện Quy Nạp",
+        "h_name": "Ngụy Biện Quy Nạp (Inductive Fallacy)",
+        "has_cot": true,
+        "cot_tokens": 1240,
+        "cot_preview": "Let's find the greatest common divisor using Euclid's algorithm. Wait, does a or b become negative? Let's add invariant a > 0 && b > 0...",
+        "cot_trace": "Let's find the greatest common divisor using Euclid's algorithm.\nWait, does a or b become negative? Let's check requires:\nrequires a != 0 || b != 0\nWait, if a is negative, modulo operation in Dafny might behave differently!\nLet's add invariant a > 0 && b > 0\nWait, invariant fails on initial state if a < 0!\nMaybe invariant gcd(a, b) == gcd(orig_a, orig_b)?\nWait, is gcd defined as a function? Let's check the spec.\nLet's add loop invariant i > 0 && a % i == 0...\nWait, this is an overthinking spiral! Let's try another invariant...\nInvariant induction step fails! Z3 cannot prove inductive step.\nLoop invariant violation detected."
+      }
+    ]
+  },
+  "latex_table": "\\begin{table}[htbp]\n\\centering\n\\caption{Cross-Model Verification Performance Comparison}\n\\label{tab:cross_model_eval}\n\\begin{tabular}{lccccccc}\n\\toprule\n\\textbf{Model} & \\textbf{Type} & \\textbf{Tasks} & \\textbf{Pass@1 (\\%)} & \\textbf{Pass@K (\\%)} & \\textbf{$T_{avg}$ (s)} & \\textbf{Avg Loops} & \\textbf{$L_{CoT}$ (tok)} \\\\\n\\midrule\nQwen2.5-Coder-7B & Local (Ollama) & 2 & 100.0\\% & 100.0\\% & 2.15 & 0.0 & 0 \\\\\nDeepSeek-R1-7B (Reasoning) & Local (Ollama) & 2 & 50.0\\% & 50.0\\% & 18.5 & 1.0 & 826 \\\\\n\\bottomrule\n\\end{tabular}\n\\end{table}"
+}

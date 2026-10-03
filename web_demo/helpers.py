@@ -229,6 +229,8 @@ def save_last_single_run(
                 "is_verified": item.is_verified,
                 "error_taxonomy": item.error_taxonomy,
                 "error_message": item.error_message,
+                "cot_trace": getattr(item, "cot_trace", ""),
+                "cot_tokens": getattr(item, "cot_tokens", 0),
             })
 
     data = {
@@ -292,6 +294,8 @@ def dict_to_pipeline_result(data: dict) -> Tuple[Any, dict]:
                 is_verified=h.get("is_verified", False),
                 error_message=h.get("error_message", ""),
                 error_taxonomy=h.get("error_taxonomy", ""),
+                cot_trace=h.get("cot_trace", ""),
+                cot_tokens=h.get("cot_tokens", 0),
             )
         )
 

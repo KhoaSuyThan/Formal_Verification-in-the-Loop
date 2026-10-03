@@ -805,6 +805,18 @@ with tab_pipeline:
                                 st.error(f"**Lỗi phát hiện:** `{entry.error_taxonomy}`")
                                 st.markdown(f"**Chi tiết:** {entry.error_message}")
 
+                        if getattr(entry, "cot_trace", None):
+                            cot_tok = getattr(entry, "cot_tokens", 0)
+                            with st.expander(f"🧠 Chuỗi Suy Luận CoT Lượt {entry.iteration} ({cot_tok:,} tokens)", expanded=False):
+                                st.caption("Nội dung mô hình tự suy luận bên trong thẻ `<think>` trước khi sinh mã:")
+                                st.text_area(
+                                    label=f"cot_view_live_{entry.iteration}",
+                                    value=entry.cot_trace,
+                                    height=150,
+                                    disabled=True,
+                                    label_visibility="collapsed"
+                                )
+
             except Exception as e:
                 st.error(f"Đã xảy ra lỗi trong quá trình thực thi: {str(e)}")
 
@@ -877,6 +889,18 @@ with tab_pipeline:
                             else:
                                 st.error(f"**Lỗi phát hiện:** `{entry.error_taxonomy}`")
                                 st.markdown(f"**Chi tiết:** {entry.error_message}")
+
+                        if getattr(entry, "cot_trace", None):
+                            cot_tok = getattr(entry, "cot_tokens", 0)
+                            with st.expander(f"🧠 Chuỗi Suy Luận CoT Lượt {entry.iteration} ({cot_tok:,} tokens)", expanded=False):
+                                st.caption("Nội dung mô hình tự suy luận bên trong thẻ `<think>` trước khi sinh mã:")
+                                st.text_area(
+                                    label=f"cot_view_saved_{entry.iteration}",
+                                    value=entry.cot_trace,
+                                    height=150,
+                                    disabled=True,
+                                    label_visibility="collapsed"
+                                )
 
 
     elif exec_mode == "Hàng loạt":
@@ -1646,21 +1670,32 @@ with tab_cross_model:
         st.markdown("#### 📊 Bảng Ma Trận Đối Đầu Khoa Học (Benchmark Matrix)")
 
         df_summary = pd.DataFrame(summaries)
-        df_display = df_summary[[
+        
+        # Kiểm tra sự hiện diện của mô hình Reasoning (Trục 2 - arXiv:2505.12886)
+        has_cot_in_summary = "avg_cot_tokens" in df_summary.columns and (df_summary["avg_cot_tokens"] > 0).any()
+        
+        summary_cols = [
             "display_name", "model_type", "total_tasks",
             "passed_tasks", "pass_at_1_rate", "pass_at_k_rate",
             "avg_duration_sec", "avg_repair_loops"
-        ]].copy()
-        df_display.columns = [
+        ]
+        summary_headers = [
             "Mô Hình", "Loại", "Số Bài",
             "Bài Đạt", "Pass@1 (%)", "Pass@K (%)",
             "Thời Gian TB (s)", "Số Vòng Lặp TB"
         ]
+        if has_cot_in_summary:
+            summary_cols.append("avg_cot_tokens")
+            summary_headers.append("CoT Token TB (L_CoT)")
+
+        df_display = df_summary[summary_cols].copy()
+        df_display.columns = summary_headers
         st.dataframe(df_display, width="stretch", hide_index=True)
 
         # Tính toán trước danh sách chi tiết và thống kê ảo giác để vẽ 3 biểu đồ song hành
         all_detailed = []
         h_counts_by_model: Dict[str, Dict[str, int]] = {}
+        all_cot_records = []
 
         if "detailed_results" in active_data and active_data["detailed_results"]:
             for m_key, t_list in active_data.get("detailed_results", {}).items():
@@ -1683,7 +1718,14 @@ with tab_cross_model:
                     if h_code in h_counts_by_model[m_name]:
                         h_counts_by_model[m_name][h_code] += 1
 
-                    all_detailed.append({
+                    # Ghi nhận chỉ số CoT Reasoning
+                    c_tok = t.get("cot_tokens", 0)
+                    has_c = t.get("has_cot", False) or c_tok > 0
+                    cot_label = f"🧠 {c_tok:,} tokens" if has_c else "⚡ Trực tiếp"
+                    if has_c:
+                        all_cot_records.append({**t, "model_display": m_name})
+
+                    task_row = {
                         "Mô Hình": m_name,
                         "Bài Toán": t.get("task_name", ""),
                         "Tập": t.get("group", ""),
@@ -1691,7 +1733,10 @@ with tab_cross_model:
                         "Phân Loại Ảo Giác (Nature 2024)": h_badge,
                         "Lượt Thử": f"Pass@{t.get('iterations')}" if is_pass else ">3",
                         "Thời Gian (s)": t.get("duration_sec", 0.0),
-                    })
+                    }
+                    if has_cot_in_summary or all_cot_records:
+                        task_row["Suy Luận CoT"] = cot_label
+                    all_detailed.append(task_row)
 
         # --- BỘ 3 BIỂU ĐỒ CHUNG 1 HÀNG NGANG (DASHBOARD TRỰC QUAN GỌN GÀNG) ---
         col_fig1, col_fig2, col_fig3 = st.columns([1, 1, 1.15])
@@ -1823,14 +1868,117 @@ with tab_cross_model:
 
         if all_detailed:
             st.markdown("---")
-            st.markdown(f"##### 📝 Nhật Ký Chi Tiết Toàn Bộ {len(all_detailed)} Lượt Giải Kèm Nhãn Ảo Giác:")
+            st.markdown(f"##### 📝 Nhật Ký Chi Tiết Toàn Bộ {len(all_detailed)} Lượt Giải:")
             df_tasks = pd.DataFrame(all_detailed)
             st.dataframe(df_tasks, width="stretch", hide_index=True)
+
+        # --- KHUNG PHÂN TÍCH HIỆN TƯỢNG OVERTHINKING & COT REASONING (TRỤC 2) ---
+        with st.expander("🧠 Phân Tích Hiện Tượng 'Overthinking' & Chuỗi Suy Luận CoT (Căn cứ arXiv:2505.12886 & 2505.23646)"):
+            if all_cot_records:
+                col_cot1, col_cot2, col_cot3 = st.columns([1, 1, 1.2])
+                pass_cots = [t.get("cot_tokens", 0) for t in all_cot_records if t.get("success")]
+                fail_cots = [t.get("cot_tokens", 0) for t in all_cot_records if not t.get("success")]
+                avg_pass_cot = round(sum(pass_cots) / len(pass_cots)) if pass_cots else 0
+                avg_fail_cot = round(sum(fail_cots) / len(fail_cots)) if fail_cots else 0
+
+                with col_cot1:
+                    st.metric(
+                        "CoT TB Bài Đạt (H0)",
+                        f"{avg_pass_cot:,} tokens",
+                        help="Độ dài suy luận trung bình của các bài giải trúng ngay và được Z3 chứng minh toán học."
+                    )
+                with col_cot2:
+                    delta_text = f"+{avg_fail_cot - avg_pass_cot:,} tokens (Overthinking)" if avg_fail_cot > avg_pass_cot else "Tương đương"
+                    st.metric(
+                        "CoT TB Bài Thất Bại (H1-H4)",
+                        f"{avg_fail_cot:,} tokens",
+                        delta=delta_text,
+                        delta_color="inverse",
+                        help="Các bài thất bại thường có lượng token suy luận cao hơn đáng kể (vòng lặp luẩn quẩn)."
+                    )
+                with col_cot3:
+                    overthink_count = sum(1 for t in all_cot_records if t.get("cot_tokens", 0) > 800)
+                    st.metric(
+                        "Số Bài Chạm Ngưỡng Overthinking (>800 tokens)",
+                        f"{overthink_count}/{len(all_cot_records)} bài",
+                        help="Ngưỡng thực nghiệm theo arXiv:2505.12886: Suy luận trên 800 tokens cho một bài toán đơn thường sinh ra bất biến rác."
+                    )
+
+                # Biểu đồ phân bổ độ dài CoT theo bài toán kèm đường ngưỡng Overthinking (800 tokens)
+                cot_plot_data = []
+                for rec in all_cot_records:
+                    status_lbl = "✅ Đạt Chứng Minh (H0)" if rec.get("success") else f"❌ Vi Phạm ({rec.get('h_code', 'FAIL')})"
+                    cot_plot_data.append({
+                        "Bài Toán": f"{rec.get('task_name', '')}",
+                        "Tokens CoT": rec.get("cot_tokens", 0),
+                        "Trạng Thái": status_lbl,
+                    })
+                if cot_plot_data:
+                    df_cot_plot = pd.DataFrame(cot_plot_data)
+                    color_map = {
+                        "✅ Đạt Chứng Minh (H0)": "#22c55e",
+                        "❌ Vi Phạm (H1)": "#ef4444",
+                        "❌ Vi Phạm (H2)": "#f97316",
+                        "❌ Vi Phạm (H3)": "#eab308",
+                        "❌ Vi Phạm (H4)": "#06b6d4",
+                    }
+                    fig_cot = px.bar(
+                        df_cot_plot,
+                        x="Bài Toán",
+                        y="Tokens CoT",
+                        color="Trạng Thái",
+                        color_discrete_map=color_map,
+                        text_auto=True,
+                    )
+                    fig_cot.add_hline(
+                        y=800,
+                        line_dash="dash",
+                        line_color="#f43f5e",
+                        annotation_text="Ngưỡng Nguy Cơ Overthinking (800 tokens)",
+                        annotation_position="top right",
+                        annotation_font=dict(color="#f43f5e", size=11)
+                    )
+                    fig_cot.update_layout(
+                        margin=dict(l=10, r=10, t=30, b=20),
+                        height=280,
+                        paper_bgcolor="rgba(0,0,0,0)",
+                        plot_bgcolor="rgba(0,0,0,0)",
+                        legend_title_text="",
+                        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, font=dict(size=10))
+                    )
+                    st.plotly_chart(fig_cot, width="stretch")
+
+                # Soi chi tiết chuỗi suy luận CoT của từng bài
+                st.markdown("##### 🔬 Kính Soi Chuỗi Suy Luận (CoT Inspector):")
+                cot_options = {
+                    f"[{t.get('model_display')}] {t.get('task_name')} ({'✅ PASS' if t.get('success') else '❌ ' + t.get('h_code', 'FAIL')}) - {t.get('cot_tokens', 0):,} tokens": t
+                    for t in all_cot_records if t.get("cot_trace")
+                }
+                if cot_options:
+                    selected_cot_label = st.selectbox(
+                        "Chọn bài toán để xem toàn văn chuỗi suy luận của mô hình:",
+                        list(cot_options.keys()),
+                        key="sb_cot_inspector"
+                    )
+                    chosen_rec = cot_options[selected_cot_label]
+                    st.text_area(
+                        "Nội dung chuỗi suy luận bên trong thẻ <think>:",
+                        value=chosen_rec.get("cot_trace", ""),
+                        height=220,
+                        disabled=True
+                    )
+            else:
+                st.info(
+                    "💡 **Chưa có dữ liệu suy luận CoT trong lượt chạy hiện tại.** "
+                    "Để kích hoạt đo lường và soi chuỗi suy luận Trục 2, hãy chọn mô hình suy luận sâu như **`ollama/deepseek-r1:7b`** tham gia đối đầu."
+                )
 
         # Khung xuất mã bảng LaTeX cho bài báo khoa học
         with st.expander("📝 Bảng Mã LaTeX Chuẩn Cho Bài Báo Khoa Học (Nhấn để sao chép)"):
             st.caption("Sao chép đoạn mã LaTeX sau đây và dán trực tiếp vào tệp .tex của bài báo:")
             latex_code = active_data.get("latex_table", "")
+            if not latex_code and summaries:
+                latex_code = CrossModelEvaluator.generate_latex_table(summaries)
             st.code(latex_code, language="latex")
             st.download_button(
                 "📥 Tải File LaTeX (.tex)",
