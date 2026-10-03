@@ -5,11 +5,12 @@ Hỗ trợ mô hình chạy cục bộ (Ollama) và các mô hình trên đám m
 
 import os
 import re
-from typing import Optional
+from typing import Optional, Tuple
 # pyrefly: ignore [missing-import]
 import litellm
 # pyrefly: ignore [missing-import]
 from dotenv import load_dotenv
+from core.cot_extractor import extract_cot_trace
 
 # Tải các biến môi trường từ file .env nếu có
 load_dotenv()
@@ -27,6 +28,9 @@ class LLMAgent:
         """Khởi tạo agent với model và cấu hình kết nối."""
         self.model = model_name
         self.temperature = temperature
+        # Lưu vết chuỗi suy luận CoT và số token tương ứng của lượt sinh mã gần nhất
+        self.last_cot_trace: str = ""
+        self.last_cot_tokens: int = 0
         # Mặc định cấu hình api_base cho Ollama nếu model bắt đầu bằng ollama/
         if api_base:
             self.api_base = api_base
@@ -84,7 +88,11 @@ class LLMAgent:
                     if candidates:
                         parts = candidates[0].get("content", {}).get("parts", [])
                         if parts and "text" in parts[0]:
-                            return self._clean_markdown(parts[0]["text"])
+                            raw_text = parts[0]["text"]
+                            clean_code, cot_trace, cot_tokens = extract_cot_trace(raw_text)
+                            self.last_cot_trace = cot_trace
+                            self.last_cot_tokens = cot_tokens
+                            return clean_code
                 elif res.status_code == 429:
                     # Trích xuất thời gian chờ chuẩn xác theo yêu cầu từ Google AI Studio
                     wait_time = 35
@@ -106,6 +114,8 @@ class LLMAgent:
             except Exception as e:
                 print(f"[CẢNH BÁO GEMINI REST]: Gặp lỗi kết nối: {e}")
                 time.sleep(3)
+        self.last_cot_trace = ""
+        self.last_cot_tokens = 0
         return ""
 
     def _call_model(self, system_prompt: str, user_prompt: str, timeout_sec: int = 90) -> str:
@@ -133,10 +143,21 @@ class LLMAgent:
 
         try:
             response = litellm.completion(**kwargs)
-            raw_text = response.choices[0].message.content or ""
-            return self._clean_markdown(raw_text)
+            msg = response.choices[0].message
+            raw_text = msg.content or ""
+            # Một số phiên bản LiteLLM/Ollama tách riêng chuỗi suy nghĩ vào trường reasoning_content
+            reasoning = getattr(msg, "reasoning_content", None) or ""
+            if reasoning and "<think>" not in raw_text:
+                raw_text = f"<think>\n{reasoning}\n</think>\n\n{raw_text}"
+
+            clean_code, cot_trace, cot_tokens = extract_cot_trace(raw_text)
+            self.last_cot_trace = cot_trace
+            self.last_cot_tokens = cot_tokens
+            return clean_code
         except Exception as e:
             print(f"\n[CẢNH BÁO LLM]: Gặp lỗi/timeout khi gọi mô hình {self.model}: {e}")
+            self.last_cot_trace = ""
+            self.last_cot_tokens = 0
             # Trả về chuỗi rỗng để hệ thống ghi nhận lỗi logic thay vì làm sập chương trình
             return ""
 
@@ -203,33 +224,6 @@ class LLMAgent:
     @staticmethod
     def _clean_markdown(text: str) -> str:
         """Loại bỏ các định dạng markdown và thẻ suy nghĩ <think> để trích xuất mã thuần."""
-        # Loại bỏ chuỗi suy luận trong thẻ <think>...</think> (xử lý cả trường hợp thẻ chưa đóng do chạm trần token)
-        if "</think>" in text:
-            text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL)
-        elif "<think>" in text:
-            match_after_think = re.search(r'`{3,}dafny\s*(.*?)(?:`{3,}|$)', text, flags=re.DOTALL | re.IGNORECASE)
-            if match_after_think:
-                text = match_after_think.group(0)
-            else:
-                text = re.sub(r'<think>.*$', '', text, flags=re.DOTALL)
-
-        # Bóc tách thẻ ```dafny ... ``` (hỗ trợ cả 3 hoặc nhiều hơn dấu backtick)
-        match_dafny = re.search(r'`{3,}dafny\s*(.*?)(?:`{3,}|$)', text, flags=re.DOTALL | re.IGNORECASE)
-        if match_dafny:
-            cleaned = match_dafny.group(1).strip()
-            # Xóa các dòng ``` còn sót nếu có
-            cleaned = re.sub(r'^`{3,}.*$', '', cleaned, flags=re.MULTILINE)
-            return cleaned.strip()
-
-        # Thử bóc tách thẻ ``` thông thường
-        match_generic = re.search(r'`{3,}\w*\s*(.*?)(?:`{3,}|$)', text, flags=re.DOTALL)
-        if match_generic:
-            cleaned = match_generic.group(1).strip()
-            cleaned = re.sub(r'^`{3,}.*$', '', cleaned, flags=re.MULTILINE)
-            return cleaned.strip()
-
-        # Dọn dẹp dòng mở đầu nếu có dạng ```dafny
-        text = re.sub(r'^`{3,}\w*\s*', '', text.strip())
-        text = re.sub(r'`{3,}\s*$', '', text.strip())
-        return text.strip()
+        clean_code, _, _ = extract_cot_trace(text)
+        return clean_code
 

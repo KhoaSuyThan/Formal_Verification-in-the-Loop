@@ -28,6 +28,8 @@ class IterationLog:
     is_verified: bool
     error_message: str
     error_taxonomy: str
+    cot_trace: str = ""
+    cot_tokens: int = 0
 
 
 @dataclass
@@ -39,6 +41,8 @@ class PipelineResult:
     final_code: str
     history: List[IterationLog] = field(default_factory=list)
     failure_reason: str = ""
+    total_cot_tokens: int = 0
+    final_cot_trace: str = ""
 
 
 class PipelineController:
@@ -90,6 +94,8 @@ class PipelineController:
         )
 
         current_code = self.agent.generate_code(prompt)
+        cur_cot_trace = getattr(self.agent, "last_cot_trace", "")
+        cur_cot_tokens = getattr(self.agent, "last_cot_tokens", 0)
         # Hậu xử lý: bảo toàn template + chuẩn hóa cú pháp
         current_code = self._postprocess_code(raw_spec, current_code)
 
@@ -110,7 +116,9 @@ class PipelineController:
                     is_spec_valid=False,
                     is_verified=False,
                     error_message="AI tự ý sửa đổi hoặc xóa bỏ điều kiện ensures gốc.",
-                    error_taxonomy="SpecTamperingViolation"
+                    error_taxonomy="SpecTamperingViolation",
+                    cot_trace=cur_cot_trace,
+                    cot_tokens=cur_cot_tokens
                 )
                 history.append(log_entry)
                 return PipelineResult(
@@ -119,7 +127,9 @@ class PipelineController:
                     total_iterations=k,
                     final_code=current_code,
                     history=history,
-                    failure_reason="SpecTamperingViolation: Vi phạm tính toàn vẹn đặc tả ensures."
+                    failure_reason="SpecTamperingViolation: Vi phạm tính toàn vẹn đặc tả ensures.",
+                    total_cot_tokens=sum(l.cot_tokens for l in history),
+                    final_cot_trace=cur_cot_trace
                 )
 
             if self.verbose:
@@ -137,7 +147,9 @@ class PipelineController:
                     is_spec_valid=True,
                     is_verified=True,
                     error_message="",
-                    error_taxonomy="None"
+                    error_taxonomy="None",
+                    cot_trace=cur_cot_trace,
+                    cot_tokens=cur_cot_tokens
                 )
                 history.append(log_entry)
                 return PipelineResult(
@@ -145,7 +157,9 @@ class PipelineController:
                     is_success=True,
                     total_iterations=k,
                     final_code=current_code,
-                    history=history
+                    history=history,
+                    total_cot_tokens=sum(l.cot_tokens for l in history),
+                    final_cot_trace=cur_cot_trace
                 )
 
             # Trường hợp kiểm định thất bại: Dùng Semantic Diagnostic Engine bóc tách lỗi chi tiết
@@ -163,7 +177,9 @@ class PipelineController:
                 is_spec_valid=True,
                 is_verified=False,
                 error_message=summary_err,
-                error_taxonomy=err_cat
+                error_taxonomy=err_cat,
+                cot_trace=cur_cot_trace,
+                cot_tokens=cur_cot_tokens
             )
             history.append(log_entry)
 
@@ -178,6 +194,8 @@ class PipelineController:
                     repair_feedback = f"{topology_directive}\n\n{detailed_feedback}"
 
                 repaired_code = self.agent.repair_code(current_code, repair_feedback, raw_spec)
+                cur_cot_trace = getattr(self.agent, "last_cot_trace", "")
+                cur_cot_tokens = getattr(self.agent, "last_cot_tokens", 0)
                 repaired_code = self._postprocess_code(raw_spec, repaired_code)
 
                 # Phát hiện Stagnation ngay lập tức: Nếu mã mới sinh trùng lặp >= 90% với mã hiện tại
@@ -203,6 +221,8 @@ class PipelineController:
                         f"3. TUYỆT ĐỐI KHÔNG gửi lại mã nguồn cũ mà không bổ sung mệnh đề invariant mới."
                     )
                     repaired_code = self.agent.repair_code(current_code, enriched_feedback, raw_spec)
+                    cur_cot_trace = getattr(self.agent, "last_cot_trace", "")
+                    cur_cot_tokens = getattr(self.agent, "last_cot_tokens", 0)
                     repaired_code = self._postprocess_code(raw_spec, repaired_code)
                     self.agent.temperature = original_temp
 
@@ -214,6 +234,8 @@ class PipelineController:
             total_iterations=self.max_k,
             final_code=current_code,
             history=history,
-            failure_reason=f"Không thể chứng minh tính đúng đắn sau {self.max_k} vòng lặp."
+            failure_reason=f"Không thể chứng minh tính đúng đắn sau {self.max_k} vòng lặp.",
+            total_cot_tokens=sum(l.cot_tokens for l in history),
+            final_cot_trace=history[-1].cot_trace if history else ""
         )
 
