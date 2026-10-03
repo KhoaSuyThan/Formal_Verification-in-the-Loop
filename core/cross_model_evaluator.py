@@ -86,7 +86,8 @@ class CrossModelEvaluator:
         task_keys: Optional[List[str]] = None,
         max_attempts: int = 3,
         progress_callback: Optional[Callable[[str, int, int, str], None]] = None,
-        stop_check: Optional[Callable[[], bool]] = None
+        stop_check: Optional[Callable[[], bool]] = None,
+        resume_from_checkpoint: bool = False
     ) -> Dict[str, Any]:
         """Thực hiện chạy benchmark đối đầu giữa các mô hình được chọn.
         
@@ -95,6 +96,8 @@ class CrossModelEvaluator:
             task_keys: Danh sách key bài toán từ registry (None = chạy tất cả 30 tasks)
             max_attempts: Số lần sửa tối đa mỗi bài (Pass@K)
             progress_callback: Hàm nhận callback (model_id, current_step, total_steps, status_text)
+            stop_check: Hàm kiểm tra tín hiệu dừng an toàn
+            resume_from_checkpoint: Nếu True, nạp checkpoint gần nhất và tiếp tục chạy từ bài chưa hoàn thành
             
         Returns:
             Dict chứa 'summaries', 'detailed_results', 'timestamp', và 'latex_table'
@@ -108,32 +111,57 @@ class CrossModelEvaluator:
         total_steps = len(model_ids) * len(selected_tasks)
         current_step = 0
 
+        # Kiểm tra và nạp checkpoint nếu người dùng kích hoạt chế độ tiếp tục (Resume)
+        cached_data: Optional[Dict[str, Any]] = None
+        latest_file = os.path.join("artifacts", "results", "cross_model_benchmark_latest.json")
+        if resume_from_checkpoint and os.path.exists(latest_file):
+            try:
+                with open(latest_file, "r", encoding="utf-8") as f_chk:
+                    cached_data = json.load(f_chk)
+            except Exception as err:
+                print(f"[CẢNH BÁO RESUME]: Không thể nạp checkpoint: {err}")
+
         # Khởi tạo khung summaries cho tất cả mô hình để UI có thể hiển thị đầy đủ ngay từ đầu
         initial_summaries = []
         for m_id in model_ids:
-            m_info = self._get_model_info(m_id)
-            initial_summaries.append({
-                "model_name": m_id,
-                "display_name": m_info["name"],
-                "model_type": m_info["type"],
-                "total_tasks": 0,
-                "passed_tasks": 0,
-                "pass_at_1_count": 0,
-                "pass_at_k_count": 0,
-                "pass_at_1_rate": 0.0,
-                "pass_at_k_rate": 0.0,
-                "avg_duration_sec": 0.0,
-                "avg_repair_loops": 0.0,
-                "total_duration_sec": 0.0
-            })
+            # Ưu tiên lấy summary đã tích lũy từ checkpoint nếu có
+            existing_s = None
+            if cached_data and "summaries" in cached_data:
+                existing_s = next((s for s in cached_data["summaries"] if s.get("model_name") == m_id), None)
+
+            if existing_s:
+                initial_summaries.append(existing_s)
+            else:
+                m_info = self._get_model_info(m_id)
+                initial_summaries.append({
+                    "model_name": m_id,
+                    "display_name": m_info["name"],
+                    "model_type": m_info["type"],
+                    "total_tasks": 0,
+                    "passed_tasks": 0,
+                    "pass_at_1_count": 0,
+                    "pass_at_k_count": 0,
+                    "pass_at_1_rate": 0.0,
+                    "pass_at_k_rate": 0.0,
+                    "avg_duration_sec": 0.0,
+                    "avg_repair_loops": 0.0,
+                    "total_duration_sec": 0.0
+                })
+
+        # Khởi tạo hoặc kế thừa kết quả chi tiết
+        initial_detailed = {m_id: [] for m_id in model_ids}
+        if cached_data and "detailed_results" in cached_data:
+            for m_id in model_ids:
+                if m_id in cached_data["detailed_results"]:
+                    initial_detailed[m_id] = list(cached_data["detailed_results"][m_id])
 
         benchmark_results: Dict[str, Any] = {
-            "timestamp": datetime.now().isoformat(),
+            "timestamp": cached_data.get("timestamp", datetime.now().isoformat()) if cached_data else datetime.now().isoformat(),
             "task_count": len(selected_tasks),
             "max_attempts": max_attempts,
             "models_evaluated": model_ids,
             "summaries": initial_summaries,
-            "detailed_results": {m_id: [] for m_id in model_ids}
+            "detailed_results": initial_detailed
         }
 
         engine = DafnyEngine(dafny_path=self.dafny_path)
@@ -151,11 +179,14 @@ class CrossModelEvaluator:
                 verbose=False
             )
 
-            task_records = []
-            pass_at_1 = 0
-            pass_at_k = 0
-            total_duration = 0.0
-            total_loops = 0
+            # Phục hồi danh sách các bài đã hoàn thành từ checkpoint
+            task_records = list(benchmark_results["detailed_results"].get(model_id, []))
+            completed_keys = {r["task_key"] for r in task_records if "task_key" in r}
+
+            pass_at_1 = sum(1 for r in task_records if r.get("success") and r.get("iterations") == 1)
+            pass_at_k = sum(1 for r in task_records if r.get("success"))
+            total_duration = sum(r.get("duration_sec", 0.0) for r in task_records)
+            total_loops = sum(r.get("repair_loops", 0) for r in task_records)
 
             for task_label, meta in selected_tasks.items():
                 if stop_check and stop_check():
@@ -163,12 +194,28 @@ class CrossModelEvaluator:
                     break
                 current_step += 1
                 short_name = meta["short_name"]
+
+                # Nếu bài toán đã nằm trong danh sách hoàn thành của checkpoint -> bỏ qua không chạy lại
+                if resume_from_checkpoint and task_label in completed_keys:
+                    prev_status = next((r.get("success", False) for r in task_records if r.get("task_key") == task_label), False)
+                    status_desc = "✅ ĐÃ ĐẠT" if prev_status else "❌ CHƯA ĐẠT"
+                    if progress_callback:
+                        progress_callback(
+                            model_id,
+                            current_step,
+                            total_steps,
+                            f"Kế thừa từ checkpoint: {display_info['name']} trên bài {short_name} ({status_desc}) [{current_step}/{total_steps}]",
+                            benchmark_results
+                        )
+                    continue
+
                 if progress_callback:
                     progress_callback(
                         model_id,
                         current_step,
                         total_steps,
-                        f"Đang chạy {display_info['name']} trên bài {short_name} ({current_step}/{total_steps})..."
+                        f"Đang chạy {display_info['name']} trên bài {short_name} ({current_step}/{total_steps})...",
+                        benchmark_results
                     )
 
                 spec_content = load_task_spec(meta["rel_path"])
