@@ -7,6 +7,8 @@ Tất cả các thay đổi đáng chú ý của dự án sẽ được ghi nh�
 ---
 
 ## [1.3.3] - 2026-10-03: Cơ Chế Tiếp Tục Chạy Benchmark (Resume) & Tối Ưu Quản Lý Lịch Sử
+- **Tài liệu hóa lộ trình nghiên cứu khoa học ([RESEARCH_IMPROVEMENT_PLAN.md](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/RESEARCH_IMPROVEMENT_PLAN.md))**:
+  - Xây dựng bản kế hoạch chi tiết gồm 4 trục cải tiến nâng tầm bài báo khoa học dựa trên 7 công trình tham khảo (Nature 2024, Stanford Clover 2024, IEEE/ACM TSE 2026, arXiv 2025-2026).
 - **Cơ chế tiếp tục chạy từ checkpoint dở dang ([core/cross_model_evaluator.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/cross_model_evaluator.py), [experiments/run_cross_model_benchmark.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/experiments/run_cross_model_benchmark.py))**:
   - Thêm `resume_from_checkpoint=True` (CLI `--resume`): tự động nạp `cross_model_benchmark_latest.json`, bỏ qua các bài đã xong và tiếp tục chạy từ bài dở dang mà không mất kết quả cũ.
   - Hỗ trợ mở rộng số lượng bài (vd: từ 10 lên 16/30 bài) hoặc thêm mô hình mới một cách linh hoạt.
