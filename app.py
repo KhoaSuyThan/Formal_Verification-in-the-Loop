@@ -33,6 +33,7 @@ from core.pipeline_controller import PipelineController, PipelineResult
 from core.spec_locker import SpecLocker
 from core.topology_detector import TopologyDetector
 from core.cross_model_evaluator import CrossModelEvaluator
+from core.hallucination_classifier import classify_hallucination, FormalHallucinationType, HALLUCINATION_META
 from core.token_tracker import get_gemini_token_usage
 from web_demo.helpers import (
     clear_last_batch_run,
@@ -1657,10 +1658,45 @@ with tab_cross_model:
         ]
         st.dataframe(df_display, width="stretch", hide_index=True)
 
-        # Hai biểu đồ đối đầu
-        col_fig1, col_fig2 = st.columns(2)
+        # Tính toán trước danh sách chi tiết và thống kê ảo giác để vẽ 3 biểu đồ song hành
+        all_detailed = []
+        h_counts_by_model: Dict[str, Dict[str, int]] = {}
+
+        if "detailed_results" in active_data and active_data["detailed_results"]:
+            for m_key, t_list in active_data.get("detailed_results", {}).items():
+                m_name = next((s["display_name"] for s in summaries if s["model_name"] == m_key), m_key)
+                h_counts_by_model[m_name] = {"H0": 0, "H1": 0, "H2": 0, "H3": 0, "H4": 0}
+
+                for t in t_list:
+                    is_pass = t.get("success", False)
+                    # Tương thích ngược an toàn với bản lưu cũ chưa có trường h_code
+                    h_code = t.get("h_code")
+                    h_badge = t.get("h_badge")
+                    if not h_code or not h_badge:
+                        h_rep = classify_hallucination(
+                            is_success=is_pass,
+                            error_message=t.get("failure_reason", "")
+                        )
+                        h_code = h_rep["code"]
+                        h_badge = h_rep["badge"]
+
+                    if h_code in h_counts_by_model[m_name]:
+                        h_counts_by_model[m_name][h_code] += 1
+
+                    all_detailed.append({
+                        "Mô Hình": m_name,
+                        "Bài Toán": t.get("task_name", ""),
+                        "Tập": t.get("group", ""),
+                        "Kết Quả Z3": "✅ PASS" if is_pass else "❌ FAIL",
+                        "Phân Loại Ảo Giác (Nature 2024)": h_badge,
+                        "Lượt Thử": f"Pass@{t.get('iterations')}" if is_pass else ">3",
+                        "Thời Gian (s)": t.get("duration_sec", 0.0),
+                    })
+
+        # --- BỘ 3 BIỂU ĐỒ CHUNG 1 HÀNG NGANG (DASHBOARD TRỰC QUAN GỌN GÀNG) ---
+        col_fig1, col_fig2, col_fig3 = st.columns([1, 1, 1.15])
         with col_fig1:
-            st.markdown("##### 🎯 Tỷ Lệ Chứng Minh Thành Công (Pass Rate)")
+            st.markdown("##### 🎯 Tỷ Lệ Đạt (Pass Rate)")
             fig_pass = px.bar(
                 df_summary,
                 x="display_name",
@@ -1670,17 +1706,24 @@ with tab_cross_model:
                 color_discrete_sequence=["#38bdf8", "#22c55e"],
                 text_auto=True
             )
+            # Chuẩn hóa tên hiển thị trên chú thích (Legend)
+            metric_names = {"pass_at_1_rate": "Pass@1 (%)", "pass_at_k_rate": "Pass@K (%)"}
+            fig_pass.for_each_trace(lambda t: t.update(name=metric_names.get(t.name, t.name)))
+            fig_pass.update_xaxes(title_text="")
             fig_pass.update_layout(
                 legend_title_text="",
-                margin=dict(l=20, r=20, t=30, b=20),
-                height=320,
+                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, font=dict(size=10)),
+                margin=dict(l=10, r=10, t=30, b=20),
+                height=360,
+                bargap=0.35,
+                bargroupgap=0.08,
                 paper_bgcolor="rgba(0,0,0,0)",
                 plot_bgcolor="rgba(0,0,0,0)"
             )
             st.plotly_chart(fig_pass, width="stretch")
 
         with col_fig2:
-            st.markdown("##### ⏱️ Thời Gian Giải Trung Bình Một Bài (Latency $T_{avg}$)")
+            st.markdown("##### ⏱️ Thời Gian TB (Latency)")
             fig_time = px.bar(
                 df_summary,
                 x="display_name",
@@ -1688,35 +1731,101 @@ with tab_cross_model:
                 labels={"avg_duration_sec": "Giây (s)", "display_name": "Mô hình"},
                 color="avg_duration_sec",
                 color_continuous_scale="Purples",
-                text_auto=True
+                text_auto=".1f"
             )
+            fig_time.update_xaxes(title_text="")
             fig_time.update_layout(
-                margin=dict(l=20, r=20, t=30, b=20),
-                height=320,
+                margin=dict(l=10, r=10, t=30, b=20),
+                height=360,
+                bargap=0.45,
+                coloraxis_showscale=False,  # Ẩn thang đo màu bên phải để không bị bóp méo diện tích cột
                 paper_bgcolor="rgba(0,0,0,0)",
                 plot_bgcolor="rgba(0,0,0,0)"
             )
             st.plotly_chart(fig_time, width="stretch")
 
-        # Bảng chi tiết toàn bộ từng bài toán trong đợt benchmark được chọn
-        if "detailed_results" in active_data and active_data["detailed_results"]:
-            all_detailed = []
-            for m_key, t_list in active_data.get("detailed_results", {}).items():
-                m_name = next((s["display_name"] for s in summaries if s["model_name"] == m_key), m_key)
-                for t in t_list:
-                    all_detailed.append({
-                        "Mô Hình": m_name,
-                        "Bài Toán": t.get("task_name", ""),
-                        "Tập": t.get("group", ""),
-                        "Kết Quả Z3": "✅ PASS" if t.get("success") else "❌ FAIL",
-                        "Lượt Thử": f"Pass@{t.get('iterations')}" if t.get("success") else ">3",
-                        "Thời Gian (s)": t.get("duration_sec", 0.0),
-                    })
-            if all_detailed:
-                st.markdown("---")
-                st.markdown(f"##### 📝 Nhật Ký Chi Tiết Toàn Bộ {len(all_detailed)} Lượt Giải Trong Bản Lưu Này:")
-                df_tasks = pd.DataFrame(all_detailed)
-                st.dataframe(df_tasks, width="stretch", hide_index=True)
+        with col_fig3:
+            st.markdown("##### 🔬 Phân Bố Ảo Giác (Taxonomy)")
+            if h_counts_by_model:
+                # Đảm bảo hiển thị đầy đủ 5 tầng bản chất ảo giác H0 -> H4 chuẩn mực Nature 2024
+                ordered_codes = ["H0", "H1", "H2", "H3", "H4"]
+                code_labels = {
+                    "H0": "H0: Zero-Hallucination",
+                    "H1": "H1: Can Thiệp Đặc Tả",
+                    "H2": "H2: Ngụy Biện Quy Nạp",
+                    "H3": "H3: Vi Phạm Biên/Chỉ Số",
+                    "H4": "H4: Trôi Dạt Ngữ Nghĩa",
+                }
+                color_map = {
+                    "H0: Zero-Hallucination": "#22c55e",
+                    "H1: Can Thiệp Đặc Tả": "#ef4444",
+                    "H2: Ngụy Biện Quy Nạp": "#f97316",
+                    "H3: Vi Phạm Biên/Chỉ Số": "#eab308",
+                    "H4: Trôi Dạt Ngữ Nghĩa": "#a855f7",
+                }
+
+                df_h_chart = []
+                for m_n, counts in h_counts_by_model.items():
+                    for code in ordered_codes:
+                        df_h_chart.append({
+                            "Mô Hình": m_n,
+                            "Tầng Ảo Giác": code_labels[code],
+                            "Số Bài": counts.get(code, 0),
+                            "Mã": code
+                        })
+                df_h_plot = pd.DataFrame(df_h_chart)
+
+                fig_h = px.bar(
+                    df_h_plot,
+                    x="Mô Hình",
+                    y="Số Bài",
+                    color="Tầng Ảo Giác",
+                    color_discrete_map=color_map,
+                    barmode="stack",
+                    text_auto=True
+                )
+                fig_h.update_xaxes(title_text="")
+                fig_h.update_layout(
+                    margin=dict(l=10, r=10, t=30, b=85),
+                    height=360,
+                    bargap=0.45,
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    plot_bgcolor="rgba(0,0,0,0)",
+                    legend_title_text="",
+                    # Bố trí ghi chú đầy đủ 5 mục bên dưới chia làm 2 cột
+                    legend=dict(
+                        orientation="h",
+                        entrywidth=0.48,
+                        entrywidthmode="fraction",
+                        yanchor="top",
+                        y=-0.18,
+                        xanchor="center",
+                        x=0.5,
+                        font=dict(size=9.5)
+                    )
+                )
+                st.plotly_chart(fig_h, width="stretch")
+            else:
+                st.caption("Chưa có dữ liệu phân loại ảo giác.")
+
+        # --- KHUNG PHÂN LOẠI ẢO GIÁC HÌNH THỨC (NATURE 2024 & SMT SOLVER) ---
+        with st.expander("📘 Khung Phân Loại Ảo Giác Mã Nguồn Hình Thức (Căn cứ Nature HSSC 2024 & Z3 SMT Solver)"):
+            st.markdown(
+                """
+                Dựa trên công trình phân loại toàn diện của **Nature (2024)** và đặc thù kiểm định toán học **Dafny + Z3 Solver**, hệ thống phân rã kết quả sinh mã thành 5 tầng bản chất:
+                * **✅ H0 (Zero-Hallucination)**: Mã nguồn được Z3 SMT Solver chứng minh toán học đúng đắn 100% trên toàn bộ không gian biến vô hạn.
+                * **⚠️ H1 (Spec-Tampering)**: Ảo giác can thiệp đặc tả — mô hình tự ý xóa bỏ hoặc nới lỏng tiền/hậu điều kiện (bị chặn bởi băm SHA-256).
+                * **🌀 H2 (Inductive Fallacy)**: Ảo giác ngụy biện quy nạp — bất biến vòng lặp (`invariant`) sai bước cơ sở hoặc không bảo toàn qua bước quy nạp.
+                * **⚡ H3 (Boundary Overflow)**: Ảo giác vi phạm biên — truy xuất chỉ số mảng vượt kích thước (`out of bounds`), chỉ số âm hoặc chia cho 0.
+                * **🌊 H4 (Semantic Drift)**: Trôi dạt ngữ nghĩa — code chạy được ca mẫu nhưng vi phạm hậu điều kiện tổng quát (`ensures`) trong không gian dữ liệu lớn.
+                """
+            )
+
+        if all_detailed:
+            st.markdown("---")
+            st.markdown(f"##### 📝 Nhật Ký Chi Tiết Toàn Bộ {len(all_detailed)} Lượt Giải Kèm Nhãn Ảo Giác:")
+            df_tasks = pd.DataFrame(all_detailed)
+            st.dataframe(df_tasks, width="stretch", hide_index=True)
 
         # Khung xuất mã bảng LaTeX cho bài báo khoa học
         with st.expander("📝 Bảng Mã LaTeX Chuẩn Cho Bài Báo Khoa Học (Nhấn để sao chép)"):
