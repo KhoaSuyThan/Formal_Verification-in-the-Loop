@@ -34,6 +34,7 @@ class ModelBenchmarkSummary:
     avg_repair_loops: float
     total_duration_sec: float
     avg_cot_tokens: float = 0.0  # Chỉ số L_CoT trung bình phục vụ nghiên cứu Overthinking (Trục 2)
+    cegar_repaired_count: int = 0  # Số bài sửa lỗi thành công nhờ phản ví dụ CEGAR (Trục 3)
 
 
 class CrossModelEvaluator:
@@ -261,6 +262,11 @@ class CrossModelEvaluator:
                 has_cot = cot_tokens > 0 or bool(cot_trace)
                 cot_preview = (cot_trace[:140].replace("\n", " ") + "...") if len(cot_trace) > 140 else cot_trace.replace("\n", " ")
 
+                # Ghi nhận chỉ số phản ví dụ CEGAR (Trục 3 - arXiv:2506.06923)
+                has_cegar = getattr(res, "has_cegar", False)
+                has_cegar_repaired = getattr(res, "has_cegar_repaired", False)
+                ce_desc = next((l.counterexample_desc for l in res.history if getattr(l, "counterexample_desc", None)), "")
+
                 task_records.append({
                     "task_key": task_label,
                     "task_name": short_name,
@@ -275,7 +281,10 @@ class CrossModelEvaluator:
                     "has_cot": has_cot,
                     "cot_tokens": cot_tokens,
                     "cot_preview": cot_preview,
-                    "cot_trace": cot_trace
+                    "cot_trace": cot_trace,
+                    "has_cegar": has_cegar,
+                    "has_cegar_repaired": has_cegar_repaired,
+                    "counterexample_desc": ce_desc
                 })
 
                 # --- CHECKPOINT LŨY TIẾN: Lưu ngay lập tức sau mỗi bài toán ---
@@ -294,7 +303,8 @@ class CrossModelEvaluator:
                     avg_duration_sec=round((total_duration / cur_n) if cur_n > 0 else 0.0, 2),
                     avg_repair_loops=round((total_loops / cur_n) if cur_n > 0 else 0.0, 2),
                     total_duration_sec=round(total_duration, 2),
-                    avg_cot_tokens=round((sum(r.get("cot_tokens", 0) for r in task_records) / cur_n) if cur_n > 0 else 0.0, 1)
+                    avg_cot_tokens=round((sum(r.get("cot_tokens", 0) for r in task_records) / cur_n) if cur_n > 0 else 0.0, 1),
+                    cegar_repaired_count=sum(1 for r in task_records if r.get("has_cegar_repaired"))
                 )
                 
                 # Cập nhật summary của model hiện tại trong danh sách tạm

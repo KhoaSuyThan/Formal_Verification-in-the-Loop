@@ -6,6 +6,21 @@ Tất cả các thay đổi đáng chú ý của dự án sẽ được ghi nh�
 
 ---
 
+## [1.4.0] - 2026-10-03: Tự Sửa Lỗi Hướng Dẫn Bằng Phản Ví Dụ SMT (Neuro-Symbolic CEGAR - Trục 3)
+- **Kích hoạt cờ Solver Counterexample ([core/dafny_engine.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/dafny_engine.py))**:
+  - Tích hợp cờ `--extract-counterexample` của Dafny/Z3 CLI trong phương thức `verify()`, kích hoạt bộ giải SMT trích xuất mô hình trạng thái dữ liệu cụ thể gây vi phạm kiểm định logic.
+- **Bộ Bóc Tách & Cấu Trúc Hóa Phản Ví Dụ ([core/diagnostic_parser.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/diagnostic_parser.py))**:
+  - Định nghĩa dataclass `CounterexampleData` quản lý `initial_state`, `failing_state`, `violated_clause` và `description`.
+  - Triển khai hàm `extract_counterexample()` tự động bóc tách các biểu thức `assume` từ Z3, chuyển đổi thành ánh xạ giá trị biến trực quan.
+  - Nâng cấp `format_diagnostic_feedback()` tự động chèn khối phản hồi CEGAR hướng mục tiêu (`🎯 PHẢN VÍ DỤ CỤ THỂ TỪ Z3 SMT SOLVER`) để hướng dẫn LLM sửa trúng ca biên thay vì suy đoán mù.
+- **Tích hợp Vòng Lặp & Benchmark ([core/pipeline_controller.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/pipeline_controller.py), [core/cross_model_evaluator.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/cross_model_evaluator.py))**:
+  - Bổ sung `counterexample_desc` và `has_cegar` vào `IterationLog` và `PipelineResult`.
+  - Bổ sung chỉ số `cegar_repaired_count` vào `ModelBenchmarkSummary` để định lượng số bài được cứu nhờ phản ví dụ.
+- **Trực Quan Hóa Giao Diện ([app.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/app.py), [web_demo/helpers.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/web_demo/helpers.py))**:
+  - Tab 1: Hiển thị thẻ cảnh báo màu cam nổi bật `🎯 Phản ví dụ Z3 (CEGAR): [x = ... ➔ y = ...]` ngay tại từng lượt tự sửa lỗi (cả khi chạy trực tiếp lẫn khi nạp lịch sử đã lưu).
+- **Kiểm Thử Độc Lập & Thực Nghiệm Z3 ([tests/test_cegar_parser.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/tests/test_cegar_parser.py))**:
+  - 6 ca kiểm thử bao phủ toàn diện: số âm, đa biến, không có phản ví dụ, prompt CEGAR và **bài test live trực tiếp gọi Dafny 4.x/Z3 CLI** (100% passed).
+
 ## [1.3.6] - 2026-10-03: Định Lượng Chuỗi Suy Luận CoT & Phân Tích Hiện Tượng Overthinking (Trục 2)
 - **Module Bóc Tách & Định Lượng CoT ([core/cot_extractor.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/cot_extractor.py))**:
   - Triển khai hàm `extract_cot_trace` bóc tách độc lập giữa chuỗi suy luận bên trong `<think>...</think>` và mã nguồn Dafny sạch để đưa vào Z3 SMT Solver (xử lý an toàn cả trường hợp thẻ suy nghĩ bị cắt cụt do chạm trần token).

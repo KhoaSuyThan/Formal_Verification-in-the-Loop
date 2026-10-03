@@ -804,6 +804,8 @@ with tab_pipeline:
                             else:
                                 st.error(f"**Lỗi phát hiện:** `{entry.error_taxonomy}`")
                                 st.markdown(f"**Chi tiết:** {entry.error_message}")
+                                if getattr(entry, "counterexample_desc", None):
+                                    st.warning(f"🎯 **Phản ví dụ Z3 (CEGAR):** `{entry.counterexample_desc}`")
 
                         if getattr(entry, "cot_trace", None):
                             cot_tok = getattr(entry, "cot_tokens", 0)
@@ -889,6 +891,8 @@ with tab_pipeline:
                             else:
                                 st.error(f"**Lỗi phát hiện:** `{entry.error_taxonomy}`")
                                 st.markdown(f"**Chi tiết:** {entry.error_message}")
+                                if getattr(entry, "counterexample_desc", None):
+                                    st.warning(f"🎯 **Phản ví dụ Z3 (CEGAR):** `{entry.counterexample_desc}`")
 
                         if getattr(entry, "cot_trace", None):
                             cot_tok = getattr(entry, "cot_tokens", 0)

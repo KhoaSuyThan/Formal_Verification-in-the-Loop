@@ -63,8 +63,12 @@ class DafnyEngine:
             return False
         return shutil.which(self.dafny_bin) is not None or Path(self.dafny_bin).is_file()
 
-    def verify(self, code: str) -> VerifyResult:
-        """Ghi mã nguồn ra file tạm và gọi Dafny verify để kiểm tra tính đúng đắn."""
+    def verify(self, code: str, extract_counterexample: bool = True) -> VerifyResult:
+        """Ghi mã nguồn ra file tạm và gọi Dafny verify để kiểm tra tính đúng đắn.
+        
+        Khi extract_counterexample=True, kích hoạt cờ --extract-counterexample của Z3
+        để trích xuất trạng thái dữ liệu vi phạm thực tế phục vụ cơ chế tự sửa lỗi CEGAR (arXiv:2506.06923).
+        """
         if not self.is_available():
             raise EnvironmentError(
                 "Dafny chưa được cài đặt hoặc chưa được cấu hình đường dẫn. "
@@ -77,7 +81,10 @@ class DafnyEngine:
             tmp.write(code)
 
         try:
-            cmd = [str(self.dafny_bin), "verify", "--verification-time-limit", str(self.timeout), str(tmp_path)]
+            cmd = [str(self.dafny_bin), "verify"]
+            if extract_counterexample:
+                cmd.append("--extract-counterexample")
+            cmd.extend(["--verification-time-limit", str(self.timeout), str(tmp_path)])
             proc = subprocess.run(
                 cmd,
                 capture_output=True,
