@@ -6,6 +6,25 @@ Tất cả các thay đổi đáng chú ý của dự án sẽ được ghi nh�
 
 ---
 
+## [1.3.5] - 2026-10-03: Tinh Chỉnh Bố Cục 3 Biểu Đồ Dashboard Ngang (Tab 4 So Sánh Chéo)
+- **Tái cấu trúc bố cục Dashboard Tab 4 ([app.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/app.py))**:
+  - Gộp chung 3 biểu đồ (*Tỷ Lệ Đạt*, *Thời Gian TB*, *Phân Bố Ảo Giác*) vào **1 hàng ngang duy nhất** với 3 cột cân xứng (`st.columns([1, 1, 1.15])`), giải quyết triệt để tình trạng biểu đồ cột bị kéo giãn quá rộng.
+  - Chuẩn hóa khoảng cách cột (`bargap=0.35` - `0.45`) giúp thanh bar thon gọn, thanh thoát, hiển thị cân đối bất kể so sánh 2 hay nhiều mô hình.
+  - Ẩn thanh thang đo màu (colorbar) ở biểu đồ *Thời Gian TB* (`coloraxis_showscale=False`) để giải phóng không gian hiển thị, đồng đều trực quan với 2 biểu đồ còn lại.
+  - **Hiển thị đầy đủ 5 tầng bản chất ảo giác ($H_0 \to H_4$)**: Bố trí chú thích (legend) nằm ngay **bên dưới biểu đồ** và **chia đều thành 2 cột** (`entrywidth=0.48`), giúp người dùng quan sát toàn vẹn cả 5 nhóm ảo giác mà không bị tràn khung hay che khuất dữ liệu.
+
+
+- **Bộ phân loại ảo giác toán học ([core/hallucination_classifier.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/hallucination_classifier.py))**:
+  - Ánh xạ trực tiếp từ *Nature (HSSC 2024)* và Z3 SMT Solver thành 5 nhóm: $H_0$ (Zero-Hallucination), $H_1$ (Spec-Tampering), $H_2$ (Inductive Fallacy), $H_3$ (Boundary Overflow), và $H_4$ (Semantic Drift).
+  - Tích hợp tự động vào [core/cross_model_evaluator.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/cross_model_evaluator.py), gán nhãn ảo giác cho từng bài toán giải thất bại.
+- **Nâng cấp giao diện trực quan Tab 4 ([app.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/app.py))**:
+  - Thêm biểu đồ cột chồng Plotly: **Phân Bố Bản Chất Ảo Giác Đối Đầu** so sánh cơ cấu ảo giác giữa các mô hình.
+  - Bổ sung cột **Phân Loại Ảo Giác (Nature 2024)** kèm badge màu sắc trực quan trong Bảng Nhật Ký Chi Tiết.
+  - Thêm khung kiến giải học thuật tóm tắt 5 tầng bản chất ảo giác.
+  - Đảm bảo tương thích ngược 100% với các file dữ liệu lịch sử trước đây.
+- **Kiểm thử tự động ([tests/test_hallucination_classifier.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/tests/test_hallucination_classifier.py))**:
+  - Bổ sung 6 ca kiểm thử bao phủ toàn bộ các nhóm $H_0 \to H_4$ (100% test passed).
+
 ## [1.3.3] - 2026-10-03: Cơ Chế Tiếp Tục Chạy Benchmark (Resume) & Tối Ưu Quản Lý Lịch Sử
 - **Tài liệu hóa lộ trình nghiên cứu khoa học ([RESEARCH_IMPROVEMENT_PLAN.md](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/RESEARCH_IMPROVEMENT_PLAN.md))**:
   - Xây dựng bản kế hoạch chi tiết gồm 4 trục cải tiến nâng tầm bài báo khoa học dựa trên 7 công trình tham khảo (Nature 2024, Stanford Clover 2024, IEEE/ACM TSE 2026, arXiv 2025-2026).

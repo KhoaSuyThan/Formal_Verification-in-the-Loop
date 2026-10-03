@@ -14,6 +14,7 @@ from dataclasses import dataclass, asdict
 from agents.llm_agent import LLMAgent
 from core.dafny_engine import DafnyEngine
 from core.pipeline_controller import PipelineController, PipelineResult
+from core.hallucination_classifier import classify_hallucination, FormalHallucinationType
 from web_demo.helpers import get_flat_task_registry, load_task_spec
 
 
@@ -245,6 +246,14 @@ class CrossModelEvaluator:
                     if res.total_iterations == 1:
                         pass_at_1 += 1
 
+                # Phân loại ảo giác toán học H0 - H4 chuẩn Nature 2024
+                last_err = res.failure_reason or (res.history[-1].error_message if res.history else "")
+                h_report = classify_hallucination(
+                    is_success=is_pass,
+                    is_tampered=getattr(res, "is_spec_tampered", False),
+                    error_message=last_err
+                )
+
                 task_records.append({
                     "task_key": task_label,
                     "task_name": short_name,
@@ -252,7 +261,10 @@ class CrossModelEvaluator:
                     "success": is_pass,
                     "iterations": res.total_iterations,
                     "duration_sec": round(duration, 2),
-                    "repair_loops": loops
+                    "repair_loops": loops,
+                    "h_code": h_report["code"],
+                    "h_badge": h_report["badge"],
+                    "h_name": h_report["name"]
                 })
 
                 # --- CHECKPOINT LŨY TIẾN: Lưu ngay lập tức sau mỗi bài toán ---
