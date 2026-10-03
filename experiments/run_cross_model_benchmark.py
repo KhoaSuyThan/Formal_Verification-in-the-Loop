@@ -55,6 +55,11 @@ def parse_args():
         default=3,
         help="Số lần tự sửa tối đa Pass@K (mặc định K=3)"
     )
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help="Tiếp tục chạy từ checkpoint dở dang thay vì chạy mới từ đầu"
+    )
     return parser.parse_args()
 
 
@@ -86,12 +91,14 @@ def main():
     print(f"Mô hình tham gia: {model_ids}")
     print(f"Số bài toán: {len(target_keys)} bài (Chế độ: {args.preset})")
     print(f"Tham số Pass@K: K={args.max_attempts}")
+    if args.resume:
+        print("📌 Chế độ: TIẾP TỤC CHẠY TỪ CHECKPOINT (Resume from Checkpoint)")
     print("-" * 70)
 
     dafny_path = os.getenv("DAFNY_PATH")
     evaluator = CrossModelEvaluator(dafny_path=dafny_path)
 
-    def on_progress(model_id, cur_step, total_steps, msg):
+    def on_progress(model_id, cur_step, total_steps, msg, data=None):
         pct = (cur_step / max(1, total_steps)) * 100.0
         print(f"[{cur_step:2d}/{total_steps:2d}] ({pct:5.1f}%) {msg}")
 
@@ -99,7 +106,8 @@ def main():
         model_ids=model_ids,
         task_keys=target_keys,
         max_attempts=args.max_attempts,
-        progress_callback=on_progress
+        progress_callback=on_progress,
+        resume_from_checkpoint=args.resume
     )
 
     print("\n" + "=" * 70)

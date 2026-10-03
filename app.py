@@ -1438,13 +1438,40 @@ with tab_cross_model:
         ][:5]
         source_note = f"Mặc định chạy **5 bài tiêu biểu** (hoặc chuyển sang chế độ 'Hàng loạt' bên trái để tự chọn bài)."
 
-    col_btn_run, col_btn_stop, col_btn_load = st.columns([3, 2, 2])
-    with col_btn_run:
-        btn_start_benchmark = st.button("🚀 Bắt Đầu So Sánh", type="primary", width="stretch")
-    with col_btn_stop:
-        btn_stop_benchmark = st.button("⏹️ Dừng So Sánh", type="secondary", width="stretch", help="Dừng an toàn quá trình so sánh sau bài toán hiện tại")
-    with col_btn_load:
-        btn_load_cached = st.button("📂 Tải Kết Quả Cũ", width="stretch")
+    # Kiểm tra xem có bản checkpoint dở dang để hỗ trợ tính năng tiếp tục chạy (Resume)
+    latest_file = os.path.join("artifacts", "results", "cross_model_benchmark_latest.json")
+    has_resumable_checkpoint = False
+    resumable_tasks_count = 0
+    if os.path.exists(latest_file):
+        try:
+            with open(latest_file, "r", encoding="utf-8") as f_chk_info:
+                chk_content = json.load(f_chk_info)
+                for m_id, r_list in chk_content.get("detailed_results", {}).items():
+                    resumable_tasks_count += len(r_list)
+                if resumable_tasks_count > 0:
+                    has_resumable_checkpoint = True
+        except Exception:
+            pass
+
+    if has_resumable_checkpoint:
+        col_btn_run, col_btn_resume, col_btn_stop, col_btn_load = st.columns([2.5, 3.5, 2, 2])
+        with col_btn_run:
+            btn_start_benchmark = st.button("🚀 Chạy Mới Từ Đầu", type="secondary", width="stretch", help="Xóa bỏ checkpoint cũ và bắt đầu chạy lại từ bài đầu tiên")
+        with col_btn_resume:
+            btn_resume_benchmark = st.button(f"▶️ Tiếp Tục Chạy ({resumable_tasks_count} bài đã xong)", type="primary", width="stretch", help="Nạp lại kết quả cũ và tiếp tục chạy ngay từ bài chưa hoàn thành")
+        with col_btn_stop:
+            btn_stop_benchmark = st.button("⏹️ Dừng So Sánh", type="secondary", width="stretch", help="Dừng an toàn quá trình so sánh sau bài toán hiện tại")
+        with col_btn_load:
+            btn_load_cached = st.button("📂 Tải Kết Quả Cũ", width="stretch")
+    else:
+        btn_resume_benchmark = False
+        col_btn_run, col_btn_stop, col_btn_load = st.columns([3, 2, 2])
+        with col_btn_run:
+            btn_start_benchmark = st.button("🚀 Bắt Đầu So Sánh", type="primary", width="stretch")
+        with col_btn_stop:
+            btn_stop_benchmark = st.button("⏹️ Dừng So Sánh", type="secondary", width="stretch", help="Dừng an toàn quá trình so sánh sau bài toán hiện tại")
+        with col_btn_load:
+            btn_load_cached = st.button("📂 Tải Kết Quả Cũ", width="stretch")
 
     cross_stop_flag = os.path.join("artifacts", ".stop_cross_flag")
     if btn_stop_benchmark:
@@ -1452,16 +1479,34 @@ with tab_cross_model:
         st.toast("🛑 Đã gửi lệnh dừng! Quá trình so sánh sẽ dừng an toàn sau bài toán hiện tại.", icon="🛑")
         st.warning("🛑 Đã kích hoạt lệnh dừng. Hệ thống đang hoàn tất bài hiện tại và dừng an toàn...")
 
-    if btn_start_benchmark and os.path.exists(cross_stop_flag):
+    if (btn_start_benchmark or btn_resume_benchmark) and os.path.exists(cross_stop_flag):
         try:
             os.remove(cross_stop_flag)
         except Exception:
             pass
 
-    st.caption(f"📌 {source_note}")
+    # Xử lý khi bấm nút Tải Kết Quả Cũ ở hàng điều khiển trên cùng
+    if btn_load_cached:
+        if os.path.exists(latest_file):
+            try:
+                import json
+                with open(latest_file, "r", encoding="utf-8") as f_cached:
+                    st.session_state["cross_model_data"] = json.load(f_cached)
+                st.session_state["currently_loaded_file"] = "Mới nhất (Latest)"
+                st.toast("✅ Đã nạp thành công bản kết quả benchmark gần nhất!", icon="📂")
+                st.rerun()
+            except Exception as err:
+                st.error(f"❌ Không thể đọc file kết quả gần nhất: {err}")
+        else:
+            st.warning("⚠️ Chưa có bản lưu kết quả benchmark nào trong thư mục artifacts/results!")
 
-    # Xử lý khi bấm nút chạy
-    if btn_start_benchmark:
+    st.caption(f"📌 {source_note}")
+    if has_resumable_checkpoint:
+        st.info(f"💡 **Phát hiện tiến trình trước đó đã chạy {resumable_tasks_count} bài.** Bấm nút **'▶️ Tiếp Tục Chạy'** màu tím để chạy tiếp từ bài dở dang mà không mất kết quả cũ, hoặc bấm **'🚀 Chạy Mới Từ Đầu'** nếu muốn đo lại từ đầu.")
+
+    # Xử lý khi bấm nút chạy mới hoặc tiếp tục chạy dở dang
+    is_resuming = bool(btn_resume_benchmark)
+    if btn_start_benchmark or btn_resume_benchmark:
         if not selected_eval_models:
             st.warning("⚠️ Vui lòng chọn ít nhất một mô hình để chạy benchmark!")
         elif not target_keys:
@@ -1515,15 +1560,18 @@ with tab_cross_model:
                     except Exception:
                         pass
 
-            with st.spinner("Đang tiến hành kiểm chứng hình thức đa mô hình (kết quả tự động lưu sau mỗi bài)..."):
+            spinner_msg = "Đang tiếp tục kiểm chứng hình thức đa mô hình từ bài dở dang..." if is_resuming else "Đang tiến hành kiểm chứng hình thức đa mô hình (kết quả tự động lưu sau mỗi bài)..."
+            with st.spinner(spinner_msg):
                 benchmark_data = evaluator.run_benchmark(
                     model_ids=selected_eval_models,
                     task_keys=target_keys,
                     max_attempts=max_k,
                     progress_callback=update_progress,
-                    stop_check=lambda: os.path.exists(cross_stop_flag)
+                    stop_check=lambda: os.path.exists(cross_stop_flag),
+                    resume_from_checkpoint=is_resuming
                 )
                 st.session_state["cross_model_data"] = benchmark_data
+                st.session_state["currently_loaded_file"] = "Mới nhất (Latest)"
                 if os.path.exists(cross_stop_flag):
                     try:
                         os.remove(cross_stop_flag)
@@ -1542,6 +1590,7 @@ with tab_cross_model:
             import json
             with open(latest_file, "r", encoding="utf-8") as f:
                 st.session_state["cross_model_data"] = json.load(f)
+            st.session_state["currently_loaded_file"] = "Mới nhất (Latest)"
         except Exception:
             pass
 
@@ -1555,25 +1604,38 @@ with tab_cross_model:
     bench_files.sort(reverse=True)
 
     if bench_files:
+        hist_options = ["Mới nhất (Latest)"] + bench_files
+
         col_hist1, col_hist2 = st.columns([7, 3])
         with col_hist1:
             selected_hist = st.selectbox(
                 "📂 Xem lại các lần chạy trong lịch sử:",
-                ["Mới nhất (Latest)"] + bench_files,
-                index=0,
-                help="Chọn file để xem lại kết quả các đợt so sánh trước đó mà không sợ bị mất số liệu."
+                hist_options,
+                key="hist_selector_dropdown",
+                help="Chọn bất kỳ file nào để xem lại kết quả. Bảng và biểu đồ sẽ tự động cập nhật ngay lập tức!"
             )
         with col_hist2:
             st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
-            if st.button("🔄 Nạp Bản Này", width="stretch"):
-                target_fname = "cross_model_benchmark_latest.json" if selected_hist == "Mới nhất (Latest)" else selected_hist
-                target_path = os.path.join(res_dir, target_fname)
-                if os.path.exists(target_path):
-                    import json
+            btn_force_reload = st.button("🔄 Nạp Lại Bản Này", width="stretch")
+
+        # Tự động nạp dữ liệu tức thì mỗi khi mục chọn thay đổi hoặc bấm nạp lại
+        need_load = (st.session_state.get("currently_loaded_file") != selected_hist) or btn_force_reload
+        if need_load:
+            target_fname = "cross_model_benchmark_latest.json" if selected_hist == "Mới nhất (Latest)" else selected_hist
+            target_path = os.path.join(res_dir, target_fname)
+            if os.path.exists(target_path):
+                import json
+                try:
                     with open(target_path, "r", encoding="utf-8") as f_in:
                         st.session_state["cross_model_data"] = json.load(f_in)
+                    st.session_state["currently_loaded_file"] = selected_hist
                     st.toast(f"✅ Đã tải: {selected_hist}")
-                    st.rerun()
+                except Exception as err:
+                    st.error(f"Lỗi khi đọc file {selected_hist}: {err}")
+
+        # Hiển thị nhãn rõ ràng để người dùng biết đang xem dữ liệu của file nào
+        active_label = st.session_state.get("currently_loaded_file", selected_hist)
+        st.info(f"📊 Đang hiển thị dữ liệu lịch sử từ tệp: **`{active_label}`**")
 
     # Hiển thị bảng kết quả và đồ thị khi đã có dữ liệu
     active_data = st.session_state.get("cross_model_data")
@@ -1636,6 +1698,26 @@ with tab_cross_model:
             )
             st.plotly_chart(fig_time, width="stretch")
 
+        # Bảng chi tiết toàn bộ từng bài toán trong đợt benchmark được chọn
+        if "detailed_results" in active_data and active_data["detailed_results"]:
+            all_detailed = []
+            for m_key, t_list in active_data.get("detailed_results", {}).items():
+                m_name = next((s["display_name"] for s in summaries if s["model_name"] == m_key), m_key)
+                for t in t_list:
+                    all_detailed.append({
+                        "Mô Hình": m_name,
+                        "Bài Toán": t.get("task_name", ""),
+                        "Tập": t.get("group", ""),
+                        "Kết Quả Z3": "✅ PASS" if t.get("success") else "❌ FAIL",
+                        "Lượt Thử": f"Pass@{t.get('iterations')}" if t.get("success") else ">3",
+                        "Thời Gian (s)": t.get("duration_sec", 0.0),
+                    })
+            if all_detailed:
+                st.markdown("---")
+                st.markdown(f"##### 📝 Nhật Ký Chi Tiết Toàn Bộ {len(all_detailed)} Lượt Giải Trong Bản Lưu Này:")
+                df_tasks = pd.DataFrame(all_detailed)
+                st.dataframe(df_tasks, width="stretch", hide_index=True)
+
         # Khung xuất mã bảng LaTeX cho bài báo khoa học
         with st.expander("📝 Bảng Mã LaTeX Chuẩn Cho Bài Báo Khoa Học (Nhấn để sao chép)"):
             st.caption("Sao chép đoạn mã LaTeX sau đây và dán trực tiếp vào tệp .tex của bài báo:")
@@ -1647,14 +1729,5 @@ with tab_cross_model:
                 file_name="cross_model_evaluation_table.tex",
                 mime="text/plain"
             )
-
-        # Chi tiết từng bài toán
-        if "detailed_results" in active_data:
-            with st.expander("🔍 Xem Bảng Kết Quả Chi Tiết Từng Bài Toán Theo Mô Hình"):
-                for m_id, records in active_data["detailed_results"].items():
-                    m_info = next((s["display_name"] for s in summaries if s["model_name"] == m_id), m_id)
-                    st.markdown(f"**Mô hình: {m_info}**")
-                    df_det = pd.DataFrame(records)
-                    st.dataframe(df_det, width="stretch", hide_index=True)
 
 # Formal Verification-in-the-Loop Web Demo v1.3.0 - Cross-Model Evaluation Matrix Ready

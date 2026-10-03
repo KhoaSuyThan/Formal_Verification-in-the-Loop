@@ -6,6 +6,17 @@ Tất cả các thay đổi đáng chú ý của dự án sẽ được ghi nh�
 
 ---
 
+## [1.3.3] - 2026-10-03: Cơ Chế Tiếp Tục Chạy Benchmark (Resume) & Tối Ưu Quản Lý Lịch Sử
+- **Cơ chế tiếp tục chạy từ checkpoint dở dang ([core/cross_model_evaluator.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/cross_model_evaluator.py), [experiments/run_cross_model_benchmark.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/experiments/run_cross_model_benchmark.py))**:
+  - Thêm `resume_from_checkpoint=True` (CLI `--resume`): tự động nạp `cross_model_benchmark_latest.json`, bỏ qua các bài đã xong và tiếp tục chạy từ bài dở dang mà không mất kết quả cũ.
+  - Hỗ trợ mở rộng số lượng bài (vd: từ 10 lên 16/30 bài) hoặc thêm mô hình mới một cách linh hoạt.
+- **Tối ưu giao diện Web Benchmark ([app.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/app.py))**:
+  - Hiển thị nút `▶️ Tiếp Tục Chạy (X bài đã xong)` cạnh `🚀 Chạy Mới Từ Đầu` khi phát hiện lần chạy dở dang.
+  - Tự động nạp tức thì khi chọn file lịch sử trong dropdown; khắc phục lỗi kẹt bảng kết quả.
+  - Mở trực tiếp bảng **Nhật Ký Chi Tiết Toàn Bộ Lượt Giải** bên dưới biểu đồ để dễ dàng tra cứu từng bài.
+- **Kiểm thử tự động ([tests/test_cross_model_evaluator.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/tests/test_cross_model_evaluator.py))**:
+  - Bổ sung `test_run_benchmark_resume` kiểm chứng luồng kế thừa checkpoint (100% test passed).
+
 ## [1.3.2] - 2026-10-02: Khắc Phục Lỗi DeepSeek-R1 & Bổ Sung Nút Dừng Chạy Tiến Trình
 - **Tối ưu thích ứng mô hình suy luận sâu Chain-of-Thought ([agents/llm_agent.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/agents/llm_agent.py))**:
   - Khắc phục triệt để lỗi DeepSeek-R1 thất bại 0/10: nâng `max_tokens` từ 2048 lên 8192 và nâng timeout từ 90s lên 240s khi gọi dòng mô hình `deepseek`.
