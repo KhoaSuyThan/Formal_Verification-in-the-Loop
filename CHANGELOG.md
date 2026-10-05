@@ -6,6 +6,18 @@ Tất cả các thay đổi đáng chú ý của dự án sẽ được ghi nh�
 
 ---
 
+## [1.5.0-step1] - 2026-10-05: Tái Cấu Trúc Mô-đun Hóa Giao Diện (Bước 1 Kế Hoạch Cải Tiến)
+- **Phân rã kiến trúc giao diện người dùng ([web_demo/tabs/](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/web_demo/tabs/))**:
+  - Tạo mới thư mục `web_demo/tabs/` và 4 module độc lập phục vụ 4 tab:
+    - [tab_pipeline_view.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/web_demo/tabs/tab_pipeline_view.py): Quản lý Tab 1 (Chế độ Đơn, Hàng Loạt và Sân Chơi Tự Do Playground, badge CEGAR, CoT trace).
+    - [tab_diff_view.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/web_demo/tabs/tab_diff_view.py): Quản lý Tab 2 (So sánh mã diff HTML và phân tích bất biến quy nạp).
+    - [tab_metrics_view.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/web_demo/tabs/tab_metrics_view.py): Quản lý Tab 3 (Bảng chỉ số khoa học độc lập, so sánh Pass@1 vs Pass@3, biểu đồ lỗi Z3).
+    - [tab_cross_model_view.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/web_demo/tabs/tab_cross_model_view.py): Quản lý Tab 4 (Ma trận đối đầu đa mô hình, resume checkpoint, phân loại ảo giác Nature $H_0 \to H_4$, CoT Inspector và tải mã LaTeX).
+- **Thu gọn tệp điều phối chính ([app.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/app.py))**:
+  - Thu gọn kích thước file từ 1.995 dòng (>105KB) xuống còn 660 dòng (giảm ~67% dung lượng), tách bạch rành mạch giữa cấu hình Bootstrap, Sidebar và logic nghiệp vụ của từng Tab.
+- **Bổ sung bài kiểm thử tự động ([tests/test_modular_ui.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/tests/test_modular_ui.py))**:
+  - 4 bài kiểm thử bảo đảm tính toàn vẹn chữ ký hàm, export module và độ tinh gọn cấu trúc (nâng tổng số test lên 69 tests, 100% green).
+
 ## [1.4.0] - 2026-10-03: Tự Sửa Lỗi Hướng Dẫn Bằng Phản Ví Dụ SMT (Neuro-Symbolic CEGAR - Trục 3)
 - **Kích hoạt cờ Solver Counterexample ([core/dafny_engine.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/dafny_engine.py))**:
   - Tích hợp cờ `--extract-counterexample` của Dafny/Z3 CLI trong phương thức `verify()`, kích hoạt bộ giải SMT trích xuất mô hình trạng thái dữ liệu cụ thể gây vi phạm kiểm định logic.
