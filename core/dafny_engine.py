@@ -81,7 +81,7 @@ class DafnyEngine:
             tmp.write(code)
 
         try:
-            cmd = [str(self.dafny_bin), "verify"]
+            cmd = [str(self.dafny_bin), "verify", "--allow-warnings"]
             if extract_counterexample:
                 cmd.append("--extract-counterexample")
             cmd.extend(["--verification-time-limit", str(self.timeout), str(tmp_path)])

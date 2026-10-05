@@ -6,7 +6,7 @@ giữa ngôn ngữ huấn luyện (Python/Java/C++) và ngôn ngữ đích (Dafn
 """
 
 import re
-from typing import List, Set, Tuple
+from typing import List, Optional, Set, Tuple
 
 
 class SyntaxNormalizer:
@@ -220,6 +220,9 @@ class SyntaxNormalizer:
         Sửa:   `s := s[i := val];`
         """
         # Mẫu: <var>[<index>] := <expr>;
+        # Bỏ qua các biến kiểu array<T> vì trong Dafny, array là mutable và phép gán a[i] := val là hợp lệ
+        array_vars = set(re.findall(r'(\w+)\s*:\s*array<', code))
+
         seq_assign_pattern = re.compile(
             r'(\s+)(\w+)\[([^\]]+)\]\s*:=\s*(.+?)\s*;',
             re.MULTILINE
@@ -228,6 +231,8 @@ class SyntaxNormalizer:
         def replace_seq_assign(match):
             indent = match.group(1)
             var_name = match.group(2)
+            if var_name in array_vars:
+                return match.group(0)
             index = match.group(3).strip()
             value = match.group(4).strip()
             return f"{indent}{var_name} := {var_name}[{index} := {value}];"
@@ -865,6 +870,167 @@ class SyntaxNormalizer:
 
         return pattern.sub(repl, code)
 
+    @staticmethod
+    def _infer_ranking_function(condition: str) -> Optional[str]:
+        """Suy luận hàm biến thiên (ranking function) từ điều kiện vòng lặp while.
+
+        Hỗ trợ 5 mẫu hình phổ biến:
+        1. Tiến (var < bound): ranking = bound - var
+        2. Lùi (var > 0): ranking = var
+        3. Nhị phân (low < high): ranking = high - low  (đặc biệt của mẫu 1)
+        4. Euclid mod (b > 0): ranking = b              (đặc biệt của mẫu 2)
+        5. Euclid trừ (a != b): ranking = a + b
+        """
+        cond = condition.strip()
+        # Bỏ dấu ngoặc đơn bao ngoài nếu có
+        if cond.startswith('(') and cond.endswith(')'):
+            cond = cond[1:-1].strip()
+        # Bỏ qua điều kiện phức hợp (chứa && hoặc ||)
+        if '&&' in cond or '||' in cond:
+            return None
+
+        # Mẫu 2 & 4: while VAR > 0 → decreases VAR
+        m = re.match(r'^(\w+)\s*>\s*0$', cond)
+        if m:
+            return m.group(1)
+
+        # Mẫu bổ sung: while VAR <= BOUND → decreases BOUND + 1 - VAR (tránh âm khi biến đạt BOUND + 1)
+        m = re.match(r'^(\w+)\s*<=\s*(.+)$', cond)
+        if m:
+            return f"{m.group(2).strip()} + 1 - {m.group(1).strip()}"
+
+        # Mẫu 1 & 3: while VAR < BOUND (chặt chẽ không có =) → decreases BOUND - VAR
+        m = re.match(r'^(\w+)\s*<(?!=)\s*(.+)$', cond)
+        if m:
+            return f"{m.group(2).strip()} - {m.group(1).strip()}"
+
+        # Mẫu 5: while VAR1 != VAR2 → decreases VAR1 + VAR2
+        m = re.match(r'^(\w+)\s*!=\s*(\w+)$', cond)
+        if m:
+            return f"{m.group(1)} + {m.group(2)}"
+
+        return None
+
+    @classmethod
+    def infer_loop_decreases(cls, code: str) -> str:
+        """Phép biến đổi 22: Tự động suy luận mệnh đề dừng decreases cho vòng lặp thiếu.
+
+        Phân tích cấu trúc điều kiện while để suy diễn hàm biến thiên (ranking function)
+        đảm bảo Total Correctness (chứng minh tính dừng toán học).
+        Hỗ trợ 5 mẫu hình: tiến, lùi, nhị phân, Euclid mod, Euclid trừ.
+        """
+        if not code or "while " not in code:
+            return code
+
+        lines = code.split('\n')
+        result_lines: List[str] = []
+        i = 0
+
+        while i < len(lines):
+            line = lines[i]
+
+            # Phát hiện dòng bắt đầu vòng lặp while (trong thân method)
+            if re.match(r'^\s*while\s+', line):
+                stripped = line.strip()
+                indent = line[:len(line) - len(line.lstrip())]
+                condition = stripped[len('while '):].strip()
+
+                # Xử lý trường hợp while cond { trên cùng dòng: tách và chèn decreases nếu chưa có
+                if '{' in condition:
+                    actual_cond = condition.split('{')[0].strip()
+                    ranking = cls._infer_ranking_function(actual_cond)
+                    if ranking:
+                        clause_indent = indent + "    "
+                        result_lines.append(f"{indent}while {actual_cond}")
+                        result_lines.append(f"{clause_indent}decreases {ranking}")
+                        result_lines.append(f"{indent}{{")
+                        i += 1
+                        continue
+                    else:
+                        result_lines.append(line)
+                        i += 1
+                        continue
+
+                result_lines.append(line)
+                i += 1
+
+                # Quét các dòng invariant/decreases tiếp theo
+                has_decreases = False
+                while i < len(lines):
+                    next_stripped = lines[i].strip()
+                    if next_stripped.startswith('invariant ') or next_stripped.startswith('decreases '):
+                        if next_stripped.startswith('decreases '):
+                            has_decreases = True
+                        result_lines.append(lines[i])
+                        i += 1
+                    else:
+                        break
+
+                # Chèn decreases nếu chưa có và dòng kế tiếp bắt đầu bằng {
+                if not has_decreases and i < len(lines) and lines[i].strip().startswith('{'):
+                    ranking = cls._infer_ranking_function(condition)
+                    if ranking:
+                        clause_indent = indent + "    "
+                        result_lines.append(f"{clause_indent}decreases {ranking}")
+
+                continue
+
+            result_lines.append(line)
+            i += 1
+
+        return '\n'.join(result_lines)
+
+    @classmethod
+    def infer_array_modifies(cls, code: str) -> str:
+        """Phép biến đổi 23: Tự động bổ sung modifies cho method thao tác mảng in-place.
+
+        Khi method nhận tham số kiểu array<T> và thân hàm có phép gán a[i] := val,
+        tự động chèn mệnh đề modifies a nếu còn thiếu.
+        """
+        if not code or "array<" not in code:
+            return code
+
+        # Tìm tên các tham số kiểu array<T>
+        array_params = re.findall(r'(\w+)\s*:\s*array<[^>]+>', code)
+        if not array_params:
+            return code
+
+        result = code
+        for arr_name in array_params:
+            # Chỉ xử lý khi có phép gán mảng in-place VÀ chưa có modifies
+            if not re.search(rf'\b{re.escape(arr_name)}\s*\[[^\]]+\]\s*:=', result):
+                continue
+            if re.search(rf'\bmodifies\s+{re.escape(arr_name)}\b', result):
+                continue
+
+            # Chèn modifies trước dấu { của method chứa tham số array này
+            mod_lines = result.split('\n')
+            new_lines: List[str] = []
+            in_target_method = False
+            inserted = False
+
+            for mod_line in mod_lines:
+                # Phát hiện method header có tham số array
+                if not inserted and re.search(
+                    rf'method\s+\w+\s*\([^)]*\b{re.escape(arr_name)}\b', mod_line
+                ):
+                    in_target_method = True
+
+                # Chèn modifies ngay trước dấu { của method
+                if in_target_method and not inserted and mod_line.strip().startswith('{'):
+                    brace_indent = mod_line[:len(mod_line) - len(mod_line.lstrip())]
+                    clause_indent = brace_indent + "    "
+                    new_lines.append(f"{clause_indent}modifies {arr_name}")
+                    in_target_method = False
+                    inserted = True
+
+                new_lines.append(mod_line)
+
+            if inserted:
+                result = '\n'.join(new_lines)
+
+        return result
+
     @classmethod
     def normalize(cls, code: str) -> str:
         """Áp dụng toàn bộ các phép chuẩn hóa cú pháp theo thứ tự an toàn."""
@@ -895,6 +1061,8 @@ class SyntaxNormalizer:
             cls.fix_sorting_inductive_lemmas,
             cls.fix_available_lemma_invocations,
             cls.fix_negated_comparison,
+            cls.infer_loop_decreases,
+            cls.infer_array_modifies,
         ]
         for fn in transformers:
             out = fn(result)
