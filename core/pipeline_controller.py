@@ -57,13 +57,23 @@ class PipelineController:
         agent: LLMAgent,
         engine: DafnyEngine,
         max_k: int = 3,
-        verbose: bool = True
+        verbose: bool = True,
+        enable_topology: bool = True,
+        enable_normalizer: bool = True,
+        enable_spec_locker: bool = True,
+        enable_semantic_hints: bool = True,
+        enable_cegar: bool = True,
     ):
-        """Khởi tạo controller với agent sinh mã, engine kiểm định và số vòng lặp tối đa."""
+        """Khởi tạo controller với agent sinh mã, engine kiểm định và cấu hình bóc tách module."""
         self.agent = agent
         self.engine = engine
         self.max_k = max_k
         self.verbose = verbose
+        self.enable_topology = enable_topology
+        self.enable_normalizer = enable_normalizer
+        self.enable_spec_locker = enable_spec_locker
+        self.enable_semantic_hints = enable_semantic_hints
+        self.enable_cegar = enable_cegar
 
     @staticmethod
     def _is_stagnated(prev_code: str, new_code: str) -> bool:
@@ -74,9 +84,10 @@ class PipelineController:
         return ratio >= STAGNATION_THRESHOLD
 
     def _postprocess_code(self, raw_spec: str, generated_code: str) -> str:
-        """Chuỗi hậu xử lý mã sinh ra: TemplatePreserver → SyntaxNormalizer."""
+        """Chuỗi hậu xử lý mã sinh ra: TemplatePreserver → (SyntaxNormalizer nếu kích hoạt)."""
         code = TemplatePreserver.preserve_code(raw_spec, generated_code)
-        code = SyntaxNormalizer.normalize(code)
+        if self.enable_normalizer:
+            code = SyntaxNormalizer.normalize(code)
         return code
 
     def run_task(self, raw_spec: str, task_name: str = "sample_task") -> PipelineResult:
@@ -84,13 +95,18 @@ class PipelineController:
         original_hash = SpecLocker.get_hash(raw_spec)
         history: List[IterationLog] = []
 
-        topology = TopologyDetector.detect(raw_spec)
-        topology_directive = TopologyDetector.get_topology_directive(topology)
+        if self.enable_topology:
+            topology = TopologyDetector.detect(raw_spec)
+            topology_directive = TopologyDetector.get_topology_directive(topology)
+        else:
+            topology = AlgorithmTopology.DIRECT
+            topology_directive = ""
 
         if self.verbose:
-            print(f"\n[Pha 1: Sinh mã ban đầu | Hình thái: {topology.value}] Đang yêu cầu LLM sinh mã...")
+            topo_label = topology.value if self.enable_topology else "None (Ablation Baseline)"
+            print(f"\n[Pha 1: Sinh mã ban đầu | Hình thái: {topo_label}] Đang yêu cầu LLM sinh mã...")
 
-        directive_text = f"\n\n{topology_directive}\n" if topology_directive else ""
+        directive_text = f"\n\n{topology_directive}\n" if (self.enable_topology and topology_directive) else ""
         prompt = (
             f"Hãy hoàn thiện phương thức Dafny sau để vượt qua kiểm định hình thức Z3:\n\n"
             f"{raw_spec}"
@@ -100,7 +116,7 @@ class PipelineController:
         current_code = self.agent.generate_code(prompt)
         cur_cot_trace = getattr(self.agent, "last_cot_trace", "")
         cur_cot_tokens = getattr(self.agent, "last_cot_tokens", 0)
-        # Hậu xử lý: bảo toàn template + chuẩn hóa cú pháp
+        # Hậu xử lý: bảo toàn template + chuẩn hóa cú pháp (nếu bật)
         current_code = self._postprocess_code(raw_spec, current_code)
 
         # Vòng lặp kiểm định & tự sửa lỗi
@@ -111,7 +127,7 @@ class PipelineController:
 
             # 1. Kiểm tra tính toàn vẹn của mệnh đề ensures (Chống gian lận)
             spec_valid = SpecLocker.is_valid(original_hash, current_code, raw_spec=raw_spec)
-            if not spec_valid:
+            if not spec_valid and self.enable_spec_locker:
                 if self.verbose:
                     print(f"❌ [Spec-Locking]: CẢNH BÁO! LLM đã tự ý sửa đổi mệnh đề ensures gốc.")
                 log_entry = IterationLog(
@@ -135,12 +151,15 @@ class PipelineController:
                     total_cot_tokens=sum(l.cot_tokens for l in history),
                     final_cot_trace=cur_cot_trace
                 )
+            elif not spec_valid and not self.enable_spec_locker:
+                if self.verbose:
+                    print(f"⚠️ [Spec-Locking Disabled]: LLM vi phạm đặc tả ensures (Spec-Tampering) nhưng tiếp tục kiểm định...")
 
             if self.verbose:
                 print("🛡️ [Spec-Locking]: HỢP LỆ (100% khớp mã băm SHA-256).")
 
             # 2. Thực hiện kiểm định hình thức bằng Dafny/Z3
-            verify_res: VerifyResult = self.engine.verify(current_code)
+            verify_res: VerifyResult = self.engine.verify(current_code, extract_counterexample=self.enable_cegar)
 
             if verify_res.is_verified:
                 if self.verbose:
@@ -148,7 +167,7 @@ class PipelineController:
                 log_entry = IterationLog(
                     iteration=k,
                     code=current_code,
-                    is_spec_valid=True,
+                    is_spec_valid=spec_valid,
                     is_verified=True,
                     error_message="",
                     error_taxonomy="None",
@@ -169,14 +188,24 @@ class PipelineController:
                     has_cegar_repaired=has_cegar_repaired
                 )
 
-            # Trường hợp kiểm định thất bại: Dùng Semantic Diagnostic Engine bóc tách lỗi chi tiết
-            detailed_feedback, err_cat = DiagnosticParser.format_diagnostic_feedback(current_code, verify_res.output)
+            # Trường hợp kiểm định thất bại: Dùng Semantic Diagnostic Engine hoặc thông báo thô (Ablation Clover)
+            if self.enable_semantic_hints:
+                detailed_feedback, err_cat = DiagnosticParser.format_diagnostic_feedback(current_code, verify_res.output)
+            else:
+                # Chế độ Stanford Clover Baseline: Gửi thông báo lỗi thô trực tiếp từ Dafny/Z3
+                detailed_feedback = f"Dafny Compiler Error Message:\n{verify_res.output}"
+                err_cat = DiagnosticParser.classify_error(verify_res.output)
+
             summary_err = DiagnosticParser.extract_error(verify_res.output, current_code)
 
-            # Trích xuất phản ví dụ CEGAR cụ thể từ Z3 SMT Solver
-            ce_data = DiagnosticParser.extract_counterexample(verify_res.output, current_code)
-            ce_desc = ce_data.description if ce_data else ""
-            has_cegar_iter = bool(ce_data)
+            # Trích xuất phản ví dụ CEGAR cụ thể từ Z3 SMT Solver nếu bật cờ enable_cegar
+            if self.enable_cegar:
+                ce_data = DiagnosticParser.extract_counterexample(verify_res.output, current_code)
+                ce_desc = ce_data.description if ce_data else ""
+                has_cegar_iter = bool(ce_data)
+            else:
+                ce_desc = ""
+                has_cegar_iter = False
 
             if self.verbose:
                 print(f"❌ [Dafny Engine]: Kiểm định thất bại.")
@@ -188,7 +217,7 @@ class PipelineController:
             log_entry = IterationLog(
                 iteration=k,
                 code=current_code,
-                is_spec_valid=True,
+                is_spec_valid=spec_valid,
                 is_verified=False,
                 error_message=summary_err,
                 error_taxonomy=err_cat,
@@ -202,11 +231,11 @@ class PipelineController:
             # 3. Pha sửa lỗi (Repair Phase) nếu chưa chạm ngưỡng max_k
             if k < self.max_k:
                 if self.verbose:
-                    print(f"\n[Pha sửa lỗi {k} -> {k+1}] Đang gửi chẩn đoán ngữ nghĩa sang Repair Agent để vá mã...")
+                    print(f"\n[Pha sửa lỗi {k} -> {k+1}] Đang gửi chẩn đoán sang Repair Agent để vá mã...")
 
-                # Lần sửa thứ nhất với thông tin chẩn đoán giàu ngữ cảnh
+                # Lần sửa thứ nhất với thông tin chẩn đoán
                 repair_feedback = detailed_feedback
-                if topology == AlgorithmTopology.DIRECT:
+                if self.enable_topology and topology == AlgorithmTopology.DIRECT and topology_directive:
                     repair_feedback = f"{topology_directive}\n\n{detailed_feedback}"
 
                 repaired_code = self.agent.repair_code(current_code, repair_feedback, raw_spec)

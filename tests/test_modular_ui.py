@@ -64,7 +64,7 @@ def test_app_script_syntax_and_structure():
     content = app_path.read_text(encoding="utf-8")
     assert "render_pipeline_tab(" in content
     assert "render_diff_tab()" in content
-    assert "render_metrics_tab()" in content
+    assert "render_metrics_tab(" in content
     assert "render_cross_model_tab(" in content
     # Đảm bảo app.py đã được thu gọn đáng kể (từ gần 2000 dòng xuống dưới 750 dòng)
     lines = content.splitlines()
