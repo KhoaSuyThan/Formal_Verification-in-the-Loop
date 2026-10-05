@@ -423,6 +423,56 @@ class DiagnosticParser:
             )
 
         if category == "TerminationFailure":
+            # Phân tích chi tiết theo loại lỗi dừng cụ thể
+            if "decreases expression might not decrease" in msg_lower:
+                # Trích xuất điều kiện while từ mã nguồn để gợi ý ranking function cụ thể
+                while_match = re.search(r'while\s+(\w+)\s*(<|<=|>|>=|!=)\s*(\S+)', code)
+                if while_match:
+                    var = while_match.group(1)
+                    op = while_match.group(2)
+                    bound = while_match.group(3)
+                    if op in ('<', '<='):
+                        suggested = f"{bound} - {var}"
+                    elif op == '>' and bound == '0':
+                        suggested = var
+                    elif op == '!=':
+                        suggested = f"{var} + {bound}"
+                    else:
+                        suggested = f"{bound} - {var}"
+                    return (
+                        f"BIỂU THỨC GIẢM KHÔNG GIẢM NGHIÊM NGẶT (decreases expression might not decrease): `{faulty_line}`.\n"
+                        f"[HÀNH ĐỘNG BẮT BUỘC - SỬA RANKING FUNCTION]:\n"
+                        f"Vòng lặp `while {var} {op} {bound}` cần hàm biến thiên giảm nghiêm ngặt sau mỗi bước.\n"
+                        f"-> BẮT BUỘC sửa mệnh đề dừng thành: `decreases {suggested}`\n"
+                        f"Đảm bảo rằng biểu thức `{suggested}` luôn >= 0 tại đầu mỗi lần lặp "
+                        f"và giảm nghiêm ngặt sau mỗi bước (sau phép gán `{var} := ...`)."
+                    )
+
+            if "cannot prove termination" in msg_lower:
+                return (
+                    "KHÔNG THỂ CHỨNG MINH TÍNH DỪNG (cannot prove termination):\n"
+                    "[HÀNH ĐỘNG BẮT BUỘC - CHÈN MỆNH ĐỀ DỪNG]:\n"
+                    "Vòng lặp while THIẾU mệnh đề `decreases` để chứng minh Total Correctness.\n"
+                    "Quy tắc suy luận ranking function theo điều kiện while:\n"
+                    "1. `while i < n` hoặc `while i < |s|` → `decreases n - i` hoặc `decreases |s| - i`\n"
+                    "2. `while i > 0` → `decreases i`\n"
+                    "3. `while low < high` (nhị phân) → `decreases high - low`\n"
+                    "4. `while b > 0` (Euclid mod) → `decreases b`\n"
+                    "5. `while a != b` (Euclid trừ) → `decreases a + b`\n"
+                    "BẮT BUỘC chèn mệnh đề `decreases <biểu_thức>` sau invariant, trước dấu mở ngoặc `{` của while."
+                )
+
+            if "bounded below" in msg_lower:
+                return (
+                    f"BIỂU THỨC DỪNG BỊ ÂM HOẶC KHÔNG BỊ CHẶN DƯỚI (decreases expression must be bounded below): `{faulty_line}`.\n"
+                    f"[HÀNH ĐỘNG BẮT BUỘC - BẢO ĐẢM CHẶN DƯỚI KHÔNG ÂM]:\n"
+                    f"Biểu thức trong mệnh đề `decreases` bắt buộc phải luôn >= 0 tại đầu mỗi vòng lặp.\n"
+                    f"1. Bổ sung bất biến chặn dưới: `invariant i >= 0` hoặc `invariant 0 <= i <= n`.\n"
+                    f"2. Nếu tham số có thể nhận giá trị âm (như GCD), chuyển đổi sang số không âm trước vòng lặp: `var cur_a := if a < 0 then -a else a;`.\n"
+                    f"3. Nếu biến lặp đạt tới n + 1 (trong `while i <= n`), điều chỉnh ranking function thành: `decreases n + 1 - i`."
+                )
+
+            # Fallback cho các trường hợp TerminationFailure khác
             return (
                 "KHÔNG THỂ CHỨNG MINH VÒNG LẶP DỪNG (Termination Failure): "
                 "Biểu thức trong mệnh đề `decreases <biểu_thức>` phải luôn bị chặn dưới (>= 0) và giảm nghiêm ngặt sau mỗi bước lặp. "

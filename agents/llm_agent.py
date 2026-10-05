@@ -178,6 +178,8 @@ class LLMAgent:
             "- Câu lệnh rẽ nhánh: Dùng `if điều_kiện { ... } else { ... }` (KHÔNG dùng từ khóa `then` trong method).\n"
             "- Vòng lặp: Bắt buộc dùng `while` (KHÔNG dùng từ khóa `loop` hoặc `for`).\n"
             "- Mệnh đề `invariant` và `decreases` BẮT BUỘC phải đặt ngay TRƯỚC dấu mở ngoặc `{` của vòng lặp `while` (KHÔNG đặt bên trong thân vòng lặp).\n"
+            "- Bảo chứng dừng (Total Correctness): Mọi vòng lặp while BẮT BUỘC phải có mệnh đề `decreases <ranking_function>` để chứng minh tính dừng toán học (ví dụ: `decreases n - i` hoặc `decreases |s| - i` khi lặp tiến `i < n`; `decreases i` khi lặp lùi `i > 0`; `decreases high - low` khi tìm kiếm nhị phân; `decreases b` khi lặp Euclid `b > 0`). Biểu thức decreases phải luôn >= 0 tại mỗi vòng lặp.\n"
+            "- Thao tác mảng (In-place Array): Nếu method nhận tham số `a: array<T>` và có câu lệnh gán in-place `a[i] := val;`, method header BẮT BUỘC phải có mệnh đề `modifies a` (ví dụ: `method Foo(a: array<int>) modifies a`). Đối với kiểu `seq<T>` là bất biến, KHÔNG dùng modifies mà dùng cú pháp functional update `s := s[i := val];`.\n"
             "- Biên của vòng lặp và bất biến: Khi duyệt `while i < n` (hoặc `while i < |s|`), sau khi vòng lặp kết thúc thì `i == n`. "
             "Bất biến cận trên BẮT BUỘC là `invariant 0 <= i <= n` (hoặc `0 <= i <= |s|`). "
             "Gán giá trị cho biến kết quả ngõ ra phù hợp với phạm vi biến (scope) trước khi thoát hàm.\n"
