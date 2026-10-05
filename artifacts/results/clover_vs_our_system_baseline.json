@@ -1,0 +1,137 @@
+{
+  "timestamp": "2026-10-05 17:36:58",
+  "model_name": "ollama/qwen2.5-coder:7b",
+  "preset": "clover",
+  "total_tasks": 6,
+  "clover_baseline": {
+    "method_name": "Stanford Clover Baseline (2024)",
+    "total_tasks": 6,
+    "passed_tasks": 5,
+    "pass_at_1_count": 4,
+    "pass_at_1_rate": 66.7,
+    "pass_at_k_count": 5,
+    "pass_at_k_rate": 83.3,
+    "spec_tampering_count": 0,
+    "spec_tampering_rate": 0.0,
+    "cegar_repaired_count": 0,
+    "avg_repair_loops": 1.5,
+    "avg_duration_sec": 39.8,
+    "total_duration_sec": 238.6,
+    "details": [
+      {
+        "task_name": "abs_val",
+        "is_success": true,
+        "total_iterations": 1,
+        "elapsed_sec": 30.18,
+        "pass_at_1": true,
+        "has_tamper": false
+      },
+      {
+        "task_name": "find_min",
+        "is_success": true,
+        "total_iterations": 1,
+        "elapsed_sec": 9.43,
+        "pass_at_1": true,
+        "has_tamper": false
+      },
+      {
+        "task_name": "linear_search",
+        "is_success": false,
+        "total_iterations": 3,
+        "elapsed_sec": 117.28,
+        "pass_at_1": false,
+        "has_tamper": false
+      },
+      {
+        "task_name": "sample_max",
+        "is_success": true,
+        "total_iterations": 1,
+        "elapsed_sec": 11.69,
+        "pass_at_1": true,
+        "has_tamper": false
+      },
+      {
+        "task_name": "sign_function",
+        "is_success": true,
+        "total_iterations": 1,
+        "elapsed_sec": 16.8,
+        "pass_at_1": true,
+        "has_tamper": false
+      },
+      {
+        "task_name": "sum_to_n",
+        "is_success": true,
+        "total_iterations": 2,
+        "elapsed_sec": 53.24,
+        "pass_at_1": false,
+        "has_tamper": false
+      }
+    ]
+  },
+  "our_system": {
+    "method_name": "Our System (Full Neuro-Symbolic)",
+    "total_tasks": 6,
+    "passed_tasks": 6,
+    "pass_at_1_count": 5,
+    "pass_at_1_rate": 83.3,
+    "pass_at_k_count": 6,
+    "pass_at_k_rate": 100.0,
+    "spec_tampering_count": 0,
+    "spec_tampering_rate": 0.0,
+    "cegar_repaired_count": 1,
+    "avg_repair_loops": 1.17,
+    "avg_duration_sec": 19.1,
+    "total_duration_sec": 114.6,
+    "details": [
+      {
+        "task_name": "abs_val",
+        "is_success": true,
+        "total_iterations": 1,
+        "elapsed_sec": 11.99,
+        "pass_at_1": true,
+        "has_tamper": false
+      },
+      {
+        "task_name": "find_min",
+        "is_success": true,
+        "total_iterations": 1,
+        "elapsed_sec": 10.94,
+        "pass_at_1": true,
+        "has_tamper": false
+      },
+      {
+        "task_name": "linear_search",
+        "is_success": true,
+        "total_iterations": 1,
+        "elapsed_sec": 23.3,
+        "pass_at_1": true,
+        "has_tamper": false
+      },
+      {
+        "task_name": "sample_max",
+        "is_success": true,
+        "total_iterations": 1,
+        "elapsed_sec": 11.76,
+        "pass_at_1": true,
+        "has_tamper": false
+      },
+      {
+        "task_name": "sign_function",
+        "is_success": true,
+        "total_iterations": 1,
+        "elapsed_sec": 15.84,
+        "pass_at_1": true,
+        "has_tamper": false
+      },
+      {
+        "task_name": "sum_to_n",
+        "is_success": true,
+        "total_iterations": 2,
+        "elapsed_sec": 40.73,
+        "pass_at_1": false,
+        "has_tamper": false
+      }
+    ]
+  },
+  "latex_table": "\\begin{table}[htbp]\n\\centering\n\\caption{Ablation Study: Stanford Clover vs. Our System (6 Tasks, ollama/qwen2.5-coder:7b)}\n\\label{tab:clover_comparison}\n\\begin{tabular}{lcccccc}\n\\toprule\n\\textbf{Method / Framework} & \\textbf{Tasks} & \\textbf{Pass@1} & \\textbf{Pass@3} & \\textbf{Spec-Tamper ($H_1$)} & \\textbf{Avg Loops} & \\textbf{$T_{avg}$ (s)} \\\\\n\\midrule\nStanford Clover (2024) Baseline & 6 & 66.7\\% & 83.3\\% & 0.0\\% & 1.50 & 39.8 \\\\\n\\textbf{Our System (Neuro-Symbolic)} & 6 & \\textbf{83.3\\%} & \\textbf{100.0\\%} & \\textbf{0.0\\%} & \\textbf{1.17} & \\textbf{19.1} \\\\\n\\bottomrule\n\\end{tabular}\n\\end{table}"
+}

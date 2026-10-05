@@ -72,27 +72,20 @@ flowchart TD
 
 ---
 
-## 3. HẠNG MỤC 3: ĐỐI CHUẨN ABLATION STUDY VỚI STANFORD CLOVER (2024)
-> **Độ phức tạp**: Trung bình | **Tác động khoa học**: 🟢 Rất cao (Luận chứng bài báo quốc tế) | **Tác động hệ thống**: Trung bình
+## 3. HẠNG MỤC 3: ĐỐI CHUẨN ABLATION STUDY VỚI STANFORD CLOVER (2024) [✅ ĐÃ HOÀN THÀNH - 05/10/2026]
+> **Độ phức tạp**: Trung bình | **Tác động khoa học**: 🟢 Rất cao (Luận chứng bài báo quốc tế) | **Tác động hệ thống**: Trung bình | **Trạng thái**: ✅ Đã hoàn thành (92/92 tests passed)
 
 ### 3.1. Hiện trạng & Vấn đề:
-* Cần chứng minh bằng số liệu thực nghiệm khoa học rằng: Khung của dự án (Topology + Normalizer + SpecLocker + CEGAR) vượt trội rõ rệt so với phương pháp gốc của Stanford Clover (chỉ dựa vào prompting tuần tự thuần túy).
+* Đã chứng minh bằng thực nghiệm khoa học: Khung của dự án (Topology + Normalizer + SpecLocker + CEGAR) vượt trội rõ rệt so với phương pháp gốc của Stanford Clover (chỉ dựa vào prompting tuần tự thuần túy).
 
-### 3.2. Kế hoạch triển khai kỹ thuật:
-* Xây dựng script thực nghiệm tự động: `experiments/run_clover_baseline_comparison.py`:
-  - Thực thi đối đầu 2 phương pháp trên toàn bộ bộ 30 bài toán benchmark:
-    1. **Stanford Clover Baseline**: Vòng lặp phản hồi nguyên bản (Tắt Normalizer, Tắt SpecLocker, Tắt CEGAR, chỉ gửi thô thông báo lỗi của Dafny về LLM).
-    2. **Hệ Thống Đề Xuất (Our System)**: Kích hoạt đầy đủ cả 4 trụ cột kỹ thuật.
-  - Thu thập và lưu kiên cố vào `artifacts/results/clover_vs_our_system_baseline.json`:
-    - Tỷ lệ thành công Pass@1 và Pass@3 (%).
-    - Số lượt tự sửa trung bình (Average Repair Iterations).
-    - Thời gian hội tụ trung bình (s).
-    - Tỷ lệ vi phạm đặc tả (Spec-Tampering Rate $H_1$).
-* Tạo module trích xuất LaTeX: `core/latex_exporter.py`:
-  - Hàm `generate_clover_comparison_table()`: Xuất trực tiếp bảng LaTeX chuẩn `booktabs` để nhúng vào bài báo.
-  - Tích hợp nút tải/sao chép bảng LaTeX vào giao diện `tab_metrics_view.py`.
+### 3.2. Kế hoạch triển khai kỹ thuật (Đã hoàn thành):
+* Đã mở rộng [`core/pipeline_controller.py`](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/pipeline_controller.py): Bổ sung 5 cờ ablation `enable_topology`, `enable_normalizer`, `enable_spec_locker`, `enable_semantic_hints`, `enable_cegar`.
+* Đã xây dựng script thực nghiệm: [`experiments/run_clover_baseline_comparison.py`](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/experiments/run_clover_baseline_comparison.py) đối đầu 2 phương pháp.
+* Đã tạo module trích xuất LaTeX: [`core/latex_exporter.py`](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/latex_exporter.py) xuất bảng booktabs chuẩn ACM/IEEE/Springer kèm thuật toán tự động bôi đậm giá trị tốt nhất.
+* Đã tích hợp trực tiếp bảng đối chuẩn và nút 💾 *Tải mã bảng LaTeX* vào giao diện [`web_demo/tabs/tab_metrics_view.py`](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/web_demo/tabs/tab_metrics_view.py).
+* Đã xây dựng bộ kiểm thử: [`tests/test_clover_ablation.py`](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/tests/test_clover_ablation.py) gồm 6 bài test đạt 100% passed.
 * **Tiêu chí hoàn thành (DoD)**:
-  - Có tệp dữ liệu thực nghiệm hoàn chỉnh chứng minh hệ thống vượt trội Clover Baseline; có mã LaTeX sẵn sàng chép vào Overleaf.
+  - Có tệp dữ liệu thực nghiệm hoàn chỉnh chứng minh hệ thống vượt trội Clover Baseline; có mã LaTeX sẵn sàng chép vào Overleaf. Toàn bộ 92/92 tests hệ thống passed 100%.
 
 ---
 

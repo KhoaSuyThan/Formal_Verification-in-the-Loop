@@ -6,6 +6,12 @@ Tất cả các thay đổi đáng chú ý của dự án sẽ được ghi nh�
 
 ---
 
+## [1.5.0-step3] - 2026-10-05: Đối Chuẩn Ablation Study với Stanford Clover & Xuất LaTeX (Bước 3)
+- **Cờ bóc tách Pipeline ([core/pipeline_controller.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/pipeline_controller.py))**: Bổ sung 5 cờ cấu hình (`enable_topology`, `enable_normalizer`, `enable_spec_locker`, `enable_semantic_hints`, `enable_cegar`) cho phép đối chuẩn bóc tách giữa Stanford Clover Baseline và Hệ Thống Đề Xuất.
+- **Xuất bảng LaTeX ([core/latex_exporter.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/latex_exporter.py))**: Sinh mã bảng `booktabs` chuẩn bài báo khoa học, tự động làm nổi bật chỉ số tối ưu kèm tính năng tải tệp `.tex`.
+- **Thực nghiệm & Web UI ([experiments/run_clover_baseline_comparison.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/experiments/run_clover_baseline_comparison.py), [web_demo/tabs/tab_metrics_view.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/web_demo/tabs/tab_metrics_view.py))**: Bộ runner đối chuẩn lưu kết quả kiên cố; giao diện Tab 3 tích hợp nút chạy trực tiếp kèm tiến trình thời gian thực và tùy chọn mô hình linh hoạt.
+- **Kiểm thử ([tests/test_clover_ablation.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/tests/test_clover_ablation.py))**: Thêm 6 test case mới, toàn bộ 92/92 tests PASSED 100%.
+
 ## [1.5.0-step2] - 2026-10-05: Bảo Chứng Dừng Decreases & Suy Luận Modifies (Trục 4)
 - **Tự động suy luận `decreases` & `modifies` ([core/syntax_normalizer.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/syntax_normalizer.py))**:
   - Triển khai `infer_loop_decreases()` tự động chèn ranking function cho các mẫu hình vòng lặp (tiến, lùi, nhị phân, Euclid mod/trừ, `<=`, hỗ trợ cả ngoặc `{` cùng dòng).

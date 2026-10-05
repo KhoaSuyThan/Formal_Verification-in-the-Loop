@@ -709,7 +709,11 @@ with tab_diff:
     render_diff_tab()
 
 with tab_metrics:
-    render_metrics_tab()
+    render_metrics_tab(
+        model_name=model_name,
+        max_k=max_k,
+        timeout_sec=timeout_sec,
+    )
 
 with tab_cross_model:
     render_cross_model_tab(
