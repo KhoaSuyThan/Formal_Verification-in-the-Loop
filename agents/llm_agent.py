@@ -23,11 +23,13 @@ class LLMAgent:
         self,
         model_name: str = "ollama/qwen2.5-coder:7b",
         api_base: Optional[str] = None,
-        temperature: float = 0.0
+        temperature: float = 0.0,
+        timeout_sec: int = 180
     ):
-        """Khởi tạo agent với model và cấu hình kết nối."""
+        """Khởi tạo agent với model, cấu hình kết nối và thời gian timeout."""
         self.model = model_name
         self.temperature = temperature
+        self.timeout_sec = timeout_sec
         # Lưu vết chuỗi suy luận CoT và số token tương ứng của lượt sinh mã gần nhất
         self.last_cot_trace: str = ""
         self.last_cot_tokens: int = 0
@@ -118,15 +120,17 @@ class LLMAgent:
         self.last_cot_tokens = 0
         return ""
 
-    def _call_model(self, system_prompt: str, user_prompt: str, timeout_sec: int = 90) -> str:
+    def _call_model(self, system_prompt: str, user_prompt: str, timeout_sec: Optional[int] = None) -> str:
         """Thực hiện gọi API thông qua litellm.completion hoặc REST API với cơ chế timeout an toàn."""
+        actual_timeout = timeout_sec if timeout_sec is not None else getattr(self, "timeout_sec", 180)
+
         # Gọi trực tiếp REST API độc lập cho họ mô hình Gemini (chống lỗi Vertex AI)
         if "gemini" in self.model.lower():
-            return self._call_gemini_rest(system_prompt, user_prompt, timeout_sec=timeout_sec) or ""
+            return self._call_gemini_rest(system_prompt, user_prompt, timeout_sec=actual_timeout) or ""
 
-        # Điều chỉnh max_tokens và timeout thích ứng cho mô hình suy luận sâu Chain-of-Thought (như DeepSeek-R1)
-        effective_max_tokens = 8192 if "deepseek" in self.model.lower() else 2048
-        effective_timeout = max(timeout_sec, 240) if "deepseek" in self.model.lower() else timeout_sec
+        # Tối ưu hóa: max_tokens = 1024 giúp Ollama sinh mã ngắn gọn (15-20s), riêng DeepSeek-R1 giữ 8192 cho CoT
+        effective_max_tokens = 8192 if "deepseek" in self.model.lower() else 1024
+        effective_timeout = max(actual_timeout, 240) if "deepseek" in self.model.lower() else actual_timeout
 
         kwargs = {
             "model": self.model,

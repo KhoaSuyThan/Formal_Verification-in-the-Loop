@@ -26,6 +26,7 @@ load_dotenv()
 
 from agents.llm_agent import LLMAgent
 from core.dafny_engine import DafnyEngine
+from core.verification_cache import VerificationCache
 from core.pipeline_controller import PipelineController, PipelineResult
 from core.latex_exporter import LaTeXExporter
 from web_demo.helpers import get_flat_task_registry, load_task_spec
@@ -188,7 +189,7 @@ def execute_clover_ablation_experiment(
     """Hàm lõi chạy thực nghiệm đối chuẩn Stanford Clover vs. Our System (dùng chung cho CLI và Web UI)."""
     flat_registry = get_flat_task_registry()
     agent = LLMAgent(model_name=model_name, temperature=0.0)
-    engine = DafnyEngine(timeout_sec=timeout_sec)
+    engine = DafnyEngine(timeout_sec=timeout_sec, cache=VerificationCache())
     total_steps = len(task_keys) * 2
 
     # 1. Chạy cấu hình 1: Stanford Clover Baseline (Tắt tất cả module bảo trợ)

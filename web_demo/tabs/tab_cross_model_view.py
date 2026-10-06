@@ -44,10 +44,31 @@ def render_cross_model_tab(
     selected_eval_models = st.multiselect(
         "Mô hình tham gia:",
         options=[m[0] for m in eval_models],
-        default=["ollama/qwen2.5-coder:7b", "gemini-3.5-flash", "ollama/llama3.1:8b"],
+        default=["ollama/qwen2.5-coder:7b", "ollama/llama3.1:8b"],
         format_func=lambda x: next((m[1] for m in eval_models if m[0] == x), x),
         help="Tick chọn các mô hình muốn so tài.",
     )
+
+    # Cấu hình hiệu năng: Thực thi đa luồng song song & SMT Verification Cache
+    col_cfg_w, col_cfg_c = st.columns([1.5, 2.5])
+    with col_cfg_w:
+        eval_workers = st.slider(
+            "Số luồng xử lý song song (Workers):",
+            min_value=1,
+            max_value=8,
+            value=1,
+            help="1: Tuần tự truyền thống. 2-8: Đa luồng song song (ThreadPoolExecutor), tăng tốc độ chạy trên CPU đa nhân."
+        )
+    with col_cfg_c:
+        st.markdown("<div style='height: 25px;'></div>", unsafe_allow_html=True)
+        eval_use_cache = st.checkbox(
+            "Bật SMT Verification Cache (Tái sử dụng Z3)",
+            value=True,
+            help="Băm SHA-256 mã nguồn và lưu đệm kết quả kiểm định Z3. Giúp chạy lại benchmark cực nhanh (< vài giây)."
+        )
+
+    # Khuyến nghị tối ưu hóa tài nguyên phần cứng
+    st.caption("💡 **Khuyến nghị:** Mô hình Local (Ollama) nên đặt **1 - 2 Workers** (để GPU dồn tài nguyên xử lý dứt điểm, tránh chia tải tráo đổi mô hình); Mô hình Cloud (Gemini) nên đặt **4 - 8 Workers** để khai thác tối đa tốc độ server Google.")
 
     # Đồng bộ trực tiếp danh sách bài toán đã chọn từ Sidebar bên trái (tránh trùng lặp cấu hình)
     if exec_mode == "Hàng loạt" and selected_batch:
@@ -193,6 +214,8 @@ def render_cross_model_tab(
                     progress_callback=update_progress,
                     stop_check=lambda: os.path.exists(cross_stop_flag),
                     resume_from_checkpoint=is_resuming,
+                    workers=eval_workers,
+                    use_cache=eval_use_cache,
                 )
                 st.session_state["cross_model_data"] = benchmark_data
                 st.session_state["currently_loaded_file"] = "Mới nhất (Latest)"

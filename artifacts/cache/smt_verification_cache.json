@@ -1,0 +1,230 @@
+{
+  "d9a881a6b85ec834936cff8c2035dccb9a9e510d64dc2963cca313977ea8657e": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 1 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "fb4b2582b2a04166dd640035b3a0ca9599687b7e6e9550e4c23183fceeae02fa": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 1 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "34f1dad7330db905d7160c079eb3c2eb1bd57bcb16ddc0b4e674e0009652bc21": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 1 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "b0648a91c73a29bda07268b3075c40d90e26c7275a8106cdad02e985ec345f65": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "8636f7b8ed485feac09059c71353342607eeea34a355e30a92e01ade46cd087e": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 1 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "cee5e74be51c033a1b5c8757e3fbd2c0a4c7c802974208736eef40f0c9fbafd3": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 1 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "29e156b29e046a4f0daa85ec3048507ae41528fc1be466befdcde015d8dd95a8": {
+    "is_verified": false,
+    "return_code": 4,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmps9i5sntj.dfy(9,20): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n Related counterexample:\n WARNING: the following counterexample may be inconsistent or invalid. See dafny.org/dafny/DafnyRef/DafnyRef#sec-counterexamples\n Temporary variables to describe counterexamples: \n ghost var counterexampleLoopGuard0 : bool := false;\n C:/Users/aaa/AppData/Local/Temp/tmps9i5sntj.dfy(4,0): initial state:\n assume 4 == n;\n C:/Users/aaa/AppData/Local/Temp/tmps9i5sntj.dfy(5,10):\n assume 4 == n && 0 == s;\n C:/Users/aaa/AppData/Local/Temp/tmps9i5sntj.dfy(6,14):\n assume 4 == n && 0 == s && 0 == i;\n C:/Users/aaa/AppData/Local/Temp/tmps9i5sntj.dfy(7,4): after some loop iterations:\n counterexampleLoopGuard0 := 4 == n && 3 == s && 3 == i;\n C:/Users/aaa/AppData/Local/Temp/tmps9i5sntj.dfy(12,18):\n assume counterexampleLoopGuard0 ==> 4 == n && 4 == i && 3 == s;\n C:/Users/aaa/AppData/Local/Temp/tmps9i5sntj.dfy(13,18):\n assume counterexampleLoopGuard0 ==> 4 == n && 4 == i && 7 == s;\n \n  |\n9 |         invariant s == i * (i - 1) / 2\n  |                     ^^\n\n\nDafny program verifier finished with 1 verified, 1 error\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "1078714f96effc399566aa4dab3831e2161db39daa7b2e8afb04f0f78461d3b8": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "294e417a84873e66a2326eabc4c0c9ddd8b7cb13c31d663b4754e8f03b8d3347": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "de4f2e3311b397375aded5f092aa00bbd5f44059db413bc60986f3b6df4f9e43": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "7b3d2bd5430f91be538d1436484d24f7f36cd9d59040c75c3ffe6ea31188253b": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "fd805b14149d951eab1865e8294d0a6e3060153fe6d95b352a4a5fb031a7a4b7": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpxg34ykch.dfy(15,12): Error: invalid IfStmt\n   |\n15 |             s := 1;\n   |             ^\n\n1 parse errors detected in tmpxg34ykch.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "22b392b872a93536b0ed35ab5aeb4aab9324a3afa0840a0b9f3eebc65fa9452b": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 1 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "d321f3c6c015778be7bd5546617620d71e2668c3c76285562a6f95a654b871c4": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 1 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "2d6ab8e0fccc2f2991fbdb113d0d18eec39a67d510d5282199fe70fbd06b2e57": {
+    "is_verified": false,
+    "return_code": 4,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpst91ev_q.dfy(28,2): Error: a postcondition could not be proved on this return path\n Related counterexample:\n WARNING: the following counterexample may be inconsistent or invalid. See dafny.org/dafny/DafnyRef/DafnyRef#sec-counterexamples\n Temporary variables to describe counterexamples: \n ghost var counterexampleLoopGuard0 : bool := false;\n C:/Users/aaa/AppData/Local/Temp/tmpst91ev_q.dfy(5,0): initial state:\n assume 4 == k;\n C:/Users/aaa/AppData/Local/Temp/tmpst91ev_q.dfy(12,12):\n assume 4 == k && 2 == i;\n C:/Users/aaa/AppData/Local/Temp/tmpst91ev_q.dfy(13,2): after some loop iterations:\n counterexampleLoopGuard0 := 4 == k && 4 == i;\n C:/Users/aaa/AppData/Local/Temp/tmpst91ev_q.dfy(25,16):\n assume counterexampleLoopGuard0 ==> 4 == k && 4 == i && true == result;\n \n   |\n28 |   return;\n   |   ^^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpst91ev_q.dfy(3,21): Related location: this is the postcondition that could not be proved\n  |\n3 |   ensures result ==> forall i :: 2 <= i < k ==> k % i != 0\n  |                      ^^^^^^\n\n\nDafny program verifier finished with 1 verified, 1 error\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "d86f42d5a766ca6eb9fe80707971d5c06393dcf95cc8784927a0228dd684e1cc": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "0092f16710151193fd8f700f92d11d9cae7732903114906a04d7a4cf3a7f9d96": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "20295ff7300bb91d32474b9dbd5e6b596b0f2fe121ba461db70bd14e248c4269": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "6492f27af5ee0c8220ca211f8b50dbe4c5bdbac98b34de522032adc298005168": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "e30cb8df1c2037710a27ed3962f063f2ce1cd6088d14c49daaeffb84ef0c0ebc": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "668bb0513e62bd9ff1466d560e9d74f2f9f0b1ef86a9557961cb969768a436e8": {
+    "is_verified": false,
+    "return_code": 4,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpvskcpslw.dfy(9,4): Error: a postcondition could not be proved on this return path\n Related counterexample:\n WARNING: the following counterexample may be inconsistent or invalid. See dafny.org/dafny/DafnyRef/DafnyRef#sec-counterexamples\n C:/Users/aaa/AppData/Local/Temp/tmpvskcpslw.dfy(9,4): initial state:\n assume 976.0 == x;\n C:/Users/aaa/AppData/Local/Temp/tmpvskcpslw.dfy(10,36):\n assume 976.0 == x && 976.0 == floor_x;\n C:/Users/aaa/AppData/Local/Temp/tmpvskcpslw.dfy(12,20):\n assume 976.0 == x && 976.0 == d && 976.0 == floor_x;\n \n  |\n9 |     {\n  |     ^\n\nC:/Users/aaa/AppData/Local/Temp/tmpvskcpslw.dfy(6,22): Related location: this is the postcondition that could not be proved\n  |\n6 |     ensures (0.0 <= d <= 1.0)\n  |                       ^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpvskcpslw.dfy(9,4): Error: a postcondition could not be proved on this return path\n Related counterexample:\n WARNING: the following counterexample may be inconsistent or invalid. See dafny.org/dafny/DafnyRef/DafnyRef#sec-counterexamples\n C:/Users/aaa/AppData/Local/Temp/tmpvskcpslw.dfy(9,4): initial state:\n assume 684.0 / 625.0 == x;\n C:/Users/aaa/AppData/Local/Temp/tmpvskcpslw.dfy(10,36):\n assume 684.0 / 625.0 == x && 1.0 == floor_x;\n C:/Users/aaa/AppData/Local/Temp/tmpvskcpslw.dfy(12,20):\n assume 684.0 / 625.0 == x && 1.0 == d && 1.0 == floor_x;\n \n  |\n9 |     {\n  |     ^\n\nC:/Users/aaa/AppData/Local/Temp/tmpvskcpslw.dfy(7,20): Related location: this is the postcondition that could not be proved\n  |\n7 |     ensures (x - d) == (x.Floor as real)\n  |                     ^^\n\n\nDafny program verifier finished with 0 verified, 2 errors\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "c79d14c97f6dc3e0d417774239ae1ee589e5a79c640e002c189d5381b19677a0": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 1 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "d5df0791dc1069a4ed4dc3c4cfcf093bded3e75c5083bf4d68f14d83864f8e64": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 1 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "d72d9e0298178ff161a2930e48a61618fe42744d9e2e7618d2b04963fe0e4d00": {
+    "is_verified": false,
+    "return_code": 4,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpr3fsq1bv.dfy(12,36): Error: this loop invariant could not be proved on entry\n Related message: loop invariant violation\n Related counterexample:\n WARNING: the following counterexample may be inconsistent or invalid. See dafny.org/dafny/DafnyRef/DafnyRef#sec-counterexamples\n C:/Users/aaa/AppData/Local/Temp/tmpr3fsq1bv.dfy(9,0): initial state:\n assume 1 == k;\n C:/Users/aaa/AppData/Local/Temp/tmpr3fsq1bv.dfy(11,12):\n assume 1 == k && 2 == i;\n \n   |\n12 |   while i < k invariant 2 <= i && i <= k decreases k - i\n   |                                     ^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpr3fsq1bv.dfy(20,2): Error: a postcondition could not be proved on this return path\n Related counterexample:\n WARNING: the following counterexample may be inconsistent or invalid. See dafny.org/dafny/DafnyRef/DafnyRef#sec-counterexamples\n Temporary variables to describe counterexamples: \n ghost var counterexampleLoopGuard0 : bool := false;\n C:/Users/aaa/AppData/Local/Temp/tmpr3fsq1bv.dfy(9,0): initial state:\n assume 4 == k;\n C:/Users/aaa/AppData/Local/Temp/tmpr3fsq1bv.dfy(11,12):\n assume 4 == k && 2 == i;\n C:/Users/aaa/AppData/Local/Temp/tmpr3fsq1bv.dfy(12,2): after some loop iterations:\n counterexampleLoopGuard0 := 4 == k && 4 == i;\n C:/Users/aaa/AppData/Local/Temp/tmpr3fsq1bv.dfy(18,16):\n assume counterexampleLoopGuard0 ==> 4 == k && 4 == i && true == result;\n \n   |\n20 |   return;\n   |   ^^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpr3fsq1bv.dfy(6,21): Related location: this is the postcondition that could not be proved\n  |\n6 |   ensures result ==> forall i :: 2 <= i < k ==> k % i != 0\n  |                      ^^^^^^\n\n\nDafny program verifier finished with 1 verified, 2 errors\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "360cd5fb61baff3ae3759859661e24ffe976014b27536fd5d400bbf1e982188c": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "acb85bac6949672ef2138d53a96957c2f896c10923132d37cf4da7864fdd92cd": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "07509bad78afe4d2ff7b0b57c57f11d5c830526fbb4842919d6c0a50e2792f04": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "612876fb5dd7e4f7b46826d68b0525200544f9ebf12f100842a26c933cea6bfc": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpb1isr079.dfy(23,2): Error: rbrace expected\n   |\n23 |   else if n == 1 {\n   |   ^\n\n1 parse errors detected in tmpb1isr079.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "3f949ed9622037d041635c75bd96f4423e0ec23d55d7aeb992cfbe23f0ddcec7": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 1 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "ca732160ac80cc00632e9cab29b1571a39cfbc3a8ce21ad1b07309658a877d41": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 1 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "f377434b0b341a0305c197e633c3a5ea8f901c466c7248fbeb90b62ea8c8fb64": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "a53d1326a9891419e49d19db7b8e98811d9e88eb4e5e96f1601bb8de6347e500": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "da07418bfdd7d5b26cfef2256bb7ebd7a6c4ec1aa0338f0aab1d41825b619062": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "b1bd3412c768c5d7f2fcf40a67349de552715ff015fd0bebe01f4320aaa117b5": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpmrnq4nc_.dfy(33,12): Error: unresolved identifier: a\n   |\n33 |   result := a;\n   |             ^\n\n1 resolution/type errors detected in tmpmrnq4nc_.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "d27244d4dcd30cde6a6901ce1fe28f922b998b07231719857287b1cbd8fdba35": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "fe156d473c5f7c8cf85d0d6ccf37e06ac8bd164f416bd2a7bfa00efa8169b80d": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 5 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "0c8a1827caeac49496ebf831bedf30e229086933903fb0876b6b4f031c3f945e": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 3 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "ec41bdb04292b5e68d10f9322decb4ea4a2ccd4d0f2aafcee28edac233582ef1": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 13 verified, 0 errors\n",
+    "error_summary": ""
+  }
+}
