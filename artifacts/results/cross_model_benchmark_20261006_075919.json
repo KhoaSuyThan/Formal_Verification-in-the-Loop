@@ -1,0 +1,78 @@
+{
+  "timestamp": "2026-10-06T07:58:30.833216",
+  "task_count": 2,
+  "max_attempts": 1,
+  "models_evaluated": [
+    "ollama/qwen2.5-coder:7b"
+  ],
+  "workers": 2,
+  "use_cache": true,
+  "summaries": [
+    {
+      "model_name": "ollama/qwen2.5-coder:7b",
+      "display_name": "Qwen2.5-Coder-7B",
+      "model_type": "Local (Ollama)",
+      "total_tasks": 2,
+      "passed_tasks": 2,
+      "pass_at_1_count": 2,
+      "pass_at_k_count": 2,
+      "pass_at_1_rate": 100.0,
+      "pass_at_k_rate": 100.0,
+      "avg_duration_sec": 43.0,
+      "avg_repair_loops": 0.0,
+      "total_duration_sec": 86.0,
+      "avg_cot_tokens": 0.0,
+      "cegar_repaired_count": 0
+    }
+  ],
+  "detailed_results": {
+    "ollama/qwen2.5-coder:7b": [
+      {
+        "task_key": "[Clover] find_min - Tìm giá trị nhỏ nhất trong mảng",
+        "task_name": "find_min",
+        "group": "Clover",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 37.02,
+        "repair_loops": 0,
+        "h_code": "H0",
+        "h_badge": "✅ H0: Zero-Hallucination",
+        "h_name": "Tuyệt Đối Không Ảo Giác",
+        "has_cot": false,
+        "cot_tokens": 0,
+        "cot_preview": "",
+        "cot_trace": "",
+        "has_cegar": false,
+        "has_cegar_repaired": false,
+        "counterexample_desc": ""
+      },
+      {
+        "task_key": "[Clover] abs_val - Tìm giá trị tuyệt đối",
+        "task_name": "abs_val",
+        "group": "Clover",
+        "success": true,
+        "iterations": 1,
+        "duration_sec": 48.98,
+        "repair_loops": 0,
+        "h_code": "H0",
+        "h_badge": "✅ H0: Zero-Hallucination",
+        "h_name": "Tuyệt Đối Không Ảo Giác",
+        "has_cot": false,
+        "cot_tokens": 0,
+        "cot_preview": "",
+        "cot_trace": "",
+        "has_cegar": false,
+        "has_cegar_repaired": false,
+        "counterexample_desc": ""
+      }
+    ]
+  },
+  "latex_table": "\\begin{table}[htbp]\n\\centering\n\\caption{Cross-Model Verification Performance Comparison}\n\\label{tab:cross_model_eval}\n\\begin{tabular}{lcccccc}\n\\toprule\n\\textbf{Model} & \\textbf{Type} & \\textbf{Tasks} & \\textbf{Pass@1 (\\%)} & \\textbf{Pass@K (\\%)} & \\textbf{$T_{avg}$ (s)} & \\textbf{Avg Loops} \\\\\n\\midrule\nQwen2.5-Coder-7B & Local (Ollama) & 2 & 100.0\\% & 100.0\\% & 43.0 & 0.0 \\\\\n\\bottomrule\n\\end{tabular}\n\\end{table}",
+  "cache_stats": {
+    "hits": 0,
+    "misses": 2,
+    "total_requests": 2,
+    "cached_items": 3,
+    "hit_rate_percent": 0.0
+  }
+}

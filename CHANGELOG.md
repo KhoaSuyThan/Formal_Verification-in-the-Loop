@@ -6,6 +6,21 @@ Tất cả các thay đổi đáng chú ý của dự án sẽ được ghi nh�
 
 ---
 
+## [1.5.0-step4-perf] - 2026-10-06: Tối Ưu Hóa Timeout LLM & Kiểm Soát Token Tránh Nghẽn VRAM
+- **Nâng ngưỡng Timeout an toàn ([agents/llm_agent.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/agents/llm_agent.py), [core/cross_model_evaluator.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/cross_model_evaluator.py))**: Tăng `timeout_sec` từ 90s lên 180s (3 phút) giúp các mô hình Local AI (Qwen 7B, LLaMA 8B) đủ thời gian giải quyết các bài toán HumanEval nặng (`fib`, `is-prime`, `sort_array`), triệt tiêu hoàn toàn lỗi `Connection timed out after 90.0 seconds`.
+- **Kiểm soát Token theo kiến trúc mô hình ([agents/llm_agent.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/agents/llm_agent.py))**: Giới hạn `max_tokens = 1024` cho các mô hình sinh mã trực tiếp (Qwen, LLaMA) giúp rút ngắn thời gian sinh từ 40s xuống 15–20s; giữ nguyên 8192 tokens cho DeepSeek-R1 để phục vụ suy luận dài Chain-of-Thought (CoT).
+- **Khuyến nghị tài nguyên luồng ([web_demo/tabs/tab_cross_model_view.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/web_demo/tabs/tab_cross_model_view.py))**: Bổ sung chỉ dẫn trực quan khuyến nghị số luồng `Workers`: Local AI (1–2 Workers để dồn VRAM/GPU, tránh hiện tượng Swap mô hình); Cloud AI (4–8 Workers để tăng tốc tối đa qua API Google).
+- **Mặc định mô hình Tab 4 ([web_demo/tabs/tab_cross_model_view.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/web_demo/tabs/tab_cross_model_view.py))**: Đổi mặc định danh sách so tài sang chỉ 2 mô hình Local (`Qwen 7B`, `LLaMA 8B`), tránh tự động gọi Cloud Gemini ngoài ý muốn.
+- **Hỗ trợ CLI Benchmark đa luồng ([experiments/run_cross_model_benchmark.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/experiments/run_cross_model_benchmark.py))**: Thêm cờ `--workers` và `--no-cache` cho script chạy dòng lệnh.
+- **Kiểm thử tự động ([tests/](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/tests/))**: Toàn bộ 98/98 unit tests đạt kết quả PASSED 100% trong 11.42s.
+
+## [1.5.0-step4] - 2026-10-06: Song Song Hóa Benchmark & Bộ Nhớ Đệm SMT Verification Cache (Bước 4)
+- **Bộ nhớ đệm SMT Verification Cache ([core/verification_cache.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/verification_cache.py))**: Băm SHA-256 mã nguồn và cờ kiểm định, lưu đệm kết quả Z3 an toàn đa luồng (`threading.Lock`), giúp tái sử dụng kiểm định tức thì (<0.001s).
+- **Tích hợp SMT Cache vào Engine ([core/dafny_engine.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/dafny_engine.py))**: Tự động kiểm tra và cập nhật cache trước khi gọi subprocess Z3 CLI.
+- **Thực thi đa luồng song song ([core/cross_model_evaluator.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/cross_model_evaluator.py))**: Hỗ trợ tham số `workers` (1-8 luồng) với `ThreadPoolExecutor`, bảo đảm Thread-safe khi cập nhật checkpoint và tiến trình.
+- **Giao diện Web Tab 4 ([web_demo/tabs/tab_cross_model_view.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/web_demo/tabs/tab_cross_model_view.py))**: Bổ sung thanh trượt số luồng `Workers (1-8)` và checkbox bật/tắt `SMT Verification Cache`.
+- **Kiểm thử tự động ([tests/test_parallel_benchmark.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/tests/test_parallel_benchmark.py))**: Thêm 6 bài test mới, nâng tổng số test lên 98 bài, toàn bộ 98/98 tests PASSED 100%.
+
 ## [1.5.0-step3] - 2026-10-05: Đối Chuẩn Ablation Study với Stanford Clover & Xuất LaTeX (Bước 3)
 - **Cờ bóc tách Pipeline ([core/pipeline_controller.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/pipeline_controller.py))**: Bổ sung 5 cờ cấu hình (`enable_topology`, `enable_normalizer`, `enable_spec_locker`, `enable_semantic_hints`, `enable_cegar`) cho phép đối chuẩn bóc tách giữa Stanford Clover Baseline và Hệ Thống Đề Xuất.
 - **Xuất bảng LaTeX ([core/latex_exporter.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/latex_exporter.py))**: Sinh mã bảng `booktabs` chuẩn bài báo khoa học, tự động làm nổi bật chỉ số tối ưu kèm tính năng tải tệp `.tex`.

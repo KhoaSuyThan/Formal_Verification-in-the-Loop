@@ -60,6 +60,17 @@ def parse_args():
         action="store_true",
         help="Tiếp tục chạy từ checkpoint dở dang thay vì chạy mới từ đầu"
     )
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=1,
+        help="Số luồng chạy song song (1 = tuần tự, 2-8 = ThreadPoolExecutor đa luồng)"
+    )
+    parser.add_argument(
+        "--no-cache",
+        action="store_true",
+        help="Vô hiệu hóa bộ đệm SMT Verification Cache (mặc định luôn bật cache)"
+    )
     return parser.parse_args()
 
 
@@ -107,7 +118,9 @@ def main():
         task_keys=target_keys,
         max_attempts=args.max_attempts,
         progress_callback=on_progress,
-        resume_from_checkpoint=args.resume
+        resume_from_checkpoint=args.resume,
+        workers=args.workers,
+        use_cache=not args.no_cache
     )
 
     print("\n" + "=" * 70)

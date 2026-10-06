@@ -9,7 +9,7 @@ import subprocess
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Any
 
 
 # pyrefly: ignore [missing-import]
@@ -31,12 +31,15 @@ class VerifyResult:
 class DafnyEngine:
     """Bộ điều khiển gọi trình kiểm định Dafny qua CLI."""
 
-    def __init__(self, timeout_sec: int = 15, dafny_path: Optional[str] = None):
-        """Khởi tạo engine với thời gian timeout và đường dẫn thực thi Dafny.
-
-        Đường dẫn ưu tiên theo thứ tự: tham số truyền vào -> biến môi trường DAFNY_PATH -> PATH hệ thống -> thư mục tools/ nội bộ.
-        """
+    def __init__(
+        self,
+        timeout_sec: int = 15,
+        dafny_path: Optional[str] = None,
+        cache: Optional[Any] = None,
+    ):
+        """Khởi tạo engine với thời gian timeout, đường dẫn Dafny và bộ nhớ đệm kiểm định SMT."""
         self.timeout = timeout_sec
+        self.cache = cache
         resolved_path = (
             dafny_path
             or os.getenv("DAFNY_PATH")
@@ -68,7 +71,14 @@ class DafnyEngine:
         
         Khi extract_counterexample=True, kích hoạt cờ --extract-counterexample của Z3
         để trích xuất trạng thái dữ liệu vi phạm thực tế phục vụ cơ chế tự sửa lỗi CEGAR (arXiv:2506.06923).
+        Tự động truy xuất từ SMT Cache nếu đã từng kiểm tra đoạn mã này.
         """
+        # Kiểm tra bộ nhớ đệm SMT trước khi gọi tiến trình nặng
+        if self.cache is not None:
+            cached_res = self.cache.get(code, extract_counterexample)
+            if cached_res is not None:
+                return cached_res
+
         if not self.is_available():
             raise EnvironmentError(
                 "Dafny chưa được cài đặt hoặc chưa được cấu hình đường dẫn. "
@@ -101,19 +111,28 @@ class DafnyEngine:
             # Trong Dafny 4.x, kết quả thành công xuất hiện dòng '0 errors'
             verified = (proc.returncode == 0) and ("0 errors" in stdout)
 
-            return VerifyResult(
+            result = VerifyResult(
                 is_verified=verified,
                 return_code=proc.returncode,
                 output=combined_output if not verified else stdout,
                 error_summary="" if verified else "Lỗi kiểm định logic hoặc cú pháp"
             )
+
+            # Ghi nhận kết quả vào bộ nhớ đệm SMT
+            if self.cache is not None:
+                self.cache.set(code, extract_counterexample, result)
+
+            return result
         except subprocess.TimeoutExpired:
-            return VerifyResult(
+            timeout_res = VerifyResult(
                 is_verified=False,
                 return_code=-1,
                 output="Timeout: Bộ giải Z3 vượt quá thời gian cho phép.",
                 error_summary="SolverTimeout"
             )
+            if self.cache is not None:
+                self.cache.set(code, extract_counterexample, timeout_res)
+            return timeout_res
         finally:
             # Dọn dẹp file tạm thời sau khi hoàn tất kiểm tra
             if tmp_path.exists():
