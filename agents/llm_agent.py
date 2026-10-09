@@ -128,8 +128,14 @@ class LLMAgent:
         if "gemini" in self.model.lower():
             return self._call_gemini_rest(system_prompt, user_prompt, timeout_sec=actual_timeout) or ""
 
-        # Tối ưu hóa: max_tokens = 1024 giúp Ollama sinh mã ngắn gọn (15-20s), riêng DeepSeek-R1 giữ 8192 cho CoT
-        effective_max_tokens = 8192 if "deepseek" in self.model.lower() else 1024
+        # Tối ưu hóa token: DeepSeek CoT dùng 8192, Groq thông thường dùng 2048, Ollama local dùng 1024
+        if "deepseek" in self.model.lower():
+            effective_max_tokens = 8192
+        elif self.model.lower().startswith("groq/"):
+            effective_max_tokens = 2048
+        else:
+            effective_max_tokens = 1024
+
         effective_timeout = max(actual_timeout, 240) if "deepseek" in self.model.lower() else actual_timeout
 
         kwargs = {
@@ -144,26 +150,61 @@ class LLMAgent:
         }
         if self.api_base:
             kwargs["api_base"] = self.api_base
+        if self.model.lower().startswith("groq/"):
+            groq_key = os.getenv("GROQ_API_KEY")
+            if groq_key:
+                kwargs["api_key"] = groq_key
 
-        try:
-            response = litellm.completion(**kwargs)
-            msg = response.choices[0].message
-            raw_text = msg.content or ""
-            # Một số phiên bản LiteLLM/Ollama tách riêng chuỗi suy nghĩ vào trường reasoning_content
-            reasoning = getattr(msg, "reasoning_content", None) or ""
-            if reasoning and "<think>" not in raw_text:
-                raw_text = f"<think>\n{reasoning}\n</think>\n\n{raw_text}"
+        import time
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                response = litellm.completion(**kwargs)
+                msg = response.choices[0].message
+                raw_text = msg.content or ""
+                # Một số phiên bản LiteLLM/Ollama tách riêng chuỗi suy nghĩ vào trường reasoning_content
+                reasoning = getattr(msg, "reasoning_content", None) or ""
+                if reasoning and "<think>" not in raw_text:
+                    raw_text = f"<think>\n{reasoning}\n</think>\n\n{raw_text}"
 
-            clean_code, cot_trace, cot_tokens = extract_cot_trace(raw_text)
-            self.last_cot_trace = cot_trace
-            self.last_cot_tokens = cot_tokens
-            return clean_code
-        except Exception as e:
-            print(f"\n[CẢNH BÁO LLM]: Gặp lỗi/timeout khi gọi mô hình {self.model}: {e}")
-            self.last_cot_trace = ""
-            self.last_cot_tokens = 0
-            # Trả về chuỗi rỗng để hệ thống ghi nhận lỗi logic thay vì làm sập chương trình
-            return ""
+                # Tự động ghi nhận token cho các mô hình Groq Cloud
+                if self.model.lower().startswith("groq/"):
+                    usage = getattr(response, "usage", None)
+                    if usage:
+                        p_tok = getattr(usage, "prompt_tokens", 0)
+                        c_tok = getattr(usage, "completion_tokens", 0)
+                        t_tok = getattr(usage, "total_tokens", p_tok + c_tok)
+                        try:
+                            from core.token_tracker import record_groq_tokens
+                            record_groq_tokens(p_tok, c_tok, t_tok)
+                        except Exception as err:
+                            print(f"[CẢNH BÁO GROQ TOKEN]: {err}")
+
+                clean_code, cot_trace, cot_tokens = extract_cot_trace(raw_text)
+                self.last_cot_trace = cot_trace
+                self.last_cot_tokens = cot_tokens
+                return clean_code
+            except Exception as e:
+                err_str = str(e).lower()
+                is_rate_limit = "rate limit" in err_str or "rate_limit" in err_str or "429" in err_str or "ratelimit" in type(e).__name__.lower() or "tpm" in err_str or "rpm" in err_str
+                if is_rate_limit and attempt < max_retries - 1:
+                    wait_time = 6
+                    match = re.search(r"try again in ([\d\.]+)s", err_str)
+                    if match:
+                        try:
+                            wait_time = int(float(match.group(1))) + 2
+                        except Exception:
+                            pass
+                    print(f"\n[CẢNH BÁO RATE LIMIT]: {self.model} chạm giới hạn tốc độ. Chờ {wait_time}s và thử lại (lần {attempt + 1}/{max_retries})...")
+                    time.sleep(wait_time)
+                    continue
+
+                print(f"\n[CẢNH BÁO LLM]: Gặp lỗi/timeout khi gọi mô hình {self.model}: {e}")
+                self.last_cot_trace = ""
+                self.last_cot_tokens = 0
+                # Trả về chuỗi rỗng để hệ thống ghi nhận lỗi logic thay vì làm sập chương trình
+                return ""
+        return ""
 
     def generate_code(self, prompt: str) -> str:
         """Sinh mã nguồn thuật toán Dafny từ đặc tả bài toán ban đầu."""

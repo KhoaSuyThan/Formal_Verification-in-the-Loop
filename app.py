@@ -20,7 +20,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from core.token_tracker import get_gemini_token_usage
+from core.token_tracker import get_gemini_token_usage, get_groq_token_usage
 from web_demo.helpers import (
     get_benchmark_tasks,
     get_flat_task_registry,
@@ -99,45 +99,6 @@ st.markdown(
         color: #94a3b8;
         line-height: 1.5;
         max-width: 820px;
-    }
-
-    /* Thẻ thông số Glassmorphism */
-    .glass-card {
-        padding: 1.1rem 1.3rem;
-        background: rgba(17, 24, 39, 0.7);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 12px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        margin-bottom: 1rem;
-        transition: transform 0.2s ease, border-color 0.2s ease;
-    }
-    .glass-card:hover {
-        transform: translateY(-2px);
-        border-color: rgba(99, 102, 241, 0.4);
-    }
-    .glass-card-icon {
-        font-size: 1.6rem;
-        padding: 8px;
-        border-radius: 10px;
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.06);
-    }
-    .glass-card-label {
-        font-size: 0.78rem;
-        color: #94a3b8;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 2px;
-    }
-    .glass-card-value {
-        font-size: 1.05rem;
-        font-weight: 700;
-        color: #f1f5f9;
-        font-family: 'JetBrains Mono', monospace;
     }
 
     /* Nút bấm Run Button Gradient */
@@ -437,12 +398,13 @@ def open_task_selection_dialog():
 
     st.markdown("<hr style='margin: 8px 0; border: none; border-top: 1px solid rgba(255,255,255,0.08);'>", unsafe_allow_html=True)
 
-    # Hiển thị 3 cột bài toán theo định dạng: Tên tiếng Việt (tên file)
+    # Hiển thị 4 cột bài toán: Clover, HumanEval, Advanced, Inductive
     clover_filtered = {k: v for k, v in filtered_tasks.items() if v["group"] == "Clover"}
     humaneval_filtered = {k: v for k, v in filtered_tasks.items() if v["group"] == "HumanEval"}
     advanced_filtered = {k: v for k, v in filtered_tasks.items() if v["group"] == "Advanced"}
+    inductive_filtered = {k: v for k, v in filtered_tasks.items() if v["group"] == "Inductive"}
 
-    col_c, col_h, col_a = st.columns(3)
+    col_c, col_h, col_a, col_i = st.columns(4)
     with col_c:
         st.markdown(f"**🍀 Clover ({len(clover_filtered)} bài):**")
         for _item_key, meta in clover_filtered.items():
@@ -473,6 +435,18 @@ def open_task_selection_dialog():
             file_name = Path(meta["rel_path"]).name
             vn_desc = meta["label"].split(" - ", 1)[1] if " - " in meta["label"] else meta["short_name"]
             badge_txt = " 🚀"
+            st.checkbox(
+                f"{vn_desc} ({file_name}){badge_txt}",
+                key=f"chk_task_{meta['short_name']}",
+                help=f"Mã: {meta['short_name']} | Đường dẫn: {meta['rel_path']}",
+            )
+
+    with col_i:
+        st.markdown(f"**🌳 Quy Nạp ({len(inductive_filtered)} bài):**")
+        for _item_key, meta in inductive_filtered.items():
+            file_name = Path(meta["rel_path"]).name
+            vn_desc = meta["label"].split(" - ", 1)[1] if " - " in meta["label"] else meta["short_name"]
+            badge_txt = " 🌲"
             st.checkbox(
                 f"{vn_desc} ({file_name}){badge_txt}",
                 key=f"chk_task_{meta['short_name']}",
@@ -521,11 +495,13 @@ with st.sidebar:
             clover_tasks = {k: v for k, v in flat_registry.items() if v["group"] == "Clover"}
             humaneval_tasks = {k: v for k, v in flat_registry.items() if v["group"] == "HumanEval"}
             advanced_tasks = {k: v for k, v in flat_registry.items() if v["group"] == "Advanced"}
+            inductive_tasks = {k: v for k, v in flat_registry.items() if v["group"] == "Inductive"}
             target_tasks = {k: v for k, v in flat_registry.items() if v["is_target"]}
 
             clover_total = len(clover_tasks)
             humaneval_total = len(humaneval_tasks)
             advanced_total = len(advanced_tasks)
+            inductive_total = len(inductive_tasks)
             target_total = len(target_tasks)
             all_total = len(flat_registry)
 
@@ -541,7 +517,8 @@ with st.sidebar:
                 f"🍀 Bộ Clover ({clover_total} bài)",
                 f"🧪 Bộ HumanEval ({humaneval_total} bài)",
                 f"⚡ Bộ Mở Rộng Advanced ({advanced_total} bài)",
-                f"🌐 Toàn bộ 30 bài toán ({all_total} bài)",
+                f"🌳 Bộ Quy Nạp Inductive ({inductive_total} bài)",
+                f"🌐 Toàn bộ {all_total} bài toán ({all_total} bài)",
                 "🧹 Bỏ chọn toàn bộ (0 bài)",
             ]
 
@@ -567,6 +544,9 @@ with st.sidebar:
                 elif "Bộ Mở Rộng" in preset_choice:
                     for _item_key, meta in flat_registry.items():
                         st.session_state[f"chk_task_{meta['short_name']}"] = (meta["group"] == "Advanced")
+                elif "Bộ Quy Nạp" in preset_choice:
+                    for _item_key, meta in flat_registry.items():
+                        st.session_state[f"chk_task_{meta['short_name']}"] = (meta["group"] == "Inductive")
                 elif "Toàn bộ" in preset_choice:
                     for _item_key, meta in flat_registry.items():
                         st.session_state[f"chk_task_{meta['short_name']}"] = True
@@ -612,6 +592,9 @@ with st.sidebar:
             "Mô hình LLM",
             [
                 "ollama/qwen2.5-coder:7b",
+                "groq/qwen/qwen3.8-27b",
+                "groq/openai/gpt-oss-120b",
+                "groq/openai/gpt-oss-20b",
                 "gemini-2.5-flash",
                 "gemini-3.5-flash",
                 "gemini-3.6-flash",
@@ -619,7 +602,7 @@ with st.sidebar:
                 "ollama/deepseek-r1:7b",
             ],
             index=0,
-            help="Hỗ trợ mô hình Local (Ollama) và Cloud (Google Gemini Flash Free Tier đã lưu key trong .env).",
+            help="Hỗ trợ mô hình Local (Ollama) và Cloud (Google Gemini, Groq LPU qua key trong .env).",
         )
         col_cfg1, col_cfg2 = st.columns(2)
         with col_cfg1:
@@ -648,6 +631,12 @@ gem_prompt = gemini_tokens.get("prompt_tokens", 0)
 gem_completion = gemini_tokens.get("completion_tokens", 0)
 gem_reqs = gemini_tokens.get("total_requests", 0)
 
+groq_tokens = get_groq_token_usage()
+groq_total = groq_tokens.get("total_tokens", 0)
+groq_prompt = groq_tokens.get("prompt_tokens", 0)
+groq_completion = groq_tokens.get("completion_tokens", 0)
+groq_reqs = groq_tokens.get("total_requests", 0)
+
 st.markdown(
     f"""
     <div class="hero-container" style="display: flex; justify-content: space-between; align-items: center; gap: 24px;">
@@ -659,19 +648,38 @@ st.markdown(
                 dựa trên kiểm định logic toán học tất định <strong>Dafny 4.x</strong> và <strong>Z3 SMT Solver</strong>.
             </div>
         </div>
-        <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 14px 20px; min-width: 220px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px);">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-                <span style="font-size: 0.8rem; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.05em;">💎 Gemini Token</span>
-                <span style="font-size: 0.72rem; padding: 2px 7px; border-radius: 6px; background: rgba(34, 197, 94, 0.15); color: #86efac; font-weight: 700; border: 1px solid rgba(34, 197, 94, 0.3);">FREE</span>
+        <div style="display: flex; gap: 14px; flex-shrink: 0;">
+            <!-- THẺ GEMINI TOKEN -->
+            <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 14px 18px; min-width: 195px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px);">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                    <span style="font-size: 0.8rem; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.05em;">💎 Gemini Token</span>
+                    <span style="font-size: 0.72rem; padding: 2px 7px; border-radius: 6px; background: rgba(34, 197, 94, 0.15); color: #86efac; font-weight: 700; border: 1px solid rgba(34, 197, 94, 0.3);">FREE</span>
+                </div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: #ffffff; line-height: 1.15; font-family: 'JetBrains Mono', monospace;">
+                    {gem_total:,}
+                </div>
+                <div style="font-size: 0.74rem; color: #94a3b8; margin-top: 5px;">
+                    In: <span style="color: #cbd5e1; font-weight: 600;">{gem_prompt:,}</span> | Out: <span style="color: #cbd5e1; font-weight: 600;">{gem_completion:,}</span>
+                </div>
+                <div style="font-size: 0.72rem; color: #64748b; margin-top: 3px;">
+                    Tổng yêu cầu: <strong style="color: #94a3b8;">{gem_reqs}</strong> calls
+                </div>
             </div>
-            <div style="font-size: 1.6rem; font-weight: 800; color: #ffffff; line-height: 1.15; font-family: 'JetBrains Mono', monospace;">
-                {gem_total:,}
-            </div>
-            <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 5px;">
-                In: <span style="color: #cbd5e1; font-weight: 600;">{gem_prompt:,}</span> | Out: <span style="color: #cbd5e1; font-weight: 600;">{gem_completion:,}</span>
-            </div>
-            <div style="font-size: 0.72rem; color: #64748b; margin-top: 3px;">
-                Tổng yêu cầu: <strong style="color: #94a3b8;">{gem_reqs}</strong> calls
+            <!-- THẺ GROQ TOKEN -->
+            <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(249, 115, 22, 0.35); border-radius: 14px; padding: 14px 18px; min-width: 195px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px);">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                    <span style="font-size: 0.8rem; font-weight: 700; color: #fb923c; text-transform: uppercase; letter-spacing: 0.05em;">⚡ Groq Token</span>
+                    <span style="font-size: 0.72rem; padding: 2px 7px; border-radius: 6px; background: rgba(249, 115, 22, 0.15); color: #fdba74; font-weight: 700; border: 1px solid rgba(249, 115, 22, 0.3);">LPU</span>
+                </div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: #ffffff; line-height: 1.15; font-family: 'JetBrains Mono', monospace;">
+                    {groq_total:,}
+                </div>
+                <div style="font-size: 0.74rem; color: #94a3b8; margin-top: 5px;">
+                    In: <span style="color: #cbd5e1; font-weight: 600;">{groq_prompt:,}</span> | Out: <span style="color: #cbd5e1; font-weight: 600;">{groq_completion:,}</span>
+                </div>
+                <div style="font-size: 0.72rem; color: #64748b; margin-top: 3px;">
+                    Tổng yêu cầu: <strong style="color: #fb923c;">{groq_reqs}</strong> calls
+                </div>
             </div>
         </div>
     </div>

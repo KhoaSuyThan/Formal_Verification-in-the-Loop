@@ -52,6 +52,13 @@ def get_benchmark_tasks() -> Dict[str, Dict[str, str]]:
             "matrix_row_sum - Tính tổng từng hàng ma trận 2D": "data/benchmarks/advanced/matrix_row_sum.dfy",
             "matrix_diagonal_sum - Tính tổng đường chéo ma trận vuông": "data/benchmarks/advanced/matrix_diagonal_sum.dfy",
             "sorted_insert - Chèn phần tử vào dãy đã sắp xếp": "data/benchmarks/advanced/sorted_insert.dfy",
+        },
+        "Advanced Inductive Structures (Cây & Danh Sách)": {
+            "tree_size_height - Kích thước & chiều cao cây nhị phân": "data/benchmarks/advanced_inductive/tree_size_height.dfy",
+            "bst_search - Tìm kiếm trên cây nhị phân tìm kiếm": "data/benchmarks/advanced_inductive/bst_search.dfy",
+            "bst_insert - Chèn phần tử vào cây nhị phân BST": "data/benchmarks/advanced_inductive/bst_insert.dfy",
+            "linked_list_reverse - Đảo ngược danh sách liên kết quy nạp": "data/benchmarks/advanced_inductive/linked_list_reverse.dfy",
+            "linked_list_stats - Tính độ dài và tổng danh sách liên kết": "data/benchmarks/advanced_inductive/linked_list_stats.dfy",
         }
     }
     return tasks
@@ -97,6 +104,8 @@ def get_flat_task_registry() -> Dict[str, dict]:
             tag = "Clover"
         elif "HumanEval" in group_name:
             tag = "HumanEval"
+        elif "Inductive" in group_name:
+            tag = "Inductive"
         else:
             tag = "Advanced"
 
@@ -124,7 +133,8 @@ def get_preset_labels(preset_type: str = "target_12") -> List[str]:
     - 'clover': Toàn bộ 6 bài toán tập Clover
     - 'humaneval': Toàn bộ 10 bài toán tập HumanEval
     - 'advanced': Toàn bộ 14 bài toán tập Mở Rộng Advanced
-    - 'all': Toàn bộ 30 bài toán trong kho benchmark
+    - 'inductive': Toàn bộ 5 bài toán Cây & Danh Sách Quy Nạp
+    - 'all': Toàn bộ 35 bài toán trong kho benchmark
     """
     registry = get_flat_task_registry()
     if preset_type == "target_12":
@@ -135,6 +145,8 @@ def get_preset_labels(preset_type: str = "target_12") -> List[str]:
         return [k for k, v in registry.items() if v["group"] == "HumanEval"]
     elif preset_type == "advanced":
         return [k for k, v in registry.items() if v["group"] == "Advanced"]
+    elif preset_type == "inductive":
+        return [k for k, v in registry.items() if v["group"] == "Inductive"]
     elif preset_type == "all":
         return list(registry.keys())
     return []
