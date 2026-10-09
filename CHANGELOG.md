@@ -6,6 +6,37 @@ Tất cả các thay đổi đáng chú ý của dự án sẽ được ghi nh�
 
 ---
 
+## [1.6.1-groq-tracker] - 2026-10-09: Bộ Theo Dõi & Thống Kê Token Groq Cloud API (LPU Inference)
+- **Cốt lõi Token Tracker ([core/token_tracker.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/token_tracker.py))**: Bổ sung các hàm `get_groq_token_usage()`, `record_groq_tokens()` và `reset_groq_tokens()`; lưu trữ kiên cố số liệu Token Input/Output và số lượt gọi vào `artifacts/results/groq_token_usage.json`.
+- **Tự động trích xuất Token ([agents/llm_agent.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/agents/llm_agent.py))**: Tự động đọc `response.usage` từ phản hồi của LiteLLM khi gọi các mô hình Groq Cloud để cộng dồn chính xác lượng token tiêu thụ.
+- **Trực quan hóa Header Web UI ([app.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/app.py))**: Bổ sung thẻ thống kê **⚡ Groq Token** màu cam Neon đặc trưng của Groq đặt song song cạnh thẻ **💎 Gemini Token** trên thanh tiêu đề Hero; hiển thị chi tiết tổng token, In, Out và tổng calls.
+- **Kiểm thử tự động ([tests/test_token_tracker.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/tests/test_token_tracker.py))**: Mở rộng unit test cho bộ đếm token Groq; toàn bộ test suite đạt **113/113 tests PASSED 100%**.
+
+## [1.6.0-groq] - 2026-10-09: Tích Hợp Hạ Tầng Suy Luận Siêu Tốc Groq Cloud (LPU Inference)
+- **Cấu hình API ([.env](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/.env), [.env.example](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/.env.example))**: Bổ sung `GROQ_API_KEY` kết nối cụm máy chủ chip LPU.
+- **Phòng vệ Rate Limit 429 ([agents/llm_agent.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/agents/llm_agent.py))**: Tự động bắt lỗi 429/TPM, ngủ giãn cách và retry tối đa 3 lần; tối ưu `max_tokens` (8192 cho CoT, 2048 cho mã trực tiếp).
+- **Mở rộng mô hình khả dụng ([core/cross_model_evaluator.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/cross_model_evaluator.py))**: Đăng ký `groq/qwen/qwen3.8-27b` (Qwen 3.8 27B), `groq/openai/gpt-oss-120b` (GPT-OSS 120B) và `groq/openai/gpt-oss-20b` (phân loại `Cloud (Groq LPU)`).
+- **Đồng bộ Web UI ([app.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/app.py), [web_demo/tabs/](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/web_demo/tabs/))**: Hỗ trợ chọn mô hình Groq trên Sidebar, Tab 3 (Đối chuẩn Clover) và Tab 4 (So tài đa mô hình kèm khuyến nghị 1–2 Workers).
+- **Kiểm thử ([tests/test_groq_integration.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/tests/test_groq_integration.py))**: 6 bài test xác thực kết nối thực tế; toàn bộ test suite đạt **112/112 tests PASSED 100%**.
+
+## [1.5.0-step5] - 2026-10-06: Mở Rộng Cấu Trúc Dữ Liệu Quy Nạp (Cây Nhị Phân & Danh Sách Liên Kết - Bước 5)
+- **Tập Benchmark Quy Nạp Mới ([data/benchmarks/advanced_inductive/](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/data/benchmarks/advanced_inductive/))**: Xây dựng 5 bài toán chuẩn hóa cú pháp Dafny 4.x và Z3 SMT Solver:
+  - `tree_size_height.dfy`: Kích thước & chiều cao cây nhị phân, chứng minh bất biến $size \ge height$ qua đệ quy cấu trúc.
+  - `bst_search.dfy`: Cây nhị phân tìm kiếm BST, kiểm chứng bảo toàn vị từ `is_bst` và `tree_contains`.
+  - `bst_insert.dfy`: Chèn phần tử vào cây BST, chứng minh bảo toàn cấu trúc và thứ tự toán học.
+  - `linked_list_reverse.dfy`: Đảo ngược danh sách liên kết đại số quy nạp `datatype List = Nil | Cons(...)`.
+  - `linked_list_stats.dfy`: Thống kê độ dài và tổng giá trị danh sách liên kết quy nạp.
+- **Nâng Cấp Nhận Diện Hình Thái Toán Học ([core/topology_detector.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/topology_detector.py))**:
+  - Bổ sung 2 hình thái giải thuật mới: `AlgorithmTopology.RECURSIVE_TREE` và `AlgorithmTopology.LINKED_LIST`.
+  - Tự động phát hiện cấu trúc `datatype Tree` và `datatype List` với mức độ ưu tiên cao.
+  - Cung cấp khung chỉ dẫn cấu trúc (*Inductive Directive Skeleton*) hướng dẫn LLM sinh mẫu khớp mẫu đại số `match-case`, đồng thời khẳng định bảo chứng dừng tự động (*Termination Guaranteed*) của đệ quy cấu trúc trong Dafny.
+- **Mở Rộng Danh Mục Bài Toán & Giao Diện Web ([web_demo/helpers.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/web_demo/helpers.py), [app.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/app.py))**:
+  - Tích hợp nhóm thứ 4 `"Advanced Inductive Structures (Cây & Danh Sách)"` vào registry, mở rộng tổng quy mô từ **30 lên 35 bài toán**.
+  - Bổ sung preset `"inductive"` trong helper và cập nhật hộp thoại Modal chọn bài sang bố cục 4 cột cân đối kèm dropdown preset *"🌳 Bộ Quy Nạp Inductive (5 bài)"*.
+- **Kiểm Thử Đơn Vị Toàn Diện ([tests/test_inductive_structures.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/tests/test_inductive_structures.py))**:
+  - Bổ sung 8 bài test mới kiểm tra tính toàn vẹn tệp đặc tả, nhận diện Topology, chỉ dẫn quy nạp, mở rộng registry 35 bài.
+  - Toàn bộ test suite đạt **106/106 tests PASSED 100%** trong 10.81s.
+
 ## [1.5.0-step4-perf] - 2026-10-06: Tối Ưu Hóa Timeout LLM & Kiểm Soát Token Tránh Nghẽn VRAM
 - **Nâng ngưỡng Timeout an toàn ([agents/llm_agent.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/agents/llm_agent.py), [core/cross_model_evaluator.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/cross_model_evaluator.py))**: Tăng `timeout_sec` từ 90s lên 180s (3 phút) giúp các mô hình Local AI (Qwen 7B, LLaMA 8B) đủ thời gian giải quyết các bài toán HumanEval nặng (`fib`, `is-prime`, `sort_array`), triệt tiêu hoàn toàn lỗi `Connection timed out after 90.0 seconds`.
 - **Kiểm soát Token theo kiến trúc mô hình ([agents/llm_agent.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/agents/llm_agent.py))**: Giới hạn `max_tokens = 1024` cho các mô hình sinh mã trực tiếp (Qwen, LLaMA) giúp rút ngắn thời gian sinh từ 40s xuống 15–20s; giữ nguyên 8192 tokens cho DeepSeek-R1 để phục vụ suy luận dài Chain-of-Thought (CoT).

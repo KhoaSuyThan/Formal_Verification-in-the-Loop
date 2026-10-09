@@ -32,9 +32,12 @@ def render_cross_model_tab(
     st.markdown("### ⚔️ So Sánh Đối Đầu Mô Hình")
     st.caption("Đo lường năng lực sinh mã kèm kiểm chứng hình thức giữa Local AI (Ollama) và Cloud AI (Google Gemini).")
 
-    # Lựa chọn mô hình tham gia thi đấu (Hỗ trợ các dòng Gemini Flash ổn định)
+    # Lựa chọn mô hình tham gia thi đấu (Hỗ trợ Local, Gemini và Groq LPU)
     eval_models = [
         ("ollama/qwen2.5-coder:7b", "Qwen 7B (Local)"),
+        ("groq/qwen/qwen3.8-27b", "Qwen 3.8 27B (Groq LPU - Tốc độ cao)"),
+        ("groq/openai/gpt-oss-120b", "GPT-OSS 120B (Groq LPU - Siêu lớn)"),
+        ("groq/openai/gpt-oss-20b", "GPT-OSS 20B (Groq LPU - Gọn nhẹ)"),
         ("gemini-2.5-flash", "Gemini 2.5 Flash (Cloud - Quota cao 1500 req/ngày)"),
         ("gemini-3.5-flash", "Gemini 3.5 Flash (Cloud - Đã kiểm chứng)"),
         ("gemini-3.6-flash", "Gemini 3.6 Flash (Preview - Hạn ngạch 20 req/ngày)"),
@@ -68,7 +71,7 @@ def render_cross_model_tab(
         )
 
     # Khuyến nghị tối ưu hóa tài nguyên phần cứng
-    st.caption("💡 **Khuyến nghị:** Mô hình Local (Ollama) nên đặt **1 - 2 Workers** (để GPU dồn tài nguyên xử lý dứt điểm, tránh chia tải tráo đổi mô hình); Mô hình Cloud (Gemini) nên đặt **4 - 8 Workers** để khai thác tối đa tốc độ server Google.")
+    st.caption("💡 **Khuyến nghị:** Mô hình Local (Ollama) & Groq nên đặt **1 - 2 Workers** (để tránh nghẽn VRAM hoặc chạm trần TPM của Groq); Mô hình Cloud (Gemini) có thể đặt **4 - 8 Workers** để khai thác tối đa tốc độ server Google.")
 
     # Đồng bộ trực tiếp danh sách bài toán đã chọn từ Sidebar bên trái (tránh trùng lặp cấu hình)
     if exec_mode == "Hàng loạt" and selected_batch:

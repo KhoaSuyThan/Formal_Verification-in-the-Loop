@@ -226,5 +226,581 @@
     "return_code": 0,
     "output": "\nDafny program verifier finished with 13 verified, 0 errors\n",
     "error_summary": ""
+  },
+  "75e1d016c438aa8dfcc20c204ec6a8b351d50772c5b4c755d56e5e5ddf1dbd20": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpgn61_gvp.dfy(1,22): Error: Type or type parameter is not declared in this scope: Tree (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n  |\n1 | function tree_size(t: Tree): nat {\n  |                       ^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpgn61_gvp.dfy(7,24): Error: Type or type parameter is not declared in this scope: Tree (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n  |\n7 | function tree_height(t: Tree): nat {\n  |                         ^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpgn61_gvp.dfy(16,24): Error: Type or type parameter is not declared in this scope: Tree (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n   |\n16 | lemma size_ge_height(t: Tree)\n   |                         ^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpgn61_gvp.dfy(29,31): Error: Type or type parameter is not declared in this scope: Tree (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n   |\n29 | method compute_tree_metrics(t: Tree) returns (s: nat, h: nat)\n   |                                ^^^^\n\n4 resolution/type errors detected in tmpgn61_gvp.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "528389e0cbe09a79c11d957420abf802a244f8988fe921a292d803f7d0335657": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 4 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "ea4b1f966e707c5a9685782a45955a7045512ca352b31d81cb0e1b7c9cfbb715": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmprnwhe0jb.dfy(27,8): Error: missing semicolon at end of statement\n   |\n27 |         bst_search(l, key) to found\n   |         ^^^^^^^^^^^^^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmprnwhe0jb.dfy(27,27): Error: missing semicolon at end of statement\n   |\n27 |         bst_search(l, key) to found\n   |                            ^^\n\nC:/Users/aaa/AppData/Local/Temp/tmprnwhe0jb.dfy(27,30): Error: missing semicolon at end of statement\n   |\n27 |         bst_search(l, key) to found\n   |                               ^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmprnwhe0jb.dfy(29,8): Error: missing semicolon at end of statement\n   |\n29 |         bst_search(r, key) to found\n   |         ^^^^^^^^^^^^^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmprnwhe0jb.dfy(29,27): Error: missing semicolon at end of statement\n   |\n29 |         bst_search(r, key) to found\n   |                            ^^\n\nC:/Users/aaa/AppData/Local/Temp/tmprnwhe0jb.dfy(29,30): Error: missing semicolon at end of statement\n   |\n29 |         bst_search(r, key) to found\n   |                               ^^^^^\n\n6 parse errors detected in tmprnwhe0jb.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "cfc45bfdf2b48f2c26052fd47bc0a6af4089e4fce67d74a5385cf6171be8d74b": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpilb7cy38.dfy(26,8): Error: missing semicolon at end of statement\n   |\n26 |         bst_search(l, key) to found;\n   |         ^^^^^^^^^^^^^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpilb7cy38.dfy(26,27): Error: missing semicolon at end of statement\n   |\n26 |         bst_search(l, key) to found;\n   |                            ^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpilb7cy38.dfy(28,8): Error: missing semicolon at end of statement\n   |\n28 |         bst_search(r, key) to found;\n   |         ^^^^^^^^^^^^^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpilb7cy38.dfy(28,27): Error: missing semicolon at end of statement\n   |\n28 |         bst_search(r, key) to found;\n   |                            ^^\n\n4 parse errors detected in tmpilb7cy38.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "b7f9d83ac29f8404de922ce2ec51c193928b6bd339ddd20dad5070c15023d439": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmplo34jywg.dfy(27,8): Error: missing semicolon at end of statement\n   |\n27 |         bst_search(l, key) to found;\n   |         ^^^^^^^^^^^^^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmplo34jywg.dfy(27,27): Error: missing semicolon at end of statement\n   |\n27 |         bst_search(l, key) to found;\n   |                            ^^\n\nC:/Users/aaa/AppData/Local/Temp/tmplo34jywg.dfy(29,8): Error: missing semicolon at end of statement\n   |\n29 |         bst_search(r, key) to found;\n   |         ^^^^^^^^^^^^^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmplo34jywg.dfy(29,27): Error: missing semicolon at end of statement\n   |\n29 |         bst_search(r, key) to found;\n   |                            ^^\n\n4 parse errors detected in tmplo34jywg.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "e34097b0aa4df9bb46f4fe412639ce2abacefec8b6c1deb2e54c6074746cdece": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmp3ke6sm4w.dfy(1,27): Error: Type or type parameter is not declared in this scope: Tree (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n  |\n1 | predicate tree_contains(t: Tree, x: int) {\n  |                            ^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmp3ke6sm4w.dfy(7,20): Error: Type or type parameter is not declared in this scope: Tree (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n  |\n7 | predicate is_bst(t: Tree) {\n  |                     ^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmp3ke6sm4w.dfy(17,21): Error: Type or type parameter is not declared in this scope: Tree (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n   |\n17 | method bst_insert(t: Tree, x: int) returns (res: Tree)\n   |                      ^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmp3ke6sm4w.dfy(17,49): Error: Type or type parameter is not declared in this scope: Tree (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n   |\n17 | method bst_insert(t: Tree, x: int) returns (res: Tree)\n   |                                                  ^^^^\n\n4 resolution/type errors detected in tmp3ke6sm4w.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "d78fe6ea192033994910bcc072a1e49e843ebc59f5f72de32e176c0b72e3391d": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpmlw5bm6b.dfy(29,20): Error: expression is not allowed to invoke a method (bst_insert)\n   |\n29 |         res := Node(bst_insert(l, x), v, r);\n   |                     ^^^^^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpmlw5bm6b.dfy(29,30): Error: method call is not allowed to be used in an expression context (bst_insert)\n   |\n29 |         res := Node(bst_insert(l, x), v, r);\n   |                               ^\n\nC:/Users/aaa/AppData/Local/Temp/tmpmlw5bm6b.dfy(31,26): Error: expression is not allowed to invoke a method (bst_insert)\n   |\n31 |         res := Node(l, v, bst_insert(r, x));\n   |                           ^^^^^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpmlw5bm6b.dfy(31,36): Error: method call is not allowed to be used in an expression context (bst_insert)\n   |\n31 |         res := Node(l, v, bst_insert(r, x));\n   |                                     ^\n\n4 resolution/type errors detected in tmpmlw5bm6b.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "bd9b1131e80a2dbf4dbbc6b633d2af62719e529b2ac347c4af031ac78212968a": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpo0n010qe.dfy(25,6): Error: Duplicate local-variable name: res\n   |\n25 |   var res: Tree;\n   |       ^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpo0n010qe.dfy(27,16): Error: expression is not allowed to invoke a method (bst_insert)\n   |\n27 |     res := Node(bst_insert(t.left, x), t.val, t.right);\n   |                 ^^^^^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpo0n010qe.dfy(27,26): Error: method call is not allowed to be used in an expression context (bst_insert)\n   |\n27 |     res := Node(bst_insert(t.left, x), t.val, t.right);\n   |                           ^\n\nC:/Users/aaa/AppData/Local/Temp/tmpo0n010qe.dfy(29,31): Error: expression is not allowed to invoke a method (bst_insert)\n   |\n29 |     res := Node(t.left, t.val, bst_insert(t.right, x));\n   |                                ^^^^^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpo0n010qe.dfy(29,41): Error: method call is not allowed to be used in an expression context (bst_insert)\n   |\n29 |     res := Node(t.left, t.val, bst_insert(t.right, x));\n   |                                          ^\n\n5 resolution/type errors detected in tmpo0n010qe.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "0aa8f0313727317348b005784481a691d7899bb340ed540c013507ab80beb401": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmp0xxhd72m.dfy(1,19): Error: Type or type parameter is not declared in this scope: List (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n  |\n1 | function to_seq(l: List): seq<int> {\n  |                    ^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmp0xxhd72m.dfy(12,23): Error: Type or type parameter is not declared in this scope: List (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n   |\n12 | method list_reverse(l: List) returns (rev: List)\n   |                        ^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmp0xxhd72m.dfy(12,43): Error: Type or type parameter is not declared in this scope: List (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n   |\n12 | method list_reverse(l: List) returns (rev: List)\n   |                                            ^^^^\n\n3 resolution/type errors detected in tmp0xxhd72m.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "44afb8d7846c0be53dd8dab0014837fcfac68d54b29f69a7bc4d39d710583273": {
+    "is_verified": false,
+    "return_code": 4,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmppeawr8r6.dfy(20,0): Error: a postcondition could not be proved on this return path\n Related counterexample:\n WARNING: the following counterexample may be inconsistent or invalid. See dafny.org/dafny/DafnyRef/DafnyRef#sec-counterexamples\n C:/Users/aaa/AppData/Local/Temp/tmppeawr8r6.dfy(20,0): initial state:\n assume List.Cons(9, List.Cons(15, List.Nil)) == l;\n C:/Users/aaa/AppData/Local/Temp/tmppeawr8r6.dfy(24,42):\n assume List.Cons(9, List.Cons(15, List.Nil)) == l && List.Cons(15, List.Nil) == t && List.Cons(15, List.Nil) == reversed_tail && 9 == h;\n C:/Users/aaa/AppData/Local/Temp/tmppeawr8r6.dfy(25,35):\n assume List.Cons(9, List.Cons(15, List.Nil)) == l && List.Cons(9, List.Cons(15, List.Nil)) == rev && List.Cons(15, List.Nil) == t && List.Cons(15, List.Nil) == reversed_tail && 9 == h;\n \n   |\n20 | {\n   | ^\n\nC:/Users/aaa/AppData/Local/Temp/tmppeawr8r6.dfy(18,22): Related location: this is the postcondition that could not be proved\n   |\n18 |   ensures to_seq(rev) == reverse_seq(to_seq(l))\n   |                       ^^\n\n\nDafny program verifier finished with 2 verified, 1 error\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "f410bc1b39cf28161e227879f92bbe3bfe97f057dc73b0047f5ff1e6d559ba82": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmps4axmcl8.dfy(22,6): Error: missing semicolon at end of statement\n   |\n22 |       compute_list_stats(t) to sub_len, sub_sum;\n   |       ^^^^^^^^^^^^^^^^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmps4axmcl8.dfy(22,28): Error: missing semicolon at end of statement\n   |\n22 |       compute_list_stats(t) to sub_len, sub_sum;\n   |                             ^^\n\nC:/Users/aaa/AppData/Local/Temp/tmps4axmcl8.dfy(22,47): Error: invalid AssignStatement\n   |\n22 |       compute_list_stats(t) to sub_len, sub_sum;\n   |                                                ^\n\n3 parse errors detected in tmps4axmcl8.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "684f6b12e49a2c277475e15c236d9e1f939fe14d8592e93825cfc0b8d9a4a9c6": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmp4m43ne1w.dfy(21,6): Error: missing semicolon at end of statement\n   |\n21 |       compute_list_stats(t) to sub_len, sub_sum;\n   |       ^^^^^^^^^^^^^^^^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmp4m43ne1w.dfy(21,28): Error: missing semicolon at end of statement\n   |\n21 |       compute_list_stats(t) to sub_len, sub_sum;\n   |                             ^^\n\nC:/Users/aaa/AppData/Local/Temp/tmp4m43ne1w.dfy(21,47): Error: invalid AssignStatement\n   |\n21 |       compute_list_stats(t) to sub_len, sub_sum;\n   |                                                ^\n\n3 parse errors detected in tmp4m43ne1w.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "a15dffef8a557cb41b3017ce2d8fe4636771b925a26e6de6b829224724c034ae": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpmuxmkfno.dfy(1,22): Error: Type or type parameter is not declared in this scope: Tree (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n  |\n1 | function tree_size(t: Tree): nat {\n  |                       ^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpmuxmkfno.dfy(7,24): Error: Type or type parameter is not declared in this scope: Tree (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n  |\n7 | function tree_height(t: Tree): nat {\n  |                         ^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpmuxmkfno.dfy(16,24): Error: Type or type parameter is not declared in this scope: Tree (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n   |\n16 | lemma size_ge_height(t: Tree)\n   |                         ^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpmuxmkfno.dfy(29,31): Error: Type or type parameter is not declared in this scope: Tree (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n   |\n29 | method compute_tree_metrics(t: Tree) returns (s: nat, h: nat)\n   |                                ^^^^\n\n4 resolution/type errors detected in tmpmuxmkfno.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "56a0197dfc44d69a96726c2f32a06a99d4d332cf9fc08fae6f545613be078a98": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmp2wy1hepm.dfy(43,2): Error: number of return parameters does not match declaration (found 1, expected 2)\n   |\n43 |   return (s, h);\n   |   ^^^^^^^^^^^^^^\n\n1 resolution/type errors detected in tmp2wy1hepm.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "9e32caf9f4d93e7bc9a24ec661988ea4d16d3d6443dd307b5c3c6abe607a0c77": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpltydsk45.dfy(35,6): Error: invalid IfStmt\n   |\n35 |       found := tree_contains(r, key);\n   |       ^\n\n1 parse errors detected in tmpltydsk45.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "87c51ddd4ca460a1904b38c6d89a16fc6759f5fed448cedd588f64d599acf789": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpwsxwligx.dfy(31,6): Error: invalid UnaryExpression\n   |\n31 |       decreases node + Leaf\n   |       ^\n\nC:/Users/aaa/AppData/Local/Temp/tmpwsxwligx.dfy(32,64): Error: invalid Suffix\n   |\n32 |     {(forall y :: tree_contains(node.right, y) ==> y > node.val);\n   |                                                                 ^\n\n2 parse errors detected in tmpwsxwligx.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "3a4912e2e6d61deea5d092740cef72d89f15dbbd1dff4fbe6b99b4d1a35370c7": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmp1dus2ipy.dfy(31,8): Error: invalid UnaryExpression\n   |\n31 |         invariant (forall y :: tree_contains(node.right, y) ==> y > node.val)\n   |         ^\n\n1 parse errors detected in tmp1dus2ipy.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "07630e2dcf30d1300348ee97d51c0cf9611ba6072477c8b710da1e23fbf9b0fd": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmp3shnxp8h.dfy(36,4): Error: invalid IfStmt\n   |\n36 |     var new_right := bst_insert(new_right, new_val);\n   |     ^\n\n1 parse errors detected in tmp3shnxp8h.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "78c88e41ed82e746589a35a004b0f5f0b76ba984b51ebd8c6db92afb8e3a734c": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmp3lawti64.dfy(1,27): Error: Type or type parameter is not declared in this scope: Tree (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n  |\n1 | predicate tree_contains(t: Tree, x: int) {\n  |                            ^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmp3lawti64.dfy(7,20): Error: Type or type parameter is not declared in this scope: Tree (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n  |\n7 | predicate is_bst(t: Tree) {\n  |                     ^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmp3lawti64.dfy(16,21): Error: Type or type parameter is not declared in this scope: Tree (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n   |\n16 | method bst_insert(t: Tree, x: int) returns (res: Tree)\n   |                      ^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmp3lawti64.dfy(16,49): Error: Type or type parameter is not declared in this scope: Tree (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n   |\n16 | method bst_insert(t: Tree, x: int) returns (res: Tree)\n   |                                                  ^^^^\n\n4 resolution/type errors detected in tmp3lawti64.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "c29c29b1444b0c79f32c410ea12efb88d4fea8d052406d7474109d0b03f07ecc": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmp9h2ar201.dfy(14,5): Error: quantifiers in non-ghost contexts must be compilable, but Dafny's heuristics can't figure out how to produce or compile a bounded set of values for 'x'\n   |\n14 |     (forall x :: tree_contains(l, x) ==> x <= v) &&\n   |      ^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmp9h2ar201.dfy(15,5): Error: quantifiers in non-ghost contexts must be compilable, but Dafny's heuristics can't figure out how to produce or compile a bounded set of values for 'y'\n   |\n15 |     (forall y :: tree_contains(r, y) ==> y > v)\n   |      ^^^^^^\n\n2 resolution/type errors detected in tmp9h2ar201.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "d2166803df7d5a7273d995c842a4e9a2d39d1504343eb375ed5ca140baaf1218": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpcqxc6ksd.dfy(23,14): Error: missing semicolon at end of statement\n   |\n23 |   case Nil => rev\n   |               ^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpcqxc6ksd.dfy(26,4): Error: missing semicolon at end of statement\n   |\n26 |     Cons(h, t_rev)\n   |     ^^^^^^^^^^^^^^\n\n2 parse errors detected in tmpcqxc6ksd.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "fe368ba0e9876433dc7b042851ba67ef0c5600bd745cf21fb19fdf1455727afd": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 3 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "5113c0593fe14360226142ff109c6b383c8088cf76c1da099fba5644f8e683cb": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 13 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "905d9aa9d3a7b71360ff0fbfa81de70d20b78733511add1af61dc2ca342c78c9": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 3 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "55ee8471a842920e615fd4c8b77f2fa4a24cab395c313044e8c2e3c4bbd66a59": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "aafd22fdf6d0b35f73ebac3209dd2cdcf20e711aa4d62cf7345e67426e01dce8": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "6c3a849d78a712ef20b7285bd6543a4016f3d95181a43d8b8a006e6ace065d04": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "9f43fdd6b02edf2fe637413d567e0b02f46a4c323d2a403795d305965ddd43c0": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "b7e217e6651df272753001caad182502e50702a8c021d5eaf43780709c25e6dd": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "a786f4f85ddfc5040e186ebc1d8ace91e6b393fc7edaa94faa7ec87b75353588": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "b3ec9c0653a7bf4230802d7e331af73a0fc9acdd82be22bec6f4f034b171753b": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "46c40e915e9a542eca195bc52e880f13e9edbaad169f44e1045665d29296d4df": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 3 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "b2391aeb58d3f01cd0c645d94dccb5ed1a94601fd170db61dc504f3e737945e2": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "dd6049c814d3352f592cc48021345bcf6181ea25d1f055fb3a45727823d8a23f": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "03cd7dfe59fc914b4223fa72062d88fd251cdf6c83afe1e61239b3b3d971e7b3": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 3 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "b3bc78733f665a011e40ff1ba0026a1f37e55336be83e70bfc5ec536339a6f4d": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 3 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "a03e81e508a6fcd33117a338054cd23f76255345eaf82be514927311043158a4": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpflh6i8q1.dfy(18,2): Error: unresolved identifier: insert_len\n   |\n18 |   insert_len(x, s);\n   |   ^^^^^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpflh6i8q1.dfy(18,12): Error: expected method call, found expression\n   |\n18 |   insert_len(x, s);\n   |             ^\n\nC:/Users/aaa/AppData/Local/Temp/tmpflh6i8q1.dfy(19,2): Error: unresolved identifier: insert_multiset\n   |\n19 |   insert_multiset(x, s);\n   |   ^^^^^^^^^^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpflh6i8q1.dfy(19,17): Error: expected method call, found expression\n   |\n19 |   insert_multiset(x, s);\n   |                  ^\n\nC:/Users/aaa/AppData/Local/Temp/tmpflh6i8q1.dfy(20,2): Error: unresolved identifier: insert_sorted\n   |\n20 |   insert_sorted(x, s);\n   |   ^^^^^^^^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpflh6i8q1.dfy(20,15): Error: expected method call, found expression\n   |\n20 |   insert_sorted(x, s);\n   |                ^\n\nC:/Users/aaa/AppData/Local/Temp/tmpflh6i8q1.dfy(21,9): Error: unresolved identifier: insert\n   |\n21 |   res := insert(x, s);\n   |          ^^^^^^\n\n7 resolution/type errors detected in tmpflh6i8q1.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "13b66a2daf500887641784fa6b91755f7d6ca92567d61ea87748af6c2f9f78c9": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmp02qfhn7o.dfy(25,21): Error: openparen expected\n   |\n25 |   res := s[..i] + seq{x} + s[i..];\n   |                      ^\n\nC:/Users/aaa/AppData/Local/Temp/tmp02qfhn7o.dfy(25,33): Error: comma expected\n   |\n25 |   res := s[..i] + seq{x} + s[i..];\n   |                                  ^\n\n2 parse errors detected in tmp02qfhn7o.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "ae8014e039c0f77ced6e2be5e398b69bb6e864c970d8e7b6b27e871d12fdf239": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmp3mpvp1zu.dfy(26,16): Error: expression is not allowed to invoke a method (bst_insert)\n   |\n26 |     res := Node(bst_insert(t.left, x), t.val, t.right);\n   |                 ^^^^^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmp3mpvp1zu.dfy(26,26): Error: method call is not allowed to be used in an expression context (bst_insert)\n   |\n26 |     res := Node(bst_insert(t.left, x), t.val, t.right);\n   |                           ^\n\nC:/Users/aaa/AppData/Local/Temp/tmp3mpvp1zu.dfy(28,31): Error: expression is not allowed to invoke a method (bst_insert)\n   |\n28 |     res := Node(t.left, t.val, bst_insert(t.right, x));\n   |                                ^^^^^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmp3mpvp1zu.dfy(28,41): Error: method call is not allowed to be used in an expression context (bst_insert)\n   |\n28 |     res := Node(t.left, t.val, bst_insert(t.right, x));\n   |                                          ^\n\n4 resolution/type errors detected in tmp3mpvp1zu.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "55f6382b9db38da3dca01b00e2ef44ae392473235b8f78818b9551995e4fac5c": {
+    "is_verified": false,
+    "return_code": 4,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmprik_2175.dfy(9,4): Error: a postcondition could not be proved on this return path\n Related counterexample:\n WARNING: the following counterexample may be inconsistent or invalid. See dafny.org/dafny/DafnyRef/DafnyRef#sec-counterexamples\n C:/Users/aaa/AppData/Local/Temp/tmprik_2175.dfy(9,4): initial state:\n assume 976.0 == x;\n C:/Users/aaa/AppData/Local/Temp/tmprik_2175.dfy(11,36):\n assume 976.0 == x && 976.0 == floor_x;\n C:/Users/aaa/AppData/Local/Temp/tmprik_2175.dfy(13,20):\n assume 976.0 == x && 976.0 == d && 976.0 == floor_x;\n \n  |\n9 |     {\n  |     ^\n\nC:/Users/aaa/AppData/Local/Temp/tmprik_2175.dfy(6,22): Related location: this is the postcondition that could not be proved\n  |\n6 |     ensures (0.0 <= d <= 1.0)\n  |                       ^^\n\nC:/Users/aaa/AppData/Local/Temp/tmprik_2175.dfy(9,4): Error: a postcondition could not be proved on this return path\n Related counterexample:\n WARNING: the following counterexample may be inconsistent or invalid. See dafny.org/dafny/DafnyRef/DafnyRef#sec-counterexamples\n C:/Users/aaa/AppData/Local/Temp/tmprik_2175.dfy(9,4): initial state:\n assume 684.0 / 625.0 == x;\n C:/Users/aaa/AppData/Local/Temp/tmprik_2175.dfy(11,36):\n assume 684.0 / 625.0 == x && 1.0 == floor_x;\n C:/Users/aaa/AppData/Local/Temp/tmprik_2175.dfy(13,20):\n assume 684.0 / 625.0 == x && 1.0 == d && 1.0 == floor_x;\n \n  |\n9 |     {\n  |     ^\n\nC:/Users/aaa/AppData/Local/Temp/tmprik_2175.dfy(7,20): Related location: this is the postcondition that could not be proved\n  |\n7 |     ensures (x - d) == (x.Floor as real)\n  |                     ^^\n\n\nDafny program verifier finished with 0 verified, 2 errors\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "0a6b760e87537ff953c1aa5123604f465d2ae6c8c9e47a6bbc56e3c0df01fa91": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 1 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "65aed670e85f1564adac96db475de43d9497ce3a5bb3473c9cd6194591615360": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpg9_9ukqe.dfy(23,4): Error: rbrace expected\n   |\n23 |     else if n == 1 {\n   |     ^\n\n1 parse errors detected in tmpg9_9ukqe.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "e36897d055c7f7c40023ace21b6102cba55e50f84c733a67a55e96c6e7768035": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpwn7pqqdq.dfy(18,4): Error: rbrace expected\n   |\n18 |     invariant 0 <= n && a == fib(0) && b == fib(1)\n   |     ^\n\n1 parse errors detected in tmpwn7pqqdq.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "d3bb3f053c4cb341b9fd4ad5f2ca187173a3456a3c5bca36a780192bf21e6ee1": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpxccfku91.dfy(43,7): Error: rbrace expected\n   |\n43 |   flag := abs(x - y) < 0.0;\n   |        ^\n\n1 parse errors detected in tmpxccfku91.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "81fdd47f3356ebdc2c183110e5bfce609c073e75d635d01dc965eefea6f4a66d": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpyg95ikuq.dfy(42,2): Error: invalid UnaryExpression\n   |\n42 |   invariant abs(x - y) >= 0.0;\n   |   ^\n\n1 parse errors detected in tmpyg95ikuq.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "93b0d4095bb8de6e0d0b84911160ef0ae2fe3c3d9bf6cdc601294fd49f5ab69a": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmptcgove9w.dfy(44,2): Error: invalid UnaryExpression\n   |\n44 |   invariant abs(x - y) >= 0.0;\n   |   ^\n\n1 parse errors detected in tmptcgove9w.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "d27d0d2a06d78f2031578f72cd4fa348d998dbdeb86698ffe47b797b8bbd5ae5": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpjx_xnhoa.dfy(19,4): Error: rbrace expected\n   |\n19 |     invariant |result| <= 2 * |s|\n   |     ^\n\n1 parse errors detected in tmpjx_xnhoa.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "dd009405866e3f626b912c8d914d948f389c8d32bec0d9a28888b269ddb88b58": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpg66jkpgs.dfy(19,4): Error: rbrace expected\n   |\n19 |     invariant |result| <= 2 * |s|\n   |     ^\n\n1 parse errors detected in tmpg66jkpgs.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "3c5e9e550dbab42f48bfebd27afa86df266eaa28b8b2dd0391d252e268979e75": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpubrycw5p.dfy(1,0): Error: this symbol not expected in Dafny\n  |\n1 | 1 | function is_palindrome(s : string) : bool {\n  | ^\n\n1 parse errors detected in tmpubrycw5p.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "9735737c7f540a4a6281ca3ebcd41e9f3f0639e654a13a74eafc7de537450b83": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 3 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "89b535c9c23a6b1f28edf70d9d06c3a002252bcb22963354390249eb0f3a5307": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 13 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "a9eb583a8723f435e6089aafc0a410fe929bd59e91174eb63891952e148a0fe0": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 3 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "4d705d0082efddf11e85b257985ea1249dff480e0730d440c199ebf356df65f6": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "f64e2369789f8bf5ffe47a8e546c562c844627d642576d30fb3a96f6d28d6fe7": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "0dccfbd5cb4df645cf68ee93563c0086f609bdbb25a56de3f1d7a753c5bd513e": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "552604bdd4538be03b99d2dca88d9e7a0a0f76a485cbff00497846b3d6ac4c19": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "be75e516e54c6cca7b7d51f4354841843c7cc0eeca8c5b0d5d82435e45ee173e": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "0f21493e2a40d59844e8284604174bcb9f965c00701a936e35ab1b72696be355": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "bea4ed6a850f1821cb24fb36925a574d59292d9221bf35e8fe7970969a9f8be0": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "b06a8401be8c238db8f6a0d548c086a73f2b5907617a7d99a1a709a622263c8a": {
+    "is_verified": false,
+    "return_code": 4,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpxu8getx2.dfy(16,0): Error: a postcondition could not be proved on this return path\n Related counterexample:\n WARNING: the following counterexample may be inconsistent or invalid. See dafny.org/dafny/DafnyRef/DafnyRef#sec-counterexamples\n Temporary variables to describe counterexamples: \n ghost var counterexampleLoopGuard0 : bool := false;\n C:/Users/aaa/AppData/Local/Temp/tmpxu8getx2.dfy(16,0): initial state:\n assume |s| > 0 && |s| > 1 && 8100 == |s| && 282 == s[0] && 6284 == s[1];\n C:/Users/aaa/AppData/Local/Temp/tmpxu8getx2.dfy(18,12):\n assume |s| > 0 && |s| > 1 && 8100 == |s| && 282 == s[0] && 6284 == s[1] && 0 == total;\n C:/Users/aaa/AppData/Local/Temp/tmpxu8getx2.dfy(19,12):\n assume |s| > 0 && |s| > 1 && 8100 == |s| && 282 == s[0] && 6284 == s[1] && 0 == total && 0 == i;\n C:/Users/aaa/AppData/Local/Temp/tmpxu8getx2.dfy(20,2): after some loop iterations:\n counterexampleLoopGuard0 := |s| > 0 && |s| > 1 && 8100 == |s| && 282 == s[0] && 6284 == s[1] && 6566 == total && 8100 == i;\n C:/Users/aaa/AppData/Local/Temp/tmpxu8getx2.dfy(26,16):\n assume counterexampleLoopGuard0 ==> |s| > 0 && |s| > 1 && 8100 == |s| && 282 == s[0] && 6284 == s[1] && 6566 == total && 8100 == i;\n \n   |\n16 | {\n   | ^\n\nC:/Users/aaa/AppData/Local/Temp/tmpxu8getx2.dfy(13,16): Related location: this is the postcondition that could not be proved\n   |\n13 |   ensures total == sum_pos(s)\n   |                 ^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpxu8getx2.dfy(16,0): Error: a postcondition could not be proved on this return path\n Related counterexample:\n WARNING: the following counterexample may be inconsistent or invalid. See dafny.org/dafny/DafnyRef/DafnyRef#sec-counterexamples\n Temporary variables to describe counterexamples: \n ghost var counterexampleLoopGuard0 : bool := false;\n C:/Users/aaa/AppData/Local/Temp/tmpxu8getx2.dfy(16,0): initial state:\n assume |s| > 0 && |s| > 1 && 8100 == |s| && 2447 == s[0] && 1236 == s[1];\n C:/Users/aaa/AppData/Local/Temp/tmpxu8getx2.dfy(18,12):\n assume |s| > 0 && |s| > 1 && 8100 == |s| && 2447 == s[0] && 1236 == s[1] && 0 == total;\n C:/Users/aaa/AppData/Local/Temp/tmpxu8getx2.dfy(19,12):\n assume |s| > 0 && |s| > 1 && 8100 == |s| && 2447 == s[0] && 1236 == s[1] && 0 == total && 0 == i;\n C:/Users/aaa/AppData/Local/Temp/tmpxu8getx2.dfy(20,2): after some loop iterations:\n counterexampleLoopGuard0 := |s| > 0 && |s| > 1 && 8100 == |s| && 2447 == s[0] && 1236 == s[1] && -1 == total && 8100 == i;\n C:/Users/aaa/AppData/Local/Temp/tmpxu8getx2.dfy(26,16):\n assume counterexampleLoopGuard0 ==> |s| > 0 && |s| > 1 && 8100 == |s| && 2447 == s[0] && 1236 == s[1] && -1 == total && 8100 == i;\n \n   |\n16 | {\n   | ^\n\nC:/Users/aaa/AppData/Local/Temp/tmpxu8getx2.dfy(14,16): Related location: this is the postcondition that could not be proved\n   |\n14 |   ensures total >= 0\n   |                 ^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpxu8getx2.dfy(20,56): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n Related counterexample:\n WARNING: the following counterexample may be inconsistent or invalid. See dafny.org/dafny/DafnyRef/DafnyRef#sec-counterexamples\n Temporary variables to describe counterexamples: \n ghost var counterexampleLoopGuard0 : bool := false;\n C:/Users/aaa/AppData/Local/Temp/tmpxu8getx2.dfy(16,0): initial state:\n assume |s| > 8100 && |s| > 0 && |s| > 1 && 8101 == |s| && 2449 == s[8100] && 2447 == s[0] && 1236 == s[1];\n C:/Users/aaa/AppData/Local/Temp/tmpxu8getx2.dfy(18,12):\n assume |s| > 8100 && |s| > 0 && |s| > 1 && 8101 == |s| && 2449 == s[8100] && 2447 == s[0] && 1236 == s[1] && 0 == total;\n C:/Users/aaa/AppData/Local/Temp/tmpxu8getx2.dfy(19,12):\n assume |s| > 8100 && |s| > 0 && |s| > 1 && 8101 == |s| && 2449 == s[8100] && 2447 == s[0] && 1236 == s[1] && 0 == total && 0 == i;\n C:/Users/aaa/AppData/Local/Temp/tmpxu8getx2.dfy(20,2): after some loop iterations:\n counterexampleLoopGuard0 := |s| > 8100 && |s| > 0 && |s| > 1 && 8101 == |s| && 2449 == s[8100] && 2447 == s[0] && 1236 == s[1] && -1 == total && 8100 == i;\n C:/Users/aaa/AppData/Local/Temp/tmpxu8getx2.dfy(23,39):\n assume counterexampleLoopGuard0 ==> |s| > 8100 && |s| > 0 && |s| > 1 && 8101 == |s| && 2449 == s[8100] && 2447 == s[0] && 1236 == s[1] && 2448 == total && 8100 == i;\n C:/Users/aaa/AppData/Local/Temp/tmpxu8getx2.dfy(24,14):\n assume counterexampleLoopGuard0 ==> |s| > 8100 && |s| > 0 && |s| > 1 && 8101 == |s| && 2449 == s[8100] && 2447 == s[0] && 1236 == s[1] && 2448 == total && 8101 == i;\n \n   |\n20 |   while i < |s| invariant 0 <= i <= |s| invariant total == sum_pos(s[..i]) decreases |s| - i\n   |                                                         ^^\n\n\nDafny program verifier finished with 1 verified, 3 errors\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "e809e91774912035a39a3181e80843fe2d3513ff3b340fa1c3c858af2ad67005": {
+    "is_verified": false,
+    "return_code": 4,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpx3ndrqaw.dfy(16,0): Error: a postcondition could not be proved on this return path\n Related counterexample:\n WARNING: the following counterexample may be inconsistent or invalid. See dafny.org/dafny/DafnyRef/DafnyRef#sec-counterexamples\n Temporary variables to describe counterexamples: \n ghost var counterexampleLoopGuard0 : bool := false;\n C:/Users/aaa/AppData/Local/Temp/tmpx3ndrqaw.dfy(16,0): initial state:\n assume |s| > 0 && |s| > 1 && 1144 == |s| && 8946 == s[0] && 2998 == s[1];\n C:/Users/aaa/AppData/Local/Temp/tmpx3ndrqaw.dfy(18,12):\n assume |s| > 0 && |s| > 1 && 1144 == |s| && 8946 == s[0] && 2998 == s[1] && 0 == total;\n C:/Users/aaa/AppData/Local/Temp/tmpx3ndrqaw.dfy(19,12):\n assume |s| > 0 && |s| > 1 && 1144 == |s| && 8946 == s[0] && 2998 == s[1] && 0 == total && 0 == i;\n C:/Users/aaa/AppData/Local/Temp/tmpx3ndrqaw.dfy(20,2): after some loop iterations:\n counterexampleLoopGuard0 := |s| > 0 && |s| > 1 && 1144 == |s| && 8946 == s[0] && 2998 == s[1] && 8947 == total && 1144 == i;\n C:/Users/aaa/AppData/Local/Temp/tmpx3ndrqaw.dfy(27,16):\n assume counterexampleLoopGuard0 ==> |s| > 0 && |s| > 1 && 1144 == |s| && 8946 == s[0] && 2998 == s[1] && 8947 == total && 1144 == i;\n \n   |\n16 | {\n   | ^\n\nC:/Users/aaa/AppData/Local/Temp/tmpx3ndrqaw.dfy(13,16): Related location: this is the postcondition that could not be proved\n   |\n13 |   ensures total == sum_pos(s)\n   |                 ^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpx3ndrqaw.dfy(16,0): Error: a postcondition could not be proved on this return path\n Related counterexample:\n WARNING: the following counterexample may be inconsistent or invalid. See dafny.org/dafny/DafnyRef/DafnyRef#sec-counterexamples\n Temporary variables to describe counterexamples: \n ghost var counterexampleLoopGuard0 : bool := false;\n C:/Users/aaa/AppData/Local/Temp/tmpx3ndrqaw.dfy(16,0): initial state:\n assume |s| > 0 && |s| > 1 && 1144 == |s| && 8946 == s[0] && 1 == s[1];\n C:/Users/aaa/AppData/Local/Temp/tmpx3ndrqaw.dfy(18,12):\n assume |s| > 0 && |s| > 1 && 1144 == |s| && 8946 == s[0] && 1 == s[1] && 0 == total;\n C:/Users/aaa/AppData/Local/Temp/tmpx3ndrqaw.dfy(19,12):\n assume |s| > 0 && |s| > 1 && 1144 == |s| && 8946 == s[0] && 1 == s[1] && 0 == total && 0 == i;\n C:/Users/aaa/AppData/Local/Temp/tmpx3ndrqaw.dfy(20,2): after some loop iterations:\n counterexampleLoopGuard0 := |s| > 0 && |s| > 1 && 1144 == |s| && 8946 == s[0] && 1 == s[1] && -1 == total && 1144 == i;\n C:/Users/aaa/AppData/Local/Temp/tmpx3ndrqaw.dfy(27,16):\n assume counterexampleLoopGuard0 ==> |s| > 0 && |s| > 1 && 1144 == |s| && 8946 == s[0] && 1 == s[1] && -1 == total && 1144 == i;\n \n   |\n16 | {\n   | ^\n\nC:/Users/aaa/AppData/Local/Temp/tmpx3ndrqaw.dfy(14,16): Related location: this is the postcondition that could not be proved\n   |\n14 |   ensures total >= 0\n   |                 ^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpx3ndrqaw.dfy(20,56): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n Related counterexample:\n WARNING: the following counterexample may be inconsistent or invalid. See dafny.org/dafny/DafnyRef/DafnyRef#sec-counterexamples\n Temporary variables to describe counterexamples: \n ghost var counterexampleLoopGuard0 : bool := false;\n C:/Users/aaa/AppData/Local/Temp/tmpx3ndrqaw.dfy(16,0): initial state:\n assume |s| > 1143 && |s| > 0 && |s| > 1 && 1144 == |s| && 8948 == s[1143] && 8946 == s[0] && 591 == s[1];\n C:/Users/aaa/AppData/Local/Temp/tmpx3ndrqaw.dfy(18,12):\n assume |s| > 1143 && |s| > 0 && |s| > 1 && 1144 == |s| && 8948 == s[1143] && 8946 == s[0] && 591 == s[1] && 0 == total;\n C:/Users/aaa/AppData/Local/Temp/tmpx3ndrqaw.dfy(19,12):\n assume |s| > 1143 && |s| > 0 && |s| > 1 && 1144 == |s| && 8948 == s[1143] && 8946 == s[0] && 591 == s[1] && 0 == total && 0 == i;\n C:/Users/aaa/AppData/Local/Temp/tmpx3ndrqaw.dfy(20,2): after some loop iterations:\n counterexampleLoopGuard0 := |s| > 1143 && |s| > 0 && |s| > 1 && 1144 == |s| && 8948 == s[1143] && 8946 == s[0] && 591 == s[1] && -1 == total && 1143 == i;\n C:/Users/aaa/AppData/Local/Temp/tmpx3ndrqaw.dfy(24,39):\n assume counterexampleLoopGuard0 ==> |s| > 1143 && |s| > 0 && |s| > 1 && 1144 == |s| && 8948 == s[1143] && 8946 == s[0] && 591 == s[1] && 8947 == total && 1143 == i;\n C:/Users/aaa/AppData/Local/Temp/tmpx3ndrqaw.dfy(25,14):\n assume counterexampleLoopGuard0 ==> |s| > 1143 && |s| > 0 && |s| > 1 && 1144 == |s| && 8948 == s[1143] && 8946 == s[0] && 591 == s[1] && 8947 == total && 1144 == i;\n \n   |\n20 |   while i < |s| invariant 0 <= i <= |s| invariant total == sum_pos(s[..i]) decreases |s| - i\n   |                                                         ^^\n\n\nDafny program verifier finished with 1 verified, 3 errors\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "9e4a08422cd34dd2d0a4d137761cc53cd3c8eac8112b4fa8a9699f34eb43e531": {
+    "is_verified": false,
+    "return_code": 4,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmp0peya4wu.dfy(16,0): Error: a postcondition could not be proved on this return path\n Related counterexample:\n WARNING: the following counterexample may be inconsistent or invalid. See dafny.org/dafny/DafnyRef/DafnyRef#sec-counterexamples\n Temporary variables to describe counterexamples: \n ghost var counterexampleLoopGuard0 : bool := false;\n C:/Users/aaa/AppData/Local/Temp/tmp0peya4wu.dfy(16,0): initial state:\n assume |s| > 0 && |s| > 1 && 8367 == |s| && 450 == s[0] && 1143 == s[1];\n C:/Users/aaa/AppData/Local/Temp/tmp0peya4wu.dfy(18,12):\n assume |s| > 0 && |s| > 1 && 8367 == |s| && 450 == s[0] && 1143 == s[1] && 0 == total;\n C:/Users/aaa/AppData/Local/Temp/tmp0peya4wu.dfy(19,12):\n assume |s| > 0 && |s| > 1 && 8367 == |s| && 450 == s[0] && 1143 == s[1] && 0 == total && 0 == i;\n C:/Users/aaa/AppData/Local/Temp/tmp0peya4wu.dfy(20,2): after some loop iterations:\n counterexampleLoopGuard0 := |s| > 0 && |s| > 1 && 8367 == |s| && 450 == s[0] && 1143 == s[1] && 452 == total && 8367 == i;\n C:/Users/aaa/AppData/Local/Temp/tmp0peya4wu.dfy(28,16):\n assume counterexampleLoopGuard0 ==> |s| > 0 && |s| > 1 && 8367 == |s| && 450 == s[0] && 1143 == s[1] && 452 == total && 8367 == i;\n \n   |\n16 | {\n   | ^\n\nC:/Users/aaa/AppData/Local/Temp/tmp0peya4wu.dfy(13,16): Related location: this is the postcondition that could not be proved\n   |\n13 |   ensures total == sum_pos(s)\n   |                 ^^\n\nC:/Users/aaa/AppData/Local/Temp/tmp0peya4wu.dfy(16,0): Error: a postcondition could not be proved on this return path\n Related counterexample:\n WARNING: the following counterexample may be inconsistent or invalid. See dafny.org/dafny/DafnyRef/DafnyRef#sec-counterexamples\n Temporary variables to describe counterexamples: \n ghost var counterexampleLoopGuard0 : bool := false;\n C:/Users/aaa/AppData/Local/Temp/tmp0peya4wu.dfy(16,0): initial state:\n assume |s| > 0 && |s| > 1 && 8367 == |s| && 1654 == s[0] && 8457 == s[1];\n C:/Users/aaa/AppData/Local/Temp/tmp0peya4wu.dfy(18,12):\n assume |s| > 0 && |s| > 1 && 8367 == |s| && 1654 == s[0] && 8457 == s[1] && 0 == total;\n C:/Users/aaa/AppData/Local/Temp/tmp0peya4wu.dfy(19,12):\n assume |s| > 0 && |s| > 1 && 8367 == |s| && 1654 == s[0] && 8457 == s[1] && 0 == total && 0 == i;\n C:/Users/aaa/AppData/Local/Temp/tmp0peya4wu.dfy(20,2): after some loop iterations:\n counterexampleLoopGuard0 := |s| > 0 && |s| > 1 && 8367 == |s| && 1654 == s[0] && 8457 == s[1] && -1 == total && 8367 == i;\n C:/Users/aaa/AppData/Local/Temp/tmp0peya4wu.dfy(28,16):\n assume counterexampleLoopGuard0 ==> |s| > 0 && |s| > 1 && 8367 == |s| && 1654 == s[0] && 8457 == s[1] && -1 == total && 8367 == i;\n \n   |\n16 | {\n   | ^\n\nC:/Users/aaa/AppData/Local/Temp/tmp0peya4wu.dfy(14,16): Related location: this is the postcondition that could not be proved\n   |\n14 |   ensures total >= 0\n   |                 ^^\n\nC:/Users/aaa/AppData/Local/Temp/tmp0peya4wu.dfy(22,20): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n Related counterexample:\n WARNING: the following counterexample may be inconsistent or invalid. See dafny.org/dafny/DafnyRef/DafnyRef#sec-counterexamples\n Temporary variables to describe counterexamples: \n ghost var counterexampleLoopGuard0 : bool := false;\n C:/Users/aaa/AppData/Local/Temp/tmp0peya4wu.dfy(16,0): initial state:\n assume |s| > 8366 && |s| > 0 && |s| > 1 && 8367 == |s| && 1656 == s[8366] && 1654 == s[0] && 8457 == s[1];\n C:/Users/aaa/AppData/Local/Temp/tmp0peya4wu.dfy(18,12):\n assume |s| > 8366 && |s| > 0 && |s| > 1 && 8367 == |s| && 1656 == s[8366] && 1654 == s[0] && 8457 == s[1] && 0 == total;\n C:/Users/aaa/AppData/Local/Temp/tmp0peya4wu.dfy(19,12):\n assume |s| > 8366 && |s| > 0 && |s| > 1 && 8367 == |s| && 1656 == s[8366] && 1654 == s[0] && 8457 == s[1] && 0 == total && 0 == i;\n C:/Users/aaa/AppData/Local/Temp/tmp0peya4wu.dfy(20,2): after some loop iterations:\n counterexampleLoopGuard0 := |s| > 8366 && |s| > 0 && |s| > 1 && 8367 == |s| && 1656 == s[8366] && 1654 == s[0] && 8457 == s[1] && -1 == total && 8366 == i;\n C:/Users/aaa/AppData/Local/Temp/tmp0peya4wu.dfy(25,39):\n assume counterexampleLoopGuard0 ==> |s| > 8366 && |s| > 0 && |s| > 1 && 8367 == |s| && 1656 == s[8366] && 1654 == s[0] && 8457 == s[1] && 1655 == total && 8366 == i;\n C:/Users/aaa/AppData/Local/Temp/tmp0peya4wu.dfy(26,14):\n assume counterexampleLoopGuard0 ==> |s| > 8366 && |s| > 0 && |s| > 1 && 8367 == |s| && 1656 == s[8366] && 1654 == s[0] && 8457 == s[1] && 1655 == total && 8367 == i;\n \n   |\n22 |     invariant total == sum_pos(s[..i])\n   |                     ^^\n\n\nDafny program verifier finished with 1 verified, 3 errors\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "fec88407cfd070b43e4cccabaa968d27a2ae2ddcd721b2b081bdcbe3c5245421": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "31823d7c5cc1731355653a2aabf69f8e252b8cee37d4f3f52d30c4be2aca7204": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "7aa3feb11cc1b256c3579f8c500458f428a7499f7c51c33ce6fc6829a096fcda": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 3 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "e9a78eb747bcab69bc1a79e6fa38e0465f3ed78fb61600ff39051cbc4ce625bb": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 3 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "808711357bce15ecd1b4aaa3fdbbbe60f74287ebe63fd18607ecb74ffa1ccd35": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpvb1b60eq.dfy(8,2): Error: this symbol not expected in VarDeclStatement\n  |\n8 |   while i < |s|\n  |   ^\n\n1 parse errors detected in tmpvb1b60eq.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "23baa8bbd9b3e663b1ad2b6ae074f56b36d1d0b5302f76b3889c8cf4a605706d": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpk9d4n283.dfy(8,2): Error: this symbol not expected in VarDeclStatement\n  |\n8 |   while i < |s|\n  |   ^\n\n1 parse errors detected in tmpk9d4n283.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "ea4f27182abc13ad8c49919c2478a9936fdc694d8208d2317119c6d32a5561c3": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmp22mlofxf.dfy(1,27): Error: Type or type parameter is not declared in this scope: Tree (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n  |\n1 | predicate tree_contains(t: Tree, x: int) {\n  |                            ^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmp22mlofxf.dfy(7,20): Error: Type or type parameter is not declared in this scope: Tree (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n  |\n7 | predicate is_bst(t: Tree) {\n  |                     ^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmp22mlofxf.dfy(16,21): Error: Type or type parameter is not declared in this scope: Tree (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n   |\n16 | method bst_insert(t: Tree, x: int) returns (res: Tree)\n   |                      ^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmp22mlofxf.dfy(16,49): Error: Type or type parameter is not declared in this scope: Tree (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n   |\n16 | method bst_insert(t: Tree, x: int) returns (res: Tree)\n   |                                                  ^^^^\n\n4 resolution/type errors detected in tmp22mlofxf.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "157df62db8204db9edaade323c7068c9a31456fa121caec5cc30d3edccd4b01d": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmplp4sa40g.dfy(14,5): Error: quantifiers in non-ghost contexts must be compilable, but Dafny's heuristics can't figure out how to produce or compile a bounded set of values for 'x'\n   |\n14 |     (forall x :: tree_contains(l, x) ==> x <= v) &&\n   |      ^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmplp4sa40g.dfy(15,5): Error: quantifiers in non-ghost contexts must be compilable, but Dafny's heuristics can't figure out how to produce or compile a bounded set of values for 'y'\n   |\n15 |     (forall y :: tree_contains(r, y) ==> y > v)\n   |      ^^^^^^\n\n2 resolution/type errors detected in tmplp4sa40g.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "a38129fb84ce6439bc4194b3c61c8fd267cc3a4732f635680445ceaa8a2e2783": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpr8ml_6z2.dfy(25,4): Error: invalid AssignStatement\n   |\n25 |     invariant |to_seq(rev)| == |to_seq(l)|\n   |     ^\n\n1 parse errors detected in tmpr8ml_6z2.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "6118a7d10ddd5a8202d46db84d424ebec49734a49b007c402f70a9152a074177": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpj6p5x9jc.dfy(25,4): Error: invalid AssignStatement\n   |\n25 |     invariant |to_seq(l)| == |to_seq(rev)|\n   |     ^\n\n1 parse errors detected in tmpj6p5x9jc.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "222e3b96974cd302e8d151959b364fc106311613cba44857f5d1f6de7ebfb780": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmp6ni5t1x2.dfy(1,21): Error: Type or type parameter is not declared in this scope: List (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n  |\n1 | function list_len(l: List): nat {\n  |                      ^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmp6ni5t1x2.dfy(7,21): Error: Type or type parameter is not declared in this scope: List (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n  |\n7 | function list_sum(l: List): int {\n  |                      ^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmp6ni5t1x2.dfy(14,29): Error: Type or type parameter is not declared in this scope: List (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)\n   |\n14 | method compute_list_stats(l: List) returns (len: nat, s: int)\n   |                              ^^^^\n\n3 resolution/type errors detected in tmp6ni5t1x2.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "3e3de4cc3067f94fccf62260b92ffbdf2244392f367e38fb0a9fa43b193ce5d8": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpnz267flw.dfy(28,2): Error: rbrace expected\n   |\n28 |   invariant 0 <= i <= list_len(l)\n   |   ^\n\n1 parse errors detected in tmpnz267flw.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "eb32be190f230b8908d88b15b4698a9b67ba5bf5ef849f11a480a8e5827e2a06": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpvkjnvcso.dfy(28,2): Error: rbrace expected\n   |\n28 |   invariant 0 <= i <= list_len(l)\n   |   ^\n\n1 parse errors detected in tmpvkjnvcso.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "1c95a9204dbdd3485a4dda88dc65a1173f969cd05a223e9e7ef45db74c2d867e": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 1 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "6de7696946822f44a5d3a49512d68b25bf9a3f64ae2aa1709a8c89fff674afcf": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 1 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "1cf95cc230dd639805d0603409d79fa52470186b2e20dd495577a78566e82924": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "ccb866c6f5310872e16ddc9b759f4bc4e4df1996d04108a8e4eecf41c5e11384": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 1 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "67fca7fd0abbba306d7739a2a8625960225107c52c4dbcde14742ec9a8b4b805": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 1 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "cd6d7bb53557b7f9336ee7f1921cb35d3ee4a6813cfbbf33947c834c2e8e8840": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "30ccd36ece606620af2ccdc86ff255a1b08e9e922b9b45984e51c5f8969b4fb5": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 1 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "383a37934f7c5bd540ef9af7173e1ea1b9fb30d55056443fa4566d03a8e108eb": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "e4f31ae4ab50c8d951bdc04231338093cb3da859ee6acc456e38fccbbc7f341f": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpzkhd68oq.dfy(8,53): Error: invalid WhileStmt\n  |\n8 |         invariant forall k :: 0 <= k < i ==> l[k] < t\n  |                                                      ^\n\n1 parse errors detected in tmpzkhd68oq.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "5ed496bf3e00626ebe25df3d3dd0df156f8d26906d8494a76aac9bd53017e278": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmp9x9rs8n3.dfy(25,18): Error: invalid UnaryExpression\n   |\n25 |       low := mid +\n   |                   ^\n\n1 parse errors detected in tmp9x9rs8n3.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "009280c9c2bf58d460a6ba079191b06097f308772944bcabf340f7a537aa636f": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmp0uab4dpz.dfy(14,21): Error: rbrace expected\n   |\n14 |   var found := false;\n   |                      ^\n\n1 parse errors detected in tmp0uab4dpz.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "a7416b05d3d9198d23236986574fa7fcdc18433017f57233194aa4aaf06a11cf": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpgloi2yfy.dfy(12,14): Error: invalid WhileStmt\n   |\n12 |   while i >= 0\n   |               ^\n\n1 parse errors detected in tmpgloi2yfy.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "4ea5733fddb1376436e5395a3e282cb5e148f286773cfa698b78eaf7347ac075": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "1547faafb7ac455e9cc8a19439e50571d1d46e162505a76da99e37e819d301d5": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpx1cfwst2.dfy(5,15): Error: invalid WhileStmt\n  |\n5 |   while i < |s|\n  |                ^\n\n1 parse errors detected in tmpx1cfwst2.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "a2166f8b7632e6c61352e8376852bdae0212273d5c06653074944140c8337484": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "572f33751ffa2285914d2784532408326ce056b839307da89c40d4b045b07741": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "50ad757f6fdb869743ae353a354342d8bdc5ac6d1185c6f4fbf480fa9bc09397": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 3 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "08e63e239dd661f8ca2d4c7a18762df2c84c570d50a05ab8abd693195bbc3811": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "5600f619aaf9a7bc09e35dcead4f84203d4b53bc0a0b92733dc0309c27103963": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpuy2tc2o0.dfy(12,28): Error: invalid WhileStmt\n   |\n12 |       invariant i < j <= |s|\n   |                             ^\n\n1 parse errors detected in tmpuy2tc2o0.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "64ee982d108e8d012fdee48811a0443ee54138efa736fe7b2a084fb8268feefd": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 3 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "439f015977b8087f3c1db3ef4af1da27465ac2d8b17ebcce946a7a20fe9f2cd3": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 3 verified, 0 errors\n",
+    "error_summary": ""
   }
 }

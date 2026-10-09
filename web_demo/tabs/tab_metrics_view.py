@@ -119,6 +119,9 @@ def render_metrics_tab(
         with col_c1:
             available_models = [
                 ("ollama/qwen2.5-coder:7b", "Qwen 2.5 Coder 7B (Local)"),
+                ("groq/qwen/qwen3.8-27b", "Qwen 3.8 27B (Groq LPU)"),
+                ("groq/openai/gpt-oss-120b", "GPT-OSS 120B (Groq LPU)"),
+                ("groq/openai/gpt-oss-20b", "GPT-OSS 20B (Groq LPU)"),
                 ("gemini-2.5-flash", "Gemini 2.5 Flash (Cloud)"),
                 ("gemini-3.5-flash", "Gemini 3.5 Flash (Cloud)"),
                 ("ollama/llama3.1:8b", "LLaMA 3.1 8B (Local)"),

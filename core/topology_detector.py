@@ -25,6 +25,8 @@ class AlgorithmTopology(str, Enum):
     ORDERED_INSERT = "ORDERED_INSERT"          # Chèn phần tử vào mảng đã sắp xếp (sorted_insert)
     SEQ_CONSTRUCTION = "SEQ_CONSTRUCTION"      # Xây dựng hoặc lọc chuỗi mới (copy_array, remove_element, array_reverse)
     SEARCH_CONDITION = "SEARCH_CONDITION"      # Tìm kiếm có điều kiện phủ định biên (linear_search_last, find_first_negative)
+    RECURSIVE_TREE = "RECURSIVE_TREE"          # Cây nhị phân, BST, đệ quy cấu trúc (bst_search, bst_insert, tree_size_height)
+    LINKED_LIST = "LINKED_LIST"                # Danh sách liên kết quy nạp, Nil/Cons (linked_list_reverse, linked_list_stats)
 
 
 class TopologyDetector:
@@ -46,6 +48,13 @@ class TopologyDetector:
         # 2. Nhận diện Sắp xếp và Bảo toàn đa tập hợp toàn diện (sort_array)
         if "sort_array" in spec_lower or ("multiset" in spec_lower and "sort" in spec_lower):
             return AlgorithmTopology.PERMUTATION_SORT
+
+        # 2.5. Nhận diện Cấu trúc Quy nạp Đệ quy (Cây nhị phân & Danh sách liên kết)
+        if "datatype tree" in spec_lower or "is_bst" in spec_lower or ("tree" in spec_lower and "node" in spec_lower) or ("tree" in spec_lower and "leaf" in spec_lower):
+            return AlgorithmTopology.RECURSIVE_TREE
+
+        if "datatype list" in spec_lower or ("nil" in spec_lower and "cons" in spec_lower) or "list_len" in spec_lower:
+            return AlgorithmTopology.LINKED_LIST
 
         # 3. Nhận diện Non-linear (Bậc 3 hoặc phi tuyến)
         if "cube" in spec_lower or re.search(r'\*\s*\w+\s*\*\s*\w+', raw_spec):
@@ -631,6 +640,40 @@ class TopologyDetector:
                 "     }\n"
                 "     return;\n"
                 "     ```"
+            )
+
+        if topology == AlgorithmTopology.RECURSIVE_TREE:
+            return (
+                "[RÀNG BUỘC CẤU TRÚC - CÂY NHỊ PHÂN & QUY NẠP CẤU TRÚC (RECURSIVE TREE / BST)]:\n"
+                "- Bài toán thao tác trên cấu trúc cây đại số quy nạp `datatype Tree = Leaf | Node(left: Tree, val: int, right: Tree)`.\n"
+                "- BẮT BUỘC sử dụng cấu trúc khớp mẫu đại số `match` trên biến cây `t`:\n"
+                "  ```dafny\n"
+                "  match t {\n"
+                "    case Leaf => ...\n"
+                "    case Node(l, v, r) => ...\n"
+                "  }\n"
+                "  ```\n"
+                "- 1. Với bài toán tìm kiếm BST (`bst_search`): So sánh `key == v`, `key < v` (đệ quy trên `l`), `key > v` (đệ quy trên `r`).\n"
+                "- 2. Với bài toán chèn BST (`bst_insert`): Đệ quy tạo nút mới `Node(...)` bảo toàn tính chất sắp xếp BST.\n"
+                "- 3. Với bài toán tính kích thước và chiều cao (`compute_tree_metrics`):\n"
+                "     Gọi đệ quy trên cây con trái `l` và phải `r`, sau đó kết hợp kết quả và gọi bổ đề `size_ge_height(t);` nếu cần.\n"
+                "- BẢO CHỨNG DỪNG (TERMINATION): Trong Dafny, đệ quy trên nút con của cấu trúc `datatype` tự động đảm bảo tính dừng (Structural Induction), KHÔNG CẦN viết `decreases`."
+            )
+
+        if topology == AlgorithmTopology.LINKED_LIST:
+            return (
+                "[RÀNG BUỘC CẤU TRÚC - DANH SÁCH LIÊN KẾT ĐẠI SỐ QUY NẠP (INDUCTIVE LINKED LIST)]:\n"
+                "- Bài toán thao tác trên danh sách liên kết quy nạp `datatype List = Nil | Cons(head: int, tail: List)`.\n"
+                "- BẮT BUỘC sử dụng khớp mẫu đại số `match` trên biến danh sách `l`:\n"
+                "  ```dafny\n"
+                "  match l {\n"
+                "    case Nil => ...\n"
+                "    case Cons(h, t) => ...\n"
+                "  }\n"
+                "  ```\n"
+                "- 1. Với bài toán thống kê (`compute_list_stats`): Đệ quy trên đuôi `t`, cộng dồn độ dài `1 + sub_len` và tổng `h + sub_sum`.\n"
+                "- 2. Với bài toán đảo danh sách (`list_reverse`): Đệ quy hoặc dùng hàm trợ giúp tích lũy.\n"
+                "- BẢO CHỨNG DỪNG (TERMINATION): Đệ quy trên phần tử con của `datatype List` tự động đảm bảo tính dừng trong Dafny."
             )
 
         return ""

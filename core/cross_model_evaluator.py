@@ -81,6 +81,24 @@ class CrossModelEvaluator:
             "name": "DeepSeek-R1-7B",
             "type": "Local (Ollama)",
             "description": "Mô hình lập luận suy luận sâu Chain-of-Thought (DeepSeek)"
+        },
+        {
+            "id": "groq/qwen/qwen3.8-27b",
+            "name": "Qwen-3.8-27B-Groq",
+            "type": "Cloud (Groq LPU)",
+            "description": "Mô hình Qwen thế hệ mới 27B tốc độ siêu tốc trên chip LPU (Alibaba / Groq)"
+        },
+        {
+            "id": "groq/openai/gpt-oss-120b",
+            "name": "GPT-OSS-120B-Groq",
+            "type": "Cloud (Groq LPU)",
+            "description": "Mô hình mã nguồn mở siêu lớn 120B trên chip LPU (OpenAI OSS / Groq)"
+        },
+        {
+            "id": "groq/openai/gpt-oss-20b",
+            "name": "GPT-OSS-20B-Groq",
+            "type": "Cloud (Groq LPU)",
+            "description": "Mô hình mã nguồn mở gọn nhẹ 20B trên chip LPU (OpenAI OSS / Groq)"
         }
     ]
 
@@ -434,7 +452,12 @@ class CrossModelEvaluator:
             if m["id"] == model_id:
                 return m
         # Fallback tự động
-        m_type = "Cloud (Google AI)" if "gemini" in model_id.lower() else "Local"
+        if "groq" in model_id.lower():
+            m_type = "Cloud (Groq LPU)"
+        elif "gemini" in model_id.lower():
+            m_type = "Cloud (Google AI)"
+        else:
+            m_type = "Local"
         return {"id": model_id, "name": model_id.split("/")[-1], "type": m_type}
 
     @staticmethod

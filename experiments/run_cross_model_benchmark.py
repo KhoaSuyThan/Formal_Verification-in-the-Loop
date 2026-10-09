@@ -31,7 +31,10 @@ MODEL_MAP = {
     "gemini-3.5": "gemini-3.5-flash",
     "gemini-2.5": "gemini-2.5-flash",
     "gemini-3.6": "gemini-3.6-flash",
-    "llama": "ollama/llama3.1:8b"
+    "llama": "ollama/llama3.1:8b",
+    "groq-qwen": "groq/qwen/qwen3.8-27b",
+    "groq-120b": "groq/openai/gpt-oss-120b",
+    "groq-20b": "groq/openai/gpt-oss-20b"
 }
 
 
