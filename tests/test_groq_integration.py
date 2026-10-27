@@ -89,11 +89,17 @@ class TestGroqIntegration(unittest.TestCase):
         self.assertEqual(mock_completion.call_count, 2)
         mock_sleep.assert_called_once()
 
-    def test_groq_api_key_loaded(self):
-        """Xác nhận biến môi trường GROQ_API_KEY đã được nạp từ .env."""
-        groq_key = os.getenv("GROQ_API_KEY")
-        self.assertIsNotNone(groq_key, "GROQ_API_KEY phải được nạp từ .env")
-        self.assertTrue(groq_key.startswith("gsk_"), "GROQ_API_KEY phải có tiền tố gsk_")
+    @patch("litellm.completion")
+    def test_groq_api_key_passed_to_provider(self, mock_completion):
+        """A configured key is forwarded without requiring a real secret in CI."""
+        response = MagicMock()
+        response.choices[0].message.content = "method Foo() {}"
+        response.choices[0].message.reasoning_content = None
+        response.usage = None
+        mock_completion.return_value = response
+        with patch.dict(os.environ, {"GROQ_API_KEY": "gsk_test_key"}):
+            LLMAgent(model_name="groq/qwen/qwen3.8-27b").generate_code("Foo")
+        self.assertEqual(mock_completion.call_args.kwargs["api_key"], "gsk_test_key")
 
 
 if __name__ == "__main__":

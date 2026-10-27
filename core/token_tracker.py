@@ -5,10 +5,27 @@ Lưu trữ kiên cố vào file JSON để đảm bảo số liệu không bị 
 
 import os
 import json
+import tempfile
+import threading
 from datetime import datetime
 from typing import Dict, Any
 
 TRACKER_FILE = os.path.join("artifacts", "results", "gemini_token_usage.json")
+_TRACKER_LOCK = threading.RLock()
+
+
+def _save_usage(path: str, data: Dict[str, Any]) -> None:
+    """Replace a complete JSON snapshot atomically for concurrent UI workers."""
+    parent = os.path.dirname(path)
+    os.makedirs(parent, exist_ok=True)
+    fd, temporary = tempfile.mkstemp(prefix=".token-", suffix=".json", dir=parent)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            json.dump(data, handle, indent=2, ensure_ascii=False)
+        os.replace(temporary, path)
+    finally:
+        if os.path.exists(temporary):
+            os.remove(temporary)
 
 
 def get_gemini_token_usage() -> Dict[str, Any]:
@@ -20,32 +37,30 @@ def get_gemini_token_usage() -> Dict[str, Any]:
         "total_requests": 0,
         "last_updated": datetime.now().isoformat()
     }
-    if not os.path.exists(TRACKER_FILE):
-        return default_data
-
-    try:
-        with open(TRACKER_FILE, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            return {**default_data, **data}
-    except Exception:
-        return default_data
+    with _TRACKER_LOCK:
+        if not os.path.exists(TRACKER_FILE):
+            return default_data
+        try:
+            with open(TRACKER_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                return {**default_data, **data}
+        except Exception:
+            return default_data
 
 
 def record_gemini_tokens(prompt_count: int, completion_count: int, total_count: int) -> Dict[str, Any]:
     """Ghi nhận và cộng dồn lượng token cho một yêu cầu Gemini vừa thực hiện."""
-    current = get_gemini_token_usage()
-    current["prompt_tokens"] += max(0, prompt_count)
-    current["completion_tokens"] += max(0, completion_count)
-    current["total_tokens"] += max(0, total_count if total_count > 0 else (prompt_count + completion_count))
-    current["total_requests"] += 1
-    current["last_updated"] = datetime.now().isoformat()
-
-    os.makedirs(os.path.dirname(TRACKER_FILE), exist_ok=True)
-    try:
-        with open(TRACKER_FILE, "w", encoding="utf-8") as f:
-            json.dump(current, f, indent=2, ensure_ascii=False)
-    except Exception as e:
-        print(f"[CẢNH BÁO TOKEN TRACKER]: Không thể lưu token: {e}")
+    with _TRACKER_LOCK:
+        current = get_gemini_token_usage()
+        current["prompt_tokens"] += max(0, prompt_count)
+        current["completion_tokens"] += max(0, completion_count)
+        current["total_tokens"] += max(0, total_count if total_count > 0 else (prompt_count + completion_count))
+        current["total_requests"] += 1
+        current["last_updated"] = datetime.now().isoformat()
+        try:
+            _save_usage(TRACKER_FILE, current)
+        except Exception as e:
+            print(f"[CẢNH BÁO TOKEN TRACKER]: Không thể lưu token: {e}")
 
     return current
 
@@ -59,12 +74,11 @@ def reset_gemini_tokens() -> Dict[str, Any]:
         "total_requests": 0,
         "last_updated": datetime.now().isoformat()
     }
-    os.makedirs(os.path.dirname(TRACKER_FILE), exist_ok=True)
-    try:
-        with open(TRACKER_FILE, "w", encoding="utf-8") as f:
-            json.dump(reset_data, f, indent=2, ensure_ascii=False)
-    except Exception as e:
-        print(f"[CẢNH BÁO TOKEN TRACKER]: Không thể reset token: {e}")
+    with _TRACKER_LOCK:
+        try:
+            _save_usage(TRACKER_FILE, reset_data)
+        except Exception as e:
+            print(f"[CẢNH BÁO TOKEN TRACKER]: Không thể reset token: {e}")
     return reset_data
 
 
@@ -83,32 +97,30 @@ def get_groq_token_usage() -> Dict[str, Any]:
         "total_requests": 0,
         "last_updated": datetime.now().isoformat()
     }
-    if not os.path.exists(GROQ_TRACKER_FILE):
-        return default_data
-
-    try:
-        with open(GROQ_TRACKER_FILE, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            return {**default_data, **data}
-    except Exception:
-        return default_data
+    with _TRACKER_LOCK:
+        if not os.path.exists(GROQ_TRACKER_FILE):
+            return default_data
+        try:
+            with open(GROQ_TRACKER_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                return {**default_data, **data}
+        except Exception:
+            return default_data
 
 
 def record_groq_tokens(prompt_count: int, completion_count: int, total_count: int) -> Dict[str, Any]:
     """Ghi nhận và cộng dồn lượng token cho một yêu cầu Groq vừa thực hiện."""
-    current = get_groq_token_usage()
-    current["prompt_tokens"] += max(0, prompt_count)
-    current["completion_tokens"] += max(0, completion_count)
-    current["total_tokens"] += max(0, total_count if total_count > 0 else (prompt_count + completion_count))
-    current["total_requests"] += 1
-    current["last_updated"] = datetime.now().isoformat()
-
-    os.makedirs(os.path.dirname(GROQ_TRACKER_FILE), exist_ok=True)
-    try:
-        with open(GROQ_TRACKER_FILE, "w", encoding="utf-8") as f:
-            json.dump(current, f, indent=2, ensure_ascii=False)
-    except Exception as e:
-        print(f"[CẢNH BÁO GROQ TOKEN TRACKER]: Không thể lưu token: {e}")
+    with _TRACKER_LOCK:
+        current = get_groq_token_usage()
+        current["prompt_tokens"] += max(0, prompt_count)
+        current["completion_tokens"] += max(0, completion_count)
+        current["total_tokens"] += max(0, total_count if total_count > 0 else (prompt_count + completion_count))
+        current["total_requests"] += 1
+        current["last_updated"] = datetime.now().isoformat()
+        try:
+            _save_usage(GROQ_TRACKER_FILE, current)
+        except Exception as e:
+            print(f"[CẢNH BÁO GROQ TOKEN TRACKER]: Không thể lưu token: {e}")
 
     return current
 
@@ -122,11 +134,10 @@ def reset_groq_tokens() -> Dict[str, Any]:
         "total_requests": 0,
         "last_updated": datetime.now().isoformat()
     }
-    os.makedirs(os.path.dirname(GROQ_TRACKER_FILE), exist_ok=True)
-    try:
-        with open(GROQ_TRACKER_FILE, "w", encoding="utf-8") as f:
-            json.dump(reset_data, f, indent=2, ensure_ascii=False)
-    except Exception as e:
-        print(f"[CẢNH BÁO GROQ TOKEN TRACKER]: Không thể reset token: {e}")
+    with _TRACKER_LOCK:
+        try:
+            _save_usage(GROQ_TRACKER_FILE, reset_data)
+        except Exception as e:
+            print(f"[CẢNH BÁO GROQ TOKEN TRACKER]: Không thể reset token: {e}")
     return reset_data
 

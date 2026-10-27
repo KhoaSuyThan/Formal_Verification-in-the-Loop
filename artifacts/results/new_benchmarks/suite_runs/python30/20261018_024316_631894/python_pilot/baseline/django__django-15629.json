@@ -1,0 +1,265 @@
+{
+  "schema_version": 1,
+  "task_id": "django__django-15629",
+  "category": "multi_module",
+  "backend": "swebench",
+  "repo_url": "https://github.com/django/django.git",
+  "base_commit": "694cf458f16b8d340a3195244196980b2dec34fd",
+  "source": {
+    "dataset": "princeton-nlp/SWE-bench_Verified",
+    "revision": "c104f840cc67f8b6eec6f759ebc8b2693d585d4a",
+    "split": "test",
+    "instance_id": "django__django-15629",
+    "difficulty": "1-4 hours"
+  },
+  "formal_review_status": "not_reviewed",
+  "model": "deepseek/deepseek-flash",
+  "max_attempts": 3,
+  "command_timeout_sec": 120,
+  "context_budget_chars": 24000,
+  "python_version": "3.14.8",
+  "setup": [],
+  "attempts": [
+    {
+      "number": 1,
+      "context": [
+        {
+          "path": "django/db/models/query.py",
+          "sha256": "d6d51f27c4624cea6c4a2980dfc90fbdc132eb0d0d5b3ea63476bf786b591c9e",
+          "chars": 3879,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/base.py",
+          "sha256": "8fabf9537c1ac5713eda119ef8869e22c08ec58b2f29bf1e0f44dbe1eb3913ac",
+          "chars": 4724,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/contrib/auth/migrations/0009_alter_user_last_name_max_length.py",
+          "sha256": "4f9fb2e115587b947d761acfd95bc5ae6aeeb8db3e509f1b1cbe391487d0b633",
+          "chars": 564,
+          "truncated": false,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/sql/query.py",
+          "sha256": "84442a09c24559e49cc46eb7350c7e1f596feeeaca4ce41b482bf56cd91eb6bf",
+          "chars": 4774,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/contrib/auth/migrations/0002_alter_permission_name_max_length.py",
+          "sha256": "39f8f71c6212ac5df9a6a983f9506bd6b95b2d3b33c5a78f597ad42d10dcd203",
+          "chars": 479,
+          "truncated": false,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/contrib/auth/migrations/0010_alter_group_name_max_length.py",
+          "sha256": "8fb6026e592e573e745f5a5974ccd159725277006b1c43add64c9501edc0b2a6",
+          "chars": 511,
+          "truncated": false,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/contrib/auth/migrations/0012_alter_user_first_name_max_length.py",
+          "sha256": "f40bc41bc6025c57b89a6fdb8f18e9ebee48bc87a8bba6ff40fecaaf91530fe5",
+          "chars": 560,
+          "truncated": false,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/deletion.py",
+          "sha256": "6a3d2100a20878c2eeb1a2c6f35b81bbaa729dc52a3ee2e60af6423304439979",
+          "chars": 4121,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/fields/related.py",
+          "sha256": "66d3bc952644fae8996d7beacbc01c3c633daab617a33ede807d885ee68c078f",
+          "chars": 3916,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        }
+      ],
+      "prompt_sha256": "2400753a1e2976ba3cb61d8ad97b1e28d043a77e4b2bd2f6dc6362a5ce51edb9",
+      "prompt_tokens": 6642,
+      "completion_tokens": 8192,
+      "cost_usd": 0.0059115,
+      "resolved_model": "deepseek-flash",
+      "patch_status": "failed",
+      "error": "Response does not contain a git diff"
+    },
+    {
+      "number": 2,
+      "context": [
+        {
+          "path": "django/db/models/query.py",
+          "sha256": "d6d51f27c4624cea6c4a2980dfc90fbdc132eb0d0d5b3ea63476bf786b591c9e",
+          "chars": 3879,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/base.py",
+          "sha256": "8fabf9537c1ac5713eda119ef8869e22c08ec58b2f29bf1e0f44dbe1eb3913ac",
+          "chars": 4726,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/contrib/auth/migrations/0009_alter_user_last_name_max_length.py",
+          "sha256": "4f9fb2e115587b947d761acfd95bc5ae6aeeb8db3e509f1b1cbe391487d0b633",
+          "chars": 564,
+          "truncated": false,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/sql/query.py",
+          "sha256": "84442a09c24559e49cc46eb7350c7e1f596feeeaca4ce41b482bf56cd91eb6bf",
+          "chars": 4752,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/contrib/auth/migrations/0002_alter_permission_name_max_length.py",
+          "sha256": "39f8f71c6212ac5df9a6a983f9506bd6b95b2d3b33c5a78f597ad42d10dcd203",
+          "chars": 479,
+          "truncated": false,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/contrib/auth/migrations/0010_alter_group_name_max_length.py",
+          "sha256": "8fb6026e592e573e745f5a5974ccd159725277006b1c43add64c9501edc0b2a6",
+          "chars": 511,
+          "truncated": false,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/contrib/auth/migrations/0012_alter_user_first_name_max_length.py",
+          "sha256": "f40bc41bc6025c57b89a6fdb8f18e9ebee48bc87a8bba6ff40fecaaf91530fe5",
+          "chars": 560,
+          "truncated": false,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/deletion.py",
+          "sha256": "6a3d2100a20878c2eeb1a2c6f35b81bbaa729dc52a3ee2e60af6423304439979",
+          "chars": 4121,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/fields/related.py",
+          "sha256": "66d3bc952644fae8996d7beacbc01c3c633daab617a33ede807d885ee68c078f",
+          "chars": 3893,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        }
+      ],
+      "prompt_sha256": "1d4599092a7a2847b937c08e392474a08c5f2c34aa9114a7223c4604476d5369",
+      "prompt_tokens": 6651,
+      "completion_tokens": 8192,
+      "cost_usd": 0.0056682419999999996,
+      "resolved_model": "deepseek-flash",
+      "patch_status": "failed",
+      "error": "Response does not contain a git diff"
+    },
+    {
+      "number": 3,
+      "context": [
+        {
+          "path": "django/db/models/query.py",
+          "sha256": "d6d51f27c4624cea6c4a2980dfc90fbdc132eb0d0d5b3ea63476bf786b591c9e",
+          "chars": 3879,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/base.py",
+          "sha256": "8fabf9537c1ac5713eda119ef8869e22c08ec58b2f29bf1e0f44dbe1eb3913ac",
+          "chars": 4726,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/contrib/auth/migrations/0009_alter_user_last_name_max_length.py",
+          "sha256": "4f9fb2e115587b947d761acfd95bc5ae6aeeb8db3e509f1b1cbe391487d0b633",
+          "chars": 564,
+          "truncated": false,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/sql/query.py",
+          "sha256": "84442a09c24559e49cc46eb7350c7e1f596feeeaca4ce41b482bf56cd91eb6bf",
+          "chars": 4752,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/contrib/auth/migrations/0002_alter_permission_name_max_length.py",
+          "sha256": "39f8f71c6212ac5df9a6a983f9506bd6b95b2d3b33c5a78f597ad42d10dcd203",
+          "chars": 479,
+          "truncated": false,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/contrib/auth/migrations/0010_alter_group_name_max_length.py",
+          "sha256": "8fb6026e592e573e745f5a5974ccd159725277006b1c43add64c9501edc0b2a6",
+          "chars": 511,
+          "truncated": false,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/contrib/auth/migrations/0012_alter_user_first_name_max_length.py",
+          "sha256": "f40bc41bc6025c57b89a6fdb8f18e9ebee48bc87a8bba6ff40fecaaf91530fe5",
+          "chars": 560,
+          "truncated": false,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/deletion.py",
+          "sha256": "6a3d2100a20878c2eeb1a2c6f35b81bbaa729dc52a3ee2e60af6423304439979",
+          "chars": 4121,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/fields/related.py",
+          "sha256": "66d3bc952644fae8996d7beacbc01c3c633daab617a33ede807d885ee68c078f",
+          "chars": 3893,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        }
+      ],
+      "prompt_sha256": "1d4599092a7a2847b937c08e392474a08c5f2c34aa9114a7223c4604476d5369",
+      "prompt_tokens": 6651,
+      "completion_tokens": 8192,
+      "cost_usd": 0.0049720499999999996,
+      "resolved_model": "deepseek-flash",
+      "patch_status": "failed",
+      "error": "Response does not contain a git diff"
+    }
+  ],
+  "python_tests": {
+    "status": "not_run"
+  },
+  "dafny_verification": {
+    "status": "not_applicable"
+  },
+  "spec_audit": {
+    "status": "not_applicable"
+  },
+  "final_patch": "",
+  "total_prompt_tokens": 19944,
+  "total_completion_tokens": 24576,
+  "total_cost_usd": 0.016551792,
+  "elapsed_seconds": 116.71832337499654,
+  "mode": "baseline",
+  "workers": 1
+}

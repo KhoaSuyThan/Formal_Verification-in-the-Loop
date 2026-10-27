@@ -6,10 +6,26 @@ Tất cả các thay đổi đáng chú ý của dự án sẽ được ghi nh�
 
 ---
 
+---
+
+## [1.7.0] - 2026-10-18: Thí điểm dự án Python và tăng tốc chạy benchmark
+
+Mốc phiên bản của tài liệu và mã nguồn hiện tại; kho chưa có Git tag phát hành.
+
+- Thêm 20 bài DafnyBench phục hồi gợi ý chứng minh, 30 issue SWE-bench Verified từ Django/Xarray/Sphinx, và 10 ca kiểm tra tính toàn vẹn/độ yếu của đặc tả; giữ 35 bài Dafny cũ để hồi quy.
+- Thêm runner bản vá nhiều tệp trên commit ghim, chọn context có giới hạn và lưu bằng chứng, CLI/API gọi mô hình qua LiteLLM, cùng xuất dataset chấm 30 bài ở revision cố định cho SWE-bench Docker.
+- Báo cáo tách kết quả kiểm thử Python, xác minh Dafny và audit; ba ca đặc tả yếu có phản ví dụ chạy được. Mười bản nháp đặc tả cho issue Python đang chờ người dùng rà soát, chưa được tính điểm hình thức.
+- Giao diện Streamlit có 5 tab, trong đó tab **Bộ thử nghiệm mới** cho chọn case, chạy từng bài và tải báo cáo JSON. Tab **So sánh mã** vẫn có mặt; khi có `GEMINI_API_KEY`, bộ chọn mô hình giao diện ưu tiên `gemini-2.5-flash`.
+- Bổ sung nút chạy cả tập theo nhóm đang chọn trong tab **Bộ thử nghiệm mới**: DafnyBench20 hiển thị nút 20 bài, Python pilot hiển thị nút 30 issue. Cả hai dùng danh sách chọn mô hình LiteLLM chung (có mục nhập tên khác), chạy bằng tiến trình nền và lưu tiến độ, nhật ký, báo cáo từng tập. Chấm Docker chỉ khả dụng khi đã cài SWE-bench và khởi động Docker.
+- Thêm chạy song song có giới hạn cho các case độc lập: giao diện hàng loạt 1–4 worker; `run_benchmark` và `run_dafnybench20` 1–8; `run_project_suite` 1–4. CLI mặc định 1 worker để giữ cách chạy cũ; kết quả xuất theo thứ tự case. Mỗi worker dùng agent/engine riêng; bộ đếm token Gemini/Groq dùng khóa và ghi JSON nguyên tử để tránh ghi đè khi chạy đồng thời. Suite Python chỉ tiếp tục từ báo cáo cũ khi task, mô hình, mode và số lượt sửa khớp.
+- Kiểm tra ngày 18/10/2026: `python -m pytest tests -q` đạt **125/125**; smoke test Streamlit có đủ 5 tab; một bài Clover `abs_val` với `gemini-2.5-flash`, K=1, worker=1 đạt Dafny verification trong 5,82 giây; ca bẫy `weak_gcd_nonzero` phát hiện phản ví dụ như mong đợi. Các kết quả này **không phải** số đo tăng tốc toàn bộ suite hoặc tỷ lệ đạt của 30 issue Python.
+- Xem [hướng dẫn thí điểm](docs/REAL_WORLD_BENCHMARKS.md) và [bảng rà soát đặc tả](docs/FORMAL_DRAFT_REVIEW.md). Chưa chạy chấm Docker hoặc mô hình trên toàn bộ 30 issue trong lần cập nhật này; 10 thuộc tính Python chưa được người dùng duyệt.
+
 ## [1.6.13-default-ui-zoom-80] - 2026-10-16: Thiết Lập Tỷ Lệ Thu Phóng Mặc Định 80% Toàn Giao Diện
 - **Khắc phục lỗi thanh cuộn & tối ưu trực quan ([app.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/app.py))**:
   + Thay thế thuộc tính `zoom: 0.8` thô bạo (vốn làm cụt chiều cao viewport của trình duyệt) bằng cơ chế chuẩn: hạ `font-size` gốc trên thẻ `html` xuống `13px` (~80% của 16px mặc định) và duy trì `.stApp { min-height: 100vh; }`.
   + Toàn bộ kích thước giao diện, khoảng cách và font chữ co gọn 80% thoáng đãng, thanh cuộn chạy trọn vẹn 100% màn hình không bị hở đáy hay đứt đoạn.
+
 
 ## [1.6.11-academic-integrity-dehype] - 2026-10-15: Chuẩn Hóa Liêm Chính Học Thuật & Loại Bỏ Overclaim
 - **Báo cáo đối chuẩn 30 bài ([KET_QUA_THUC_NGHIEM_DOI_CHUNG_30_BAI.md](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/KET_QUA_THUC_NGHIEM_DOI_CHUNG_30_BAI.md))**:

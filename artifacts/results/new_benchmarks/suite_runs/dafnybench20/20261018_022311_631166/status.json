@@ -1,0 +1,18 @@
+{
+  "state": "completed",
+  "suite": "dafnybench20",
+  "model": "deepseek/deepseek-flash",
+  "pid": 37054,
+  "grade": false,
+  "max_attempts": 3,
+  "workers": 2,
+  "started_at": "2026-10-17T19:23:11.715362+00:00",
+  "dafny_done": 20,
+  "baseline_done": 0,
+  "framework_done": 0,
+  "total_steps": 20,
+  "result_file": "/Users/ProM2/Documents/scientific research/Formal_Verification-in-the-Loop/artifacts/results/new_benchmarks/suite_runs/dafnybench20/20261018_022311_631166/dafnybench20.json",
+  "result_dir": null,
+  "verified_and_audited": 0,
+  "finished_at": "2026-10-17T19:42:01.420151+00:00"
+}

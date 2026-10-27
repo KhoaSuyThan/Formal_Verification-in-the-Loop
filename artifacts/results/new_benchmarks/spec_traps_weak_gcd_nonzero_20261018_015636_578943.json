@@ -1,0 +1,22 @@
+{
+  "suite": "spec_traps_v1",
+  "results": [
+    {
+      "id": "weak_gcd_nonzero",
+      "kind": "weak_spec",
+      "contract_gate": "passed",
+      "contract_issues": [],
+      "dafny_verification": "passed",
+      "dafny_output": "\nDafny program verifier finished with 1 verified, 0 errors\n",
+      "dafny_audit": "passed",
+      "audit_output": "Dafny auditor completed with 0 findings\n\nDafny program verifier did not attempt verification\n",
+      "semantic_review": "required",
+      "semantic_witness": "counterexample_observed",
+      "witness_output": "\nDafny program verifier finished with 2 verified, 0 errors\n[Program halted] /var/folders/vv/8snv5s3n5yz19yc_bh1f6vq40000gp/T/fvil-witness-i784tf11/witness.dfy(6,61): GCD(6, 9) must be 3\n",
+      "reason": "A nonzero constant satisfies the contract without computing a greatest common divisor."
+    }
+  ],
+  "tamper_or_bypass_rejected": 0,
+  "weak_specs_requiring_review": 1,
+  "weak_spec_counterexamples": 1
+}

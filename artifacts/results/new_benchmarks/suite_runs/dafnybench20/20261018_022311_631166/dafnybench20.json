@@ -1,0 +1,1345 @@
+{
+  "suite": "dafnybench20",
+  "model": "deepseek/deepseek-flash",
+  "workers": 2,
+  "results": [
+    {
+      "task_id": "CS494-final-project_tmp_tmp7nof55uq_bubblesort_no_hints",
+      "suite": "dafnybench20",
+      "model": "deepseek/deepseek-flash",
+      "status": "invalid_candidate",
+      "attempts": [
+        {
+          "number": 1,
+          "usage": {
+            "prompt_tokens": 669,
+            "completion_tokens": 8192,
+            "cost_usd": 0.00501555,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:sorted",
+            "contract_changed:pivot",
+            "contract_changed:BubbleSort",
+            "pure_definition_changed:sorted",
+            "pure_definition_changed:pivot"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 2,
+          "usage": {
+            "prompt_tokens": 682,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004942236,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:sorted",
+            "contract_changed:pivot",
+            "contract_changed:BubbleSort",
+            "pure_definition_changed:sorted",
+            "pure_definition_changed:pivot"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 3,
+          "usage": {
+            "prompt_tokens": 682,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004942236,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:sorted",
+            "contract_changed:pivot",
+            "contract_changed:BubbleSort",
+            "pure_definition_changed:sorted",
+            "pure_definition_changed:pivot"
+          ],
+          "status": "invalid_candidate"
+        }
+      ],
+      "elapsed_seconds": 112.61746691700682
+    },
+    {
+      "task_id": "Dafny-Exercises_tmp_tmpjm75muf__Session3Exercises_ExerciseMaximum_no_hints",
+      "suite": "dafnybench20",
+      "model": "deepseek/deepseek-flash",
+      "status": "invalid_candidate",
+      "attempts": [
+        {
+          "number": 1,
+          "usage": {
+            "prompt_tokens": 709,
+            "completion_tokens": 8192,
+            "cost_usd": 0.00502155,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:mmaximum1",
+            "contract_changed:mmaximum2",
+            "contract_changed:mfirstMaximum",
+            "contract_changed:mlastMaximum",
+            "contract_changed:mmaxvalue1",
+            "contract_changed:mmaxvalue2"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 2,
+          "usage": {
+            "prompt_tokens": 722,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004948236,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:mmaximum1",
+            "contract_changed:mmaximum2",
+            "contract_changed:mfirstMaximum",
+            "contract_changed:mlastMaximum",
+            "contract_changed:mmaxvalue1",
+            "contract_changed:mmaxvalue2"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 3,
+          "usage": {
+            "prompt_tokens": 722,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004948236,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:mmaximum1",
+            "contract_changed:mmaximum2",
+            "contract_changed:mfirstMaximum",
+            "contract_changed:mlastMaximum",
+            "contract_changed:mmaxvalue1",
+            "contract_changed:mmaxvalue2"
+          ],
+          "status": "invalid_candidate"
+        }
+      ],
+      "elapsed_seconds": 118.50624791700102
+    },
+    {
+      "task_id": "Dafny-Exercises_tmp_tmpjm75muf__Session9Exercises_ExerciseSeqMaxSum_no_hints",
+      "suite": "dafnybench20",
+      "model": "deepseek/deepseek-flash",
+      "status": "invalid_candidate",
+      "attempts": [
+        {
+          "number": 1,
+          "usage": {
+            "prompt_tokens": 634,
+            "completion_tokens": 8192,
+            "cost_usd": 0.0050103,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:Sum",
+            "contract_changed:SumMaxToRight",
+            "contract_changed:segMaxSum",
+            "contract_changed:Sum2",
+            "contract_changed:SumMaxToRight2",
+            "contract_changed:segSumaMaxima2",
+            "pure_definition_changed:Sum",
+            "pure_definition_changed:SumMaxToRight",
+            "pure_definition_changed:Sum2",
+            "pure_definition_changed:SumMaxToRight2"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 2,
+          "usage": {
+            "prompt_tokens": 647,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004936986,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:Sum",
+            "contract_changed:SumMaxToRight",
+            "contract_changed:segMaxSum",
+            "contract_changed:Sum2",
+            "contract_changed:SumMaxToRight2",
+            "contract_changed:segSumaMaxima2",
+            "pure_definition_changed:Sum",
+            "pure_definition_changed:SumMaxToRight",
+            "pure_definition_changed:Sum2",
+            "pure_definition_changed:SumMaxToRight2"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 3,
+          "usage": {
+            "prompt_tokens": 647,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004936986,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:Sum",
+            "contract_changed:SumMaxToRight",
+            "contract_changed:segMaxSum",
+            "contract_changed:Sum2",
+            "contract_changed:SumMaxToRight2",
+            "contract_changed:segSumaMaxima2",
+            "pure_definition_changed:Sum",
+            "pure_definition_changed:SumMaxToRight",
+            "pure_definition_changed:Sum2",
+            "pure_definition_changed:SumMaxToRight2"
+          ],
+          "status": "invalid_candidate"
+        }
+      ],
+      "elapsed_seconds": 110.80462279100902
+    },
+    {
+      "task_id": "DafnyProjects_tmp_tmp2acw_s4s_RawSort_no_hints",
+      "suite": "dafnybench20",
+      "model": "deepseek/deepseek-flash",
+      "status": "invalid_candidate",
+      "attempts": [
+        {
+          "number": 1,
+          "usage": {
+            "prompt_tokens": 812,
+            "completion_tokens": 8192,
+            "cost_usd": 0.005037,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:sorted",
+            "contract_changed:inversions",
+            "contract_changed:rawsort",
+            "contract_changed:mappingProp",
+            "contract_changed:testRawsort",
+            "pure_definition_changed:sorted",
+            "pure_definition_changed:inversions",
+            "pure_definition_changed:mappingProp"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 2,
+          "usage": {
+            "prompt_tokens": 825,
+            "completion_tokens": 8192,
+            "cost_usd": 0.00494487,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:sorted",
+            "contract_changed:inversions",
+            "contract_changed:rawsort",
+            "contract_changed:mappingProp",
+            "contract_changed:testRawsort",
+            "pure_definition_changed:sorted",
+            "pure_definition_changed:inversions",
+            "pure_definition_changed:mappingProp"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 3,
+          "usage": {
+            "prompt_tokens": 825,
+            "completion_tokens": 8192,
+            "cost_usd": 0.00494487,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:sorted",
+            "contract_changed:inversions",
+            "contract_changed:rawsort",
+            "contract_changed:mappingProp",
+            "contract_changed:testRawsort",
+            "pure_definition_changed:sorted",
+            "pure_definition_changed:inversions",
+            "pure_definition_changed:mappingProp"
+          ],
+          "status": "invalid_candidate"
+        }
+      ],
+      "elapsed_seconds": 117.1817250840104
+    },
+    {
+      "task_id": "DafnyProjects_tmp_tmp2acw_s4s_partitionOddEven_no_hints",
+      "suite": "dafnybench20",
+      "model": "deepseek/deepseek-flash",
+      "status": "invalid_candidate",
+      "attempts": [
+        {
+          "number": 1,
+          "usage": {
+            "prompt_tokens": 360,
+            "completion_tokens": 8192,
+            "cost_usd": 0.0049692,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:partitionOddEven",
+            "contract_changed:odd",
+            "contract_changed:even",
+            "contract_changed:testPartitionOddEven",
+            "pure_definition_changed:odd",
+            "pure_definition_changed:even"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 2,
+          "usage": {
+            "prompt_tokens": 373,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004952334,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:partitionOddEven",
+            "contract_changed:odd",
+            "contract_changed:even",
+            "contract_changed:testPartitionOddEven",
+            "pure_definition_changed:odd",
+            "pure_definition_changed:even"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 3,
+          "usage": {
+            "prompt_tokens": 373,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004952334,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:partitionOddEven",
+            "contract_changed:odd",
+            "contract_changed:even",
+            "contract_changed:testPartitionOddEven",
+            "pure_definition_changed:odd",
+            "pure_definition_changed:even"
+          ],
+          "status": "invalid_candidate"
+        }
+      ],
+      "elapsed_seconds": 117.6057987499953
+    },
+    {
+      "task_id": "Dafny_tmp_tmp0wu8wmfr_Heimaverkefni 2_BinarySearchDec_no_hints",
+      "suite": "dafnybench20",
+      "model": "deepseek/deepseek-flash",
+      "status": "invalid_candidate",
+      "attempts": [
+        {
+          "number": 1,
+          "usage": {
+            "prompt_tokens": 733,
+            "completion_tokens": 8192,
+            "cost_usd": 0.00502515,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:SearchRecursive",
+            "contract_changed:SearchLoop",
+            "contract_changed:Test"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 2,
+          "usage": {
+            "prompt_tokens": 746,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004951835999999999,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:SearchRecursive",
+            "contract_changed:SearchLoop",
+            "contract_changed:Test"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 3,
+          "usage": {
+            "prompt_tokens": 746,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004951835999999999,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:SearchRecursive",
+            "contract_changed:SearchLoop",
+            "contract_changed:Test"
+          ],
+          "status": "invalid_candidate"
+        }
+      ],
+      "elapsed_seconds": 111.21587499999441
+    },
+    {
+      "task_id": "Final-Project-Dafny_tmp_tmpmcywuqox_Attempts_Insertion_Sorted_Standard_no_hints",
+      "suite": "dafnybench20",
+      "model": "deepseek/deepseek-flash",
+      "status": "invalid_candidate",
+      "attempts": [
+        {
+          "number": 1,
+          "usage": {
+            "prompt_tokens": 290,
+            "completion_tokens": 8192,
+            "cost_usd": 0.0049587,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:InsertionSorted",
+            "contract_changed:sorting",
+            "pure_definition_changed:InsertionSorted"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 2,
+          "usage": {
+            "prompt_tokens": 303,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004941834,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:InsertionSorted",
+            "contract_changed:sorting",
+            "pure_definition_changed:InsertionSorted"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 3,
+          "usage": {
+            "prompt_tokens": 303,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004941834,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:InsertionSorted",
+            "contract_changed:sorting",
+            "pure_definition_changed:InsertionSorted"
+          ],
+          "status": "invalid_candidate"
+        }
+      ],
+      "elapsed_seconds": 113.93698399999994
+    },
+    {
+      "task_id": "HATRA-2022-Paper_tmp_tmp5texxy8l_copilot_verification_Sort Array_sort_array_no_hints",
+      "suite": "dafnybench20",
+      "model": "deepseek/deepseek-flash",
+      "status": "invalid_candidate",
+      "attempts": [
+        {
+          "number": 1,
+          "usage": {
+            "prompt_tokens": 462,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004984499999999999,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:sortArray",
+            "contract_changed:sorted",
+            "contract_changed:pivot",
+            "pure_definition_changed:sorted",
+            "pure_definition_changed:pivot"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 2,
+          "usage": {
+            "prompt_tokens": 475,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004948818,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:sortArray",
+            "contract_changed:sorted",
+            "contract_changed:pivot",
+            "pure_definition_changed:sorted",
+            "pure_definition_changed:pivot"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 3,
+          "usage": {
+            "prompt_tokens": 475,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004948818,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:sortArray",
+            "contract_changed:sorted",
+            "contract_changed:pivot",
+            "pure_definition_changed:sorted",
+            "pure_definition_changed:pivot"
+          ],
+          "status": "invalid_candidate"
+        }
+      ],
+      "elapsed_seconds": 112.83268120800494
+    },
+    {
+      "task_id": "Program-Verification-Dataset_tmp_tmpgbdrlnu__Dafny_advanced examples_MatrixMultiplication_no_hints",
+      "suite": "dafnybench20",
+      "model": "deepseek/deepseek-flash",
+      "status": "invalid_candidate",
+      "attempts": [
+        {
+          "number": 1,
+          "usage": {
+            "prompt_tokens": 711,
+            "completion_tokens": 8192,
+            "cost_usd": 0.00502185,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:RowColumnProduct",
+            "contract_changed:RowColumnProductFrom",
+            "contract_changed:multiply",
+            "pure_definition_changed:RowColumnProduct",
+            "pure_definition_changed:RowColumnProductFrom"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 2,
+          "usage": {
+            "prompt_tokens": 724,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004948536,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:RowColumnProduct",
+            "contract_changed:RowColumnProductFrom",
+            "contract_changed:multiply",
+            "pure_definition_changed:RowColumnProduct",
+            "pure_definition_changed:RowColumnProductFrom"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 3,
+          "usage": {
+            "prompt_tokens": 724,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004948536,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:RowColumnProduct",
+            "contract_changed:RowColumnProductFrom",
+            "contract_changed:multiply",
+            "pure_definition_changed:RowColumnProduct",
+            "pure_definition_changed:RowColumnProductFrom"
+          ],
+          "status": "invalid_candidate"
+        }
+      ],
+      "elapsed_seconds": 103.27895483399334
+    },
+    {
+      "task_id": "Program-Verification-Dataset_tmp_tmpgbdrlnu__Dafny_verified algorithms_lol_sort_no_hints",
+      "suite": "dafnybench20",
+      "model": "deepseek/deepseek-flash",
+      "status": "invalid_candidate",
+      "attempts": [
+        {
+          "number": 1,
+          "usage": {
+            "prompt_tokens": 696,
+            "completion_tokens": 8192,
+            "cost_usd": 0.0050196,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:valid_permut",
+            "contract_changed:swap",
+            "contract_changed:sorted",
+            "contract_changed:lol_sort",
+            "contract_changed:Main",
+            "pure_definition_changed:valid_permut",
+            "pure_definition_changed:sorted"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 2,
+          "usage": {
+            "prompt_tokens": 709,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004946285999999999,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:valid_permut",
+            "contract_changed:swap",
+            "contract_changed:sorted",
+            "contract_changed:lol_sort",
+            "contract_changed:Main",
+            "pure_definition_changed:valid_permut",
+            "pure_definition_changed:sorted"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 3,
+          "usage": {
+            "prompt_tokens": 709,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004946285999999999,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:valid_permut",
+            "contract_changed:swap",
+            "contract_changed:sorted",
+            "contract_changed:lol_sort",
+            "contract_changed:Main",
+            "pure_definition_changed:valid_permut",
+            "pure_definition_changed:sorted"
+          ],
+          "status": "invalid_candidate"
+        }
+      ],
+      "elapsed_seconds": 102.80699179100338
+    },
+    {
+      "task_id": "Software-Verification_tmp_tmpv4ueky2d_Non-overlapping Intervals_non_overlapping_intervals_no_hints",
+      "suite": "dafnybench20",
+      "model": "deepseek/deepseek-flash",
+      "status": "invalid_candidate",
+      "attempts": [
+        {
+          "number": 1,
+          "usage": {
+            "prompt_tokens": 654,
+            "completion_tokens": 8192,
+            "cost_usd": 0.0050133,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:non_overlapping_intervals",
+            "contract_changed:bubble_sort",
+            "contract_changed:sorted",
+            "contract_changed:partitioned",
+            "pure_definition_changed:sorted",
+            "pure_definition_changed:partitioned"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 2,
+          "usage": {
+            "prompt_tokens": 667,
+            "completion_tokens": 8192,
+            "cost_usd": 0.0049399859999999995,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:non_overlapping_intervals",
+            "contract_changed:bubble_sort",
+            "contract_changed:sorted",
+            "contract_changed:partitioned",
+            "pure_definition_changed:sorted",
+            "pure_definition_changed:partitioned"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 3,
+          "usage": {
+            "prompt_tokens": 667,
+            "completion_tokens": 8192,
+            "cost_usd": 0.0049399859999999995,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:non_overlapping_intervals",
+            "contract_changed:bubble_sort",
+            "contract_changed:sorted",
+            "contract_changed:partitioned",
+            "pure_definition_changed:sorted",
+            "pure_definition_changed:partitioned"
+          ],
+          "status": "invalid_candidate"
+        }
+      ],
+      "elapsed_seconds": 115.05465899998671
+    },
+    {
+      "task_id": "dafl_tmp_tmp_r3_8w3y_dafny_examples_uiowa_binary-search_no_hints",
+      "suite": "dafnybench20",
+      "model": "deepseek/deepseek-flash",
+      "status": "invalid_candidate",
+      "attempts": [
+        {
+          "number": 1,
+          "usage": {
+            "prompt_tokens": 558,
+            "completion_tokens": 8192,
+            "cost_usd": 0.0049989,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:isSorted",
+            "contract_changed:binSearch",
+            "pure_definition_changed:isSorted"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 2,
+          "usage": {
+            "prompt_tokens": 571,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004944402,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:isSorted",
+            "contract_changed:binSearch",
+            "pure_definition_changed:isSorted"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 3,
+          "usage": {
+            "prompt_tokens": 571,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004944402,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:isSorted",
+            "contract_changed:binSearch",
+            "pure_definition_changed:isSorted"
+          ],
+          "status": "invalid_candidate"
+        }
+      ],
+      "elapsed_seconds": 114.92518900000141
+    },
+    {
+      "task_id": "Dafny_Verify_tmp_tmphq7j0row_dataset_detailed_examples_SelectionSort_no_hints",
+      "suite": "dafnybench20",
+      "model": "deepseek/deepseek-flash",
+      "status": "invalid_candidate",
+      "attempts": [
+        {
+          "number": 1,
+          "usage": {
+            "prompt_tokens": 482,
+            "completion_tokens": 8192,
+            "cost_usd": 0.0049875,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:SelectionSort"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 2,
+          "usage": {
+            "prompt_tokens": 495,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004951818,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:SelectionSort"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 3,
+          "usage": {
+            "prompt_tokens": 495,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004951818,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:SelectionSort"
+          ],
+          "status": "invalid_candidate"
+        }
+      ],
+      "elapsed_seconds": 114.71380633399531
+    },
+    {
+      "task_id": "formal_verication_dafny_tmp_tmpwgl2qz28_Challenges_ex1_no_hints",
+      "suite": "dafnybench20",
+      "model": "deepseek/deepseek-flash",
+      "status": "invalid_candidate",
+      "attempts": [
+        {
+          "number": 1,
+          "usage": {
+            "prompt_tokens": 607,
+            "completion_tokens": 8192,
+            "cost_usd": 0.005006249999999999,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:PalVerify",
+            "contract_changed:TEST"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 2,
+          "usage": {
+            "prompt_tokens": 620,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004951751999999999,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:PalVerify",
+            "contract_changed:TEST"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 3,
+          "usage": {
+            "prompt_tokens": 620,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004951751999999999,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:PalVerify",
+            "contract_changed:TEST"
+          ],
+          "status": "invalid_candidate"
+        }
+      ],
+      "elapsed_seconds": 118.24003366599209
+    },
+    {
+      "task_id": "Dafny-Exercises_tmp_tmpjm75muf__Session2Exercises_ExerciseFibonacci_no_hints",
+      "suite": "dafnybench20",
+      "model": "deepseek/deepseek-flash",
+      "status": "invalid_candidate",
+      "attempts": [
+        {
+          "number": 1,
+          "usage": {
+            "prompt_tokens": 394,
+            "completion_tokens": 8192,
+            "cost_usd": 0.0049743,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:fib",
+            "contract_changed:fibonacci1",
+            "contract_changed:fibonacci2",
+            "contract_changed:fibonacci3",
+            "pure_definition_changed:fib"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 2,
+          "usage": {
+            "prompt_tokens": 407,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004938618,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:fib",
+            "contract_changed:fibonacci1",
+            "contract_changed:fibonacci2",
+            "contract_changed:fibonacci3",
+            "pure_definition_changed:fib"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 3,
+          "usage": {
+            "prompt_tokens": 407,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004938618,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:fib",
+            "contract_changed:fibonacci1",
+            "contract_changed:fibonacci2",
+            "contract_changed:fibonacci3",
+            "pure_definition_changed:fib"
+          ],
+          "status": "invalid_candidate"
+        }
+      ],
+      "elapsed_seconds": 106.69559737500094
+    },
+    {
+      "task_id": "dafl_tmp_tmp_r3_8w3y_dafny_examples_uiowa_modifying-arrays_no_hints",
+      "suite": "dafnybench20",
+      "model": "deepseek/deepseek-flash",
+      "status": "invalid_candidate",
+      "attempts": [
+        {
+          "number": 1,
+          "usage": {
+            "prompt_tokens": 845,
+            "completion_tokens": 8192,
+            "cost_usd": 0.00504195,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:SetEndPoints",
+            "contract_changed:Aliases",
+            "contract_changed:NewArray",
+            "contract_changed:Caller",
+            "contract_changed:InitArray",
+            "contract_changed:UpdateElements",
+            "contract_changed:IncrementArray",
+            "contract_changed:CopyArray"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 2,
+          "usage": {
+            "prompt_tokens": 858,
+            "completion_tokens": 8192,
+            "cost_usd": 0.00494982,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:SetEndPoints",
+            "contract_changed:Aliases",
+            "contract_changed:NewArray",
+            "contract_changed:Caller",
+            "contract_changed:InitArray",
+            "contract_changed:UpdateElements",
+            "contract_changed:IncrementArray",
+            "contract_changed:CopyArray"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 3,
+          "usage": {
+            "prompt_tokens": 858,
+            "completion_tokens": 8192,
+            "cost_usd": 0.00494982,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:SetEndPoints",
+            "contract_changed:Aliases",
+            "contract_changed:NewArray",
+            "contract_changed:Caller",
+            "contract_changed:InitArray",
+            "contract_changed:UpdateElements",
+            "contract_changed:IncrementArray",
+            "contract_changed:CopyArray"
+          ],
+          "status": "invalid_candidate"
+        }
+      ],
+      "elapsed_seconds": 107.86525237499154
+    },
+    {
+      "task_id": "dafny-language-server_tmp_tmpkir0kenl_Test_dafny2_SegmentSum_no_hints",
+      "suite": "dafnybench20",
+      "model": "deepseek/deepseek-flash",
+      "status": "invalid_candidate",
+      "attempts": [
+        {
+          "number": 1,
+          "usage": {
+            "prompt_tokens": 384,
+            "completion_tokens": 8192,
+            "cost_usd": 0.0049727999999999994,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:Sum",
+            "contract_changed:MaxSegSum",
+            "pure_definition_changed:Sum"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 2,
+          "usage": {
+            "prompt_tokens": 397,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004937118,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:Sum",
+            "contract_changed:MaxSegSum",
+            "pure_definition_changed:Sum"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 3,
+          "usage": {
+            "prompt_tokens": 397,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004937118,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:Sum",
+            "contract_changed:MaxSegSum",
+            "pure_definition_changed:Sum"
+          ],
+          "status": "invalid_candidate"
+        }
+      ],
+      "elapsed_seconds": 117.53389850001258
+    },
+    {
+      "task_id": "AssertivePrograming_tmp_tmpwf43uz0e_MergeSort_no_hints",
+      "suite": "dafnybench20",
+      "model": "deepseek/deepseek-flash",
+      "status": "invalid_candidate",
+      "attempts": [
+        {
+          "number": 1,
+          "usage": {
+            "prompt_tokens": 2066,
+            "completion_tokens": 8192,
+            "cost_usd": 0.0052251,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:Sorted",
+            "contract_changed:MergeSort",
+            "contract_changed:Inv",
+            "contract_changed:Merge",
+            "contract_changed:InvSorted",
+            "contract_changed:InvSubSet",
+            "contract_changed:LemmaMultysetsEquals",
+            "contract_changed:lemmaInvSubsetTakeValueFromC",
+            "contract_changed:Main",
+            "pure_definition_changed:Sorted",
+            "pure_definition_changed:Inv",
+            "pure_definition_changed:InvSorted",
+            "pure_definition_changed:InvSubSet",
+            "pure_definition_changed:LemmaMultysetsEquals",
+            "pure_definition_changed:lemmaInvSubsetTakeValueFromC"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 2,
+          "usage": {
+            "prompt_tokens": 2079,
+            "completion_tokens": 8192,
+            "cost_usd": 0.00494481,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:Sorted",
+            "contract_changed:MergeSort",
+            "contract_changed:Inv",
+            "contract_changed:Merge",
+            "contract_changed:InvSorted",
+            "contract_changed:InvSubSet",
+            "contract_changed:LemmaMultysetsEquals",
+            "contract_changed:lemmaInvSubsetTakeValueFromC",
+            "contract_changed:Main",
+            "pure_definition_changed:Sorted",
+            "pure_definition_changed:Inv",
+            "pure_definition_changed:InvSorted",
+            "pure_definition_changed:InvSubSet",
+            "pure_definition_changed:LemmaMultysetsEquals",
+            "pure_definition_changed:lemmaInvSubsetTakeValueFromC"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 3,
+          "usage": {
+            "prompt_tokens": 2079,
+            "completion_tokens": 8192,
+            "cost_usd": 0.00494481,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:Sorted",
+            "contract_changed:MergeSort",
+            "contract_changed:Inv",
+            "contract_changed:Merge",
+            "contract_changed:InvSorted",
+            "contract_changed:InvSubSet",
+            "contract_changed:LemmaMultysetsEquals",
+            "contract_changed:lemmaInvSubsetTakeValueFromC",
+            "contract_changed:Main",
+            "pure_definition_changed:Sorted",
+            "pure_definition_changed:Inv",
+            "pure_definition_changed:InvSorted",
+            "pure_definition_changed:InvSubSet",
+            "pure_definition_changed:LemmaMultysetsEquals",
+            "pure_definition_changed:lemmaInvSubsetTakeValueFromC"
+          ],
+          "status": "invalid_candidate"
+        }
+      ],
+      "elapsed_seconds": 114.28455916600069
+    },
+    {
+      "task_id": "Program-Verification-Dataset_tmp_tmpgbdrlnu__Dafny_algorithms and leetcode_leetcode_validAnagram_no_hints",
+      "suite": "dafnybench20",
+      "model": "deepseek/deepseek-flash",
+      "status": "invalid_candidate",
+      "attempts": [
+        {
+          "number": 1,
+          "usage": {
+            "prompt_tokens": 629,
+            "completion_tokens": 8192,
+            "cost_usd": 0.00500955,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:toMultiset",
+            "contract_changed:msetEqual",
+            "contract_changed:isAnagram"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 2,
+          "usage": {
+            "prompt_tokens": 642,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004955052,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:toMultiset",
+            "contract_changed:msetEqual",
+            "contract_changed:isAnagram"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 3,
+          "usage": {
+            "prompt_tokens": 642,
+            "completion_tokens": 8192,
+            "cost_usd": 0.004936823999999999,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:toMultiset",
+            "contract_changed:msetEqual",
+            "contract_changed:isAnagram"
+          ],
+          "status": "invalid_candidate"
+        }
+      ],
+      "elapsed_seconds": 108.99237112498668
+    },
+    {
+      "task_id": "cs245-verification_tmp_tmp0h_nxhqp_power_no_hints",
+      "suite": "dafnybench20",
+      "model": "deepseek/deepseek-flash",
+      "status": "invalid_candidate",
+      "attempts": [
+        {
+          "number": 1,
+          "usage": {
+            "prompt_tokens": 802,
+            "completion_tokens": 8192,
+            "cost_usd": 0.0050355,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:power",
+            "contract_changed:compute_power"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 2,
+          "usage": {
+            "prompt_tokens": 815,
+            "completion_tokens": 8192,
+            "cost_usd": 0.00494337,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:power",
+            "contract_changed:compute_power"
+          ],
+          "status": "invalid_candidate"
+        },
+        {
+          "number": 3,
+          "usage": {
+            "prompt_tokens": 815,
+            "completion_tokens": 8192,
+            "cost_usd": 0.00494337,
+            "resolved_model": "deepseek-flash"
+          },
+          "hint_integrity_valid": false,
+          "original_code_preserved": false,
+          "strict_contract_issues": [
+            "contract_changed:power",
+            "contract_changed:compute_power"
+          ],
+          "status": "invalid_candidate"
+        }
+      ],
+      "elapsed_seconds": 111.03792179100856
+    }
+  ]
+}

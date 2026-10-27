@@ -1,0 +1,167 @@
+{
+  "source": "https://github.com/sun-wendy/DafnyBench",
+  "commit": "0cd28feed9cd0179b07fdb9d002f8c39063658e4",
+  "task_type": "restore_proof_hints",
+  "tasks": [
+    {
+      "id": "CS494-final-project_tmp_tmp7nof55uq_bubblesort_no_hints",
+      "file": "CS494-final-project_tmp_tmp7nof55uq_bubblesort_no_hints.dfy",
+      "hint_sha256": "08660ad7495b5c2a29210938f20e833eb5083a5d4a66f1afae27489992d3ff61",
+      "gold_sha256": "81e7aa19a8d9595b06701b9e33f49fade717e1e242225b26b5eafcf34ac81699",
+      "upstream_hint_path": "DafnyBench/dataset/hints_removed/CS494-final-project_tmp_tmp7nof55uq_bubblesort_no_hints.dfy",
+      "upstream_gold_path": "DafnyBench/dataset/ground_truth/CS494-final-project_tmp_tmp7nof55uq_bubblesort.dfy"
+    },
+    {
+      "id": "Dafny-Exercises_tmp_tmpjm75muf__Session3Exercises_ExerciseMaximum_no_hints",
+      "file": "Dafny-Exercises_tmp_tmpjm75muf__Session3Exercises_ExerciseMaximum_no_hints.dfy",
+      "hint_sha256": "c525bd8e116d52d0952f6bcbb99954f2c03a398fdf1c0ed4703e65f48acb8285",
+      "gold_sha256": "9338f441a6157da91ef04bb40d0a3f2a7eca2dbe3be11a28377b8b3ddd6b7714",
+      "upstream_hint_path": "DafnyBench/dataset/hints_removed/Dafny-Exercises_tmp_tmpjm75muf__Session3Exercises_ExerciseMaximum_no_hints.dfy",
+      "upstream_gold_path": "DafnyBench/dataset/ground_truth/Dafny-Exercises_tmp_tmpjm75muf__Session3Exercises_ExerciseMaximum.dfy"
+    },
+    {
+      "id": "Dafny-Exercises_tmp_tmpjm75muf__Session9Exercises_ExerciseSeqMaxSum_no_hints",
+      "file": "Dafny-Exercises_tmp_tmpjm75muf__Session9Exercises_ExerciseSeqMaxSum_no_hints.dfy",
+      "hint_sha256": "8784a41def46b197713c7098bec9cd959098ae7cb39bcac4a82c86da8cac0073",
+      "gold_sha256": "d00d318284b122cdf3b5b2873423611adf9b967c68c59079ef09165295ced06e",
+      "upstream_hint_path": "DafnyBench/dataset/hints_removed/Dafny-Exercises_tmp_tmpjm75muf__Session9Exercises_ExerciseSeqMaxSum_no_hints.dfy",
+      "upstream_gold_path": "DafnyBench/dataset/ground_truth/Dafny-Exercises_tmp_tmpjm75muf__Session9Exercises_ExerciseSeqMaxSum.dfy"
+    },
+    {
+      "id": "DafnyProjects_tmp_tmp2acw_s4s_RawSort_no_hints",
+      "file": "DafnyProjects_tmp_tmp2acw_s4s_RawSort_no_hints.dfy",
+      "hint_sha256": "40c0c910d0ec54fe4d7537f22c756b6b2f3b9713c912109265fbebb2fc13a87c",
+      "gold_sha256": "f34099abcb93d42101cdca7f7235dbdc8db6317124ea6284d93ef0ece0d6db09",
+      "upstream_hint_path": "DafnyBench/dataset/hints_removed/DafnyProjects_tmp_tmp2acw_s4s_RawSort_no_hints.dfy",
+      "upstream_gold_path": "DafnyBench/dataset/ground_truth/DafnyProjects_tmp_tmp2acw_s4s_RawSort.dfy"
+    },
+    {
+      "id": "DafnyProjects_tmp_tmp2acw_s4s_partitionOddEven_no_hints",
+      "file": "DafnyProjects_tmp_tmp2acw_s4s_partitionOddEven_no_hints.dfy",
+      "hint_sha256": "96cc53579b3b59ec316975af1f218ae798f6e68a7401c87f67af6b28d585f913",
+      "gold_sha256": "c3852c2320265554c25fe6f04bfa7fbeee4840820259152f8f3b1b9c0a387217",
+      "upstream_hint_path": "DafnyBench/dataset/hints_removed/DafnyProjects_tmp_tmp2acw_s4s_partitionOddEven_no_hints.dfy",
+      "upstream_gold_path": "DafnyBench/dataset/ground_truth/DafnyProjects_tmp_tmp2acw_s4s_partitionOddEven.dfy"
+    },
+    {
+      "id": "Dafny_tmp_tmp0wu8wmfr_Heimaverkefni 2_BinarySearchDec_no_hints",
+      "file": "Dafny_tmp_tmp0wu8wmfr_Heimaverkefni 2_BinarySearchDec_no_hints.dfy",
+      "hint_sha256": "27bc417bdc1f9d67647628088bc72761405bf565e5bc60ad3318345e07ca79e1",
+      "gold_sha256": "a0cbd47e0913975c9d3fe74bde969c97636ca9a2f23320a3633934865d3a42a3",
+      "upstream_hint_path": "DafnyBench/dataset/hints_removed/Dafny_tmp_tmp0wu8wmfr_Heimaverkefni 2_BinarySearchDec_no_hints.dfy",
+      "upstream_gold_path": "DafnyBench/dataset/ground_truth/Dafny_tmp_tmp0wu8wmfr_Heimaverkefni 2_BinarySearchDec.dfy"
+    },
+    {
+      "id": "Final-Project-Dafny_tmp_tmpmcywuqox_Attempts_Insertion_Sorted_Standard_no_hints",
+      "file": "Final-Project-Dafny_tmp_tmpmcywuqox_Attempts_Insertion_Sorted_Standard_no_hints.dfy",
+      "hint_sha256": "9616e8c52b6c5fc5e6a4357a98f1a61b1fa1c06a338db00fe069672c5155de48",
+      "gold_sha256": "87602b9ff291a0d823e009b1590e9531b7ad482e2d798c8e2bcb1c8b9f1d18f9",
+      "upstream_hint_path": "DafnyBench/dataset/hints_removed/Final-Project-Dafny_tmp_tmpmcywuqox_Attempts_Insertion_Sorted_Standard_no_hints.dfy",
+      "upstream_gold_path": "DafnyBench/dataset/ground_truth/Final-Project-Dafny_tmp_tmpmcywuqox_Attempts_Insertion_Sorted_Standard.dfy"
+    },
+    {
+      "id": "HATRA-2022-Paper_tmp_tmp5texxy8l_copilot_verification_Sort Array_sort_array_no_hints",
+      "file": "HATRA-2022-Paper_tmp_tmp5texxy8l_copilot_verification_Sort Array_sort_array_no_hints.dfy",
+      "hint_sha256": "e51e7ec87ba2eb3313f5f19d06bfcb5f627e5bd94630102ff8ed1b13b54f13fd",
+      "gold_sha256": "2d928b4fa77ef7604ee542aff54766e0b3b120bc98a45f350871798233b90a27",
+      "upstream_hint_path": "DafnyBench/dataset/hints_removed/HATRA-2022-Paper_tmp_tmp5texxy8l_copilot_verification_Sort Array_sort_array_no_hints.dfy",
+      "upstream_gold_path": "DafnyBench/dataset/ground_truth/HATRA-2022-Paper_tmp_tmp5texxy8l_copilot_verification_Sort Array_sort_array.dfy"
+    },
+    {
+      "id": "Program-Verification-Dataset_tmp_tmpgbdrlnu__Dafny_advanced examples_MatrixMultiplication_no_hints",
+      "file": "Program-Verification-Dataset_tmp_tmpgbdrlnu__Dafny_advanced examples_MatrixMultiplication_no_hints.dfy",
+      "hint_sha256": "f79bf1b021179d80cebfded565be64c77493e0d48686af00e127d51d42fc4020",
+      "gold_sha256": "7a4740f98b8fc1af4e92a11c4291c6529df72ecdc03e2c28a6579760fd6b1c16",
+      "upstream_hint_path": "DafnyBench/dataset/hints_removed/Program-Verification-Dataset_tmp_tmpgbdrlnu__Dafny_advanced examples_MatrixMultiplication_no_hints.dfy",
+      "upstream_gold_path": "DafnyBench/dataset/ground_truth/Program-Verification-Dataset_tmp_tmpgbdrlnu__Dafny_advanced examples_MatrixMultiplication.dfy"
+    },
+    {
+      "id": "Program-Verification-Dataset_tmp_tmpgbdrlnu__Dafny_verified algorithms_lol_sort_no_hints",
+      "file": "Program-Verification-Dataset_tmp_tmpgbdrlnu__Dafny_verified algorithms_lol_sort_no_hints.dfy",
+      "hint_sha256": "17faa498703427b8bd4d881c07ff0956a39f97fdc9fb0dfb0f060257f74032a7",
+      "gold_sha256": "5458a46b8e7d7a13c91e43f709afcae67495e44d078247f72ca72a19bcfaefa3",
+      "upstream_hint_path": "DafnyBench/dataset/hints_removed/Program-Verification-Dataset_tmp_tmpgbdrlnu__Dafny_verified algorithms_lol_sort_no_hints.dfy",
+      "upstream_gold_path": "DafnyBench/dataset/ground_truth/Program-Verification-Dataset_tmp_tmpgbdrlnu__Dafny_verified algorithms_lol_sort.dfy"
+    },
+    {
+      "id": "Software-Verification_tmp_tmpv4ueky2d_Non-overlapping Intervals_non_overlapping_intervals_no_hints",
+      "file": "Software-Verification_tmp_tmpv4ueky2d_Non-overlapping Intervals_non_overlapping_intervals_no_hints.dfy",
+      "hint_sha256": "d0285c782bafd1985b123c7e81a953d0a5081f467cac74144f963790e92e50b2",
+      "gold_sha256": "32fe9f9cbb95e7c812a745f531334d9b9770c5afb752d45f9c21d2a21e34643d",
+      "upstream_hint_path": "DafnyBench/dataset/hints_removed/Software-Verification_tmp_tmpv4ueky2d_Non-overlapping Intervals_non_overlapping_intervals_no_hints.dfy",
+      "upstream_gold_path": "DafnyBench/dataset/ground_truth/Software-Verification_tmp_tmpv4ueky2d_Non-overlapping Intervals_non_overlapping_intervals.dfy"
+    },
+    {
+      "id": "dafl_tmp_tmp_r3_8w3y_dafny_examples_uiowa_binary-search_no_hints",
+      "file": "dafl_tmp_tmp_r3_8w3y_dafny_examples_uiowa_binary-search_no_hints.dfy",
+      "hint_sha256": "17c7d6a4034865a4e9f00d4ce1730071aaba4a841f93ba3d268048a7fd027ff4",
+      "gold_sha256": "e5bf35e2605485d8c31cf973375f1b51c16924c5c052c6c7f4a1c8f0c77e6fce",
+      "upstream_hint_path": "DafnyBench/dataset/hints_removed/dafl_tmp_tmp_r3_8w3y_dafny_examples_uiowa_binary-search_no_hints.dfy",
+      "upstream_gold_path": "DafnyBench/dataset/ground_truth/dafl_tmp_tmp_r3_8w3y_dafny_examples_uiowa_binary-search.dfy"
+    },
+    {
+      "id": "Dafny_Verify_tmp_tmphq7j0row_dataset_detailed_examples_SelectionSort_no_hints",
+      "file": "Dafny_Verify_tmp_tmphq7j0row_dataset_detailed_examples_SelectionSort_no_hints.dfy",
+      "hint_sha256": "da349ed201f58a5ca6f999a44e7453d0feb145240a59d687da02985c1186b483",
+      "gold_sha256": "ee531c617f8ebea5809b087a843214196844eb8bee455f048f336fab40cc8c31",
+      "upstream_hint_path": "DafnyBench/dataset/hints_removed/Dafny_Verify_tmp_tmphq7j0row_dataset_detailed_examples_SelectionSort_no_hints.dfy",
+      "upstream_gold_path": "DafnyBench/dataset/ground_truth/Dafny_Verify_tmp_tmphq7j0row_dataset_detailed_examples_SelectionSort.dfy"
+    },
+    {
+      "id": "formal_verication_dafny_tmp_tmpwgl2qz28_Challenges_ex1_no_hints",
+      "file": "formal_verication_dafny_tmp_tmpwgl2qz28_Challenges_ex1_no_hints.dfy",
+      "hint_sha256": "dcf5ccbda658d7a59dc40e2aa41a948a554dd561ab4406cf85aec06635a658ec",
+      "gold_sha256": "e603690acc71e592cc75e9010b280c46593b5ce470517384b5637a0325a7f752",
+      "upstream_hint_path": "DafnyBench/dataset/hints_removed/formal_verication_dafny_tmp_tmpwgl2qz28_Challenges_ex1_no_hints.dfy",
+      "upstream_gold_path": "DafnyBench/dataset/ground_truth/formal_verication_dafny_tmp_tmpwgl2qz28_Challenges_ex1.dfy"
+    },
+    {
+      "id": "Dafny-Exercises_tmp_tmpjm75muf__Session2Exercises_ExerciseFibonacci_no_hints",
+      "file": "Dafny-Exercises_tmp_tmpjm75muf__Session2Exercises_ExerciseFibonacci_no_hints.dfy",
+      "hint_sha256": "e29a8d34541b271e55d986d3e982d75eb135ddb12962cbc23b5b007c748c9bb0",
+      "gold_sha256": "87121db2d13affd85f2a7c07c1c0ae858e6fcca018594fa070dfb7bfd8d42924",
+      "upstream_hint_path": "DafnyBench/dataset/hints_removed/Dafny-Exercises_tmp_tmpjm75muf__Session2Exercises_ExerciseFibonacci_no_hints.dfy",
+      "upstream_gold_path": "DafnyBench/dataset/ground_truth/Dafny-Exercises_tmp_tmpjm75muf__Session2Exercises_ExerciseFibonacci.dfy"
+    },
+    {
+      "id": "dafl_tmp_tmp_r3_8w3y_dafny_examples_uiowa_modifying-arrays_no_hints",
+      "file": "dafl_tmp_tmp_r3_8w3y_dafny_examples_uiowa_modifying-arrays_no_hints.dfy",
+      "hint_sha256": "9dea14bda07d9d8917cf2b562425a537261577f422f4a5b3bdfc28d851ba0431",
+      "gold_sha256": "97f7b53a8bbc029b466540349e6eb44676f6e6194de838d24e0d95b9697855bc",
+      "upstream_hint_path": "DafnyBench/dataset/hints_removed/dafl_tmp_tmp_r3_8w3y_dafny_examples_uiowa_modifying-arrays_no_hints.dfy",
+      "upstream_gold_path": "DafnyBench/dataset/ground_truth/dafl_tmp_tmp_r3_8w3y_dafny_examples_uiowa_modifying-arrays.dfy"
+    },
+    {
+      "id": "dafny-language-server_tmp_tmpkir0kenl_Test_dafny2_SegmentSum_no_hints",
+      "file": "dafny-language-server_tmp_tmpkir0kenl_Test_dafny2_SegmentSum_no_hints.dfy",
+      "hint_sha256": "a684e8ae0f34bdc1e992ed9b563ed702f1ef39f9efa37d5b6f7552f499aa32f6",
+      "gold_sha256": "dd10d4f4067db2b3970a14ba5688fce70b729a28731055dbd75b103b0370c004",
+      "upstream_hint_path": "DafnyBench/dataset/hints_removed/dafny-language-server_tmp_tmpkir0kenl_Test_dafny2_SegmentSum_no_hints.dfy",
+      "upstream_gold_path": "DafnyBench/dataset/ground_truth/dafny-language-server_tmp_tmpkir0kenl_Test_dafny2_SegmentSum.dfy"
+    },
+    {
+      "id": "AssertivePrograming_tmp_tmpwf43uz0e_MergeSort_no_hints",
+      "file": "AssertivePrograming_tmp_tmpwf43uz0e_MergeSort_no_hints.dfy",
+      "hint_sha256": "eb1ae4b1db2db0332f73af1bfe2b7372b73a9945362f0ab7d20cd2b19dfc8224",
+      "gold_sha256": "4c9b2658915db96cef3733dbaedec72fdbc47c352da6bc6860e1b7ab4a7e733c",
+      "upstream_hint_path": "DafnyBench/dataset/hints_removed/AssertivePrograming_tmp_tmpwf43uz0e_MergeSort_no_hints.dfy",
+      "upstream_gold_path": "DafnyBench/dataset/ground_truth/AssertivePrograming_tmp_tmpwf43uz0e_MergeSort.dfy"
+    },
+    {
+      "id": "Program-Verification-Dataset_tmp_tmpgbdrlnu__Dafny_algorithms and leetcode_leetcode_validAnagram_no_hints",
+      "file": "Program-Verification-Dataset_tmp_tmpgbdrlnu__Dafny_algorithms and leetcode_leetcode_validAnagram_no_hints.dfy",
+      "hint_sha256": "bdf0ce5846303a8a5ae1517f0e02ebd41aa9ffb3471424fd93f044ebcf794a07",
+      "gold_sha256": "c97e80ca696cfe6a9acf848f2e8628754f9a965ef35d2fcd295ff42e79c971b3",
+      "upstream_hint_path": "DafnyBench/dataset/hints_removed/Program-Verification-Dataset_tmp_tmpgbdrlnu__Dafny_algorithms and leetcode_leetcode_validAnagram_no_hints.dfy",
+      "upstream_gold_path": "DafnyBench/dataset/ground_truth/Program-Verification-Dataset_tmp_tmpgbdrlnu__Dafny_algorithms and leetcode_leetcode_validAnagram.dfy"
+    },
+    {
+      "id": "cs245-verification_tmp_tmp0h_nxhqp_power_no_hints",
+      "file": "cs245-verification_tmp_tmp0h_nxhqp_power_no_hints.dfy",
+      "hint_sha256": "1994d630f3aa6c480ff92f6403dc30208403f969c79525ce5f99c489ce29ac30",
+      "gold_sha256": "d3f5349b17fbd80d9e90dbb6265b7c5a555b955353716496f33d493d59cf76d9",
+      "upstream_hint_path": "DafnyBench/dataset/hints_removed/cs245-verification_tmp_tmp0h_nxhqp_power_no_hints.dfy",
+      "upstream_gold_path": "DafnyBench/dataset/ground_truth/cs245-verification_tmp_tmp0h_nxhqp_power.dfy"
+    }
+  ]
+}

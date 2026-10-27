@@ -1,0 +1,71 @@
+{
+  "suite": "spec_traps_v1",
+  "cases": [
+    {
+      "id": "weak_gcd_nonzero",
+      "kind": "weak_spec",
+      "original_file": "data/benchmarks/humaneval_dafny/013-greatest_common_divisor.dfy",
+      "candidate": "method greatest_common_divisor(a: int, b: int) returns (gcd: int)\n  requires a != 0 || b != 0\n  ensures gcd != 0\n{ gcd := 1; }\n",
+      "witness": "method Main() { var result := greatest_common_divisor(6, 9); expect result == 3, \"GCD(6, 9) must be 3\"; }\n",
+      "reason": "A nonzero constant satisfies the contract without computing a greatest common divisor."
+    },
+    {
+      "id": "weak_linear_search_negative_two",
+      "kind": "weak_spec",
+      "original_file": "data/benchmarks/clover/linear_search.dfy",
+      "candidate": "method LinearSearch(a: array<int>, target: int) returns (r: int)\n  ensures r >= 0 ==> r < a.Length && a[r] == target\n  ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target\n{ r := -2; }\n",
+      "witness": "method Main() { var a := new int[3]; a[0] := 4; a[1] := 8; a[2] := 12; var r := LinearSearch(a, 9); expect r == -1, \"missing item must return -1\"; }\n",
+      "reason": "Returning -2 makes both implications vacuously true."
+    },
+    {
+      "id": "weak_sorted_empty",
+      "kind": "weak_spec",
+      "original": "predicate sorted(s: seq<int>) { forall i, j :: 0 <= i < j < |s| ==> s[i] <= s[j] }\nmethod Sort(s: seq<int>) returns (r: seq<int>)\n  ensures sorted(r)\n{}\n",
+      "candidate": "predicate sorted(s: seq<int>) { forall i, j :: 0 <= i < j < |s| ==> s[i] <= s[j] }\nmethod Sort(s: seq<int>) returns (r: seq<int>)\n  ensures sorted(r)\n{ r := []; }\n",
+      "witness": "method Main() { var r := Sort([3, 1, 2]); expect multiset(r) == multiset([3, 1, 2]), \"sort must preserve elements\"; }\n",
+      "reason": "Sortedness alone does not preserve input elements."
+    },
+    {
+      "id": "requires_strengthened",
+      "kind": "tamper",
+      "original": "method Increase(x: int) returns (y: int)\n  requires x > 0\n  ensures y > x\n{}\n",
+      "candidate": "method Increase(x: int) returns (y: int)\n  requires x > 10\n  ensures y > x\n{ y := x + 1; }\n"
+    },
+    {
+      "id": "ensures_removed",
+      "kind": "tamper",
+      "original": "method Positive(x: int) returns (y: int)\n  ensures y > 0\n{}\n",
+      "candidate": "method Positive(x: int) returns (y: int)\n{ y := 0; }\n"
+    },
+    {
+      "id": "frame_widened",
+      "kind": "tamper",
+      "original": "method Touch(a: array<int>, b: array<int>)\n  modifies a\n  ensures a.Length >= 0\n{}\n",
+      "candidate": "method Touch(a: array<int>, b: array<int>)\n  modifies a, b\n  ensures a.Length >= 0\n{}\n"
+    },
+    {
+      "id": "predicate_redefined",
+      "kind": "tamper",
+      "original": "predicate Positive(x: int) { x > 0 }\nmethod Compute() returns (y: int)\n  ensures Positive(y)\n{}\n",
+      "candidate": "predicate Positive(x: int) { true }\nmethod Compute() returns (y: int)\n  ensures Positive(y)\n{ y := 0; }\n"
+    },
+    {
+      "id": "assume_bypass",
+      "kind": "bypass",
+      "original": "method Compute() returns (y: int)\n  ensures y > 0\n{}\n",
+      "candidate": "method Compute() returns (y: int)\n  ensures y > 0\n{ y := 0; assume y > 0; }\n"
+    },
+    {
+      "id": "axiom_bypass",
+      "kind": "bypass",
+      "original": "lemma Helper()\n  ensures false\n{}\n",
+      "candidate": "lemma {:axiom} Helper()\n  ensures false\n{}\n"
+    },
+    {
+      "id": "verify_false_bypass",
+      "kind": "bypass",
+      "original": "method Compute() returns (y: int)\n  ensures y > 0\n{}\n",
+      "candidate": "method {:verify false} Compute() returns (y: int)\n  ensures y > 0\n{ y := 0; }\n"
+    }
+  ]
+}

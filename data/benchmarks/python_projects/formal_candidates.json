@@ -1,0 +1,17 @@
+{
+  "status": "draft_pending_human_review",
+  "note": "These are proposed properties, not verified Python-to-Dafny correspondences. No formal score is awarded until a reviewer approves a Dafny model and its relation to the Python task.",
+  "draft_file": "formal_drafts/draft_properties.dfy",
+  "tasks": [
+    {"id": "django__django-10554", "draft_module": "DraftDjango10554", "property": "Evaluating a derived, reordered union queryset leaves the original union's records and order unchanged for later evaluation."},
+    {"id": "django__django-11400", "draft_module": "DraftDjango11400", "property": "Related-field choices use ModelAdmin ordering when available and otherwise fall back to the related model's Meta ordering, without dropping eligible records."},
+    {"id": "pydata__xarray-2905", "draft_module": "DraftXarray2905", "property": "Scalar assignment to an object array stores the original object even if that object has a values property."},
+    {"id": "pydata__xarray-3095", "draft_module": "DraftXarray3095", "property": "A deep copy preserves Unicode index values and their dtype and does not alias mutable storage."},
+    {"id": "pydata__xarray-3305", "draft_module": "DraftXarray3305", "property": "Quantile operations preserve attributes when keep_attrs is enabled."},
+    {"id": "pydata__xarray-4687", "draft_module": "DraftXarray4687", "property": "Conditional selection preserves input attributes when attribute preservation is explicitly requested."},
+    {"id": "pydata__xarray-6938", "draft_module": "DraftXarray6938", "property": "Swapping dimensions does not mutate the original object."},
+    {"id": "pydata__xarray-6992", "draft_module": "DraftXarray6992", "property": "Data-variable enumeration remains correct even when coordinate names include names absent from the variable map."},
+    {"id": "pydata__xarray-7393", "draft_module": "DraftXarray7393", "property": "Stacking preserves the dtype of an int32 coordinate."},
+    {"id": "sphinx-doc__sphinx-7462", "draft_module": "DraftSphinx7462", "property": "Parsing an empty tuple annotation terminates without an index error and returns a valid representation."}
+  ]
+}

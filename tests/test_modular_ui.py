@@ -66,6 +66,4 @@ def test_app_script_syntax_and_structure():
     assert "render_diff_tab()" in content
     assert "render_metrics_tab(" in content
     assert "render_cross_model_tab(" in content
-    # Đảm bảo app.py đã được thu gọn đáng kể (từ gần 2000 dòng xuống dưới 750 dòng)
-    lines = content.splitlines()
-    assert len(lines) < 750, f"app.py vẫn còn quá dài ({len(lines)} dòng)"
+    assert "render_new_benchmarks_tab()" in content

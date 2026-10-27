@@ -13,6 +13,7 @@ import pandas as pd
 import plotly.express as px
 # pyrefly: ignore [missing-import]
 import streamlit as st
+from web_demo.icons import icon_heading, plain_label
 
 
 def render_metrics_tab(
@@ -21,7 +22,7 @@ def render_metrics_tab(
     timeout_sec: int = 15,
 ) -> None:
     """Hiển thị toàn bộ nội dung của Tab 3: Báo cáo chỉ số khoa học độc lập."""
-    st.markdown("### 📊 Bảng Chỉ Số Nghiên Cứu Khoa Học Độc Lập")
+    st.markdown(icon_heading("Bảng chỉ số nghiên cứu khoa học", "chart"), unsafe_allow_html=True)
 
     # Đường dẫn đến file kết quả thực nghiệm hàng loạt mới nhất (kiểm tra nhiều vị trí kiên cố)
     possible_paths = [
@@ -96,7 +97,7 @@ def render_metrics_tab(
     col_chart1, col_chart2 = st.columns([1.2, 1])
 
     with col_chart1:
-        st.markdown("#### 📈 So Sánh Pass@1 (Lần đầu) vs Pass@K (Sau vòng tự sửa)")
+        st.markdown(icon_heading("So sánh Pass@1 và Pass@K", "chart", level=4), unsafe_allow_html=True)
         df_benchmarks = pd.DataFrame(
             {
                 "Tập Benchmark": [
@@ -131,7 +132,7 @@ def render_metrics_tab(
         st.plotly_chart(fig_bar, width="stretch")
 
     with col_chart2:
-        st.markdown("#### 🎯 Ma Trận Phân Bố Kết Quả Z3")
+        st.markdown(icon_heading("Phân bố kết quả Z3", "target", level=4), unsafe_allow_html=True)
         df_status = pd.DataFrame(
             {
                 "Trạng thái": ["Z3 Verified (Thành công)", "Z3 Failed (Cần mở rộng)"],
@@ -149,15 +150,17 @@ def render_metrics_tab(
         st.plotly_chart(fig_pie, width="stretch")
 
     if res_list:
-        st.markdown(f"#### 📝 Danh Mục Toàn Bộ {total_tasks} Bài Toán Đã Thực Nghiệm (Đạt {passed_tasks}/{total_tasks} bài - {pass_rate:.1f}%)")
+        st.markdown(icon_heading(f"Danh mục {total_tasks} bài toán · đạt {passed_tasks}/{total_tasks} ({pass_rate:.1f}%)", "list", level=4), unsafe_allow_html=True)
         df_batch_display = pd.DataFrame(res_list)
+        if "Kết Quả Z3" in df_batch_display:
+            df_batch_display["Kết Quả Z3"] = df_batch_display["Kết Quả Z3"].map(plain_label)
         st.dataframe(df_batch_display, width="stretch", hide_index=True)
 
     # ======================================================================
     # BẢNG ĐỐI CHUẨN ABLATION STUDY: STANFORD CLOVER (2024) VS OUR SYSTEM
     # ======================================================================
     st.markdown("---")
-    st.markdown("#### 🔬 Đối Chuẩn Ablation Study: Baseline Nội Bộ (Clover-inspired) vs. Hệ Thống Đề Xuất")
+    st.markdown(icon_heading("Đối chuẩn Ablation Study: Baseline và hệ thống đề xuất", "compare", level=4), unsafe_allow_html=True)
     st.caption("Thực nghiệm bóc tách chứng minh đóng góp của các trụ cột Neuro-Symbolic (Topology, Normalizer, Spec-Locker, CEGAR) so với phương thức prompt trực diện kiểu Clover.")
 
     import os
@@ -166,7 +169,7 @@ def render_metrics_tab(
     from experiments.run_clover_baseline_comparison import execute_clover_ablation_experiment, select_tasks
 
     # Bộ điều khiển chạy thực nghiệm đối chuẩn trực tiếp trên Web UI
-    with st.expander("⚡ Cấu hình & Chạy Đối Chuẩn Trực Tiếp Ngay Tại Đây", expanded=False):
+    with st.expander("Cấu hình và chạy đối chuẩn trực tiếp", expanded=False):
         col_c1, col_c2, col_c3 = st.columns([1.3, 1.7, 1])
         with col_c1:
             available_models = [
@@ -176,6 +179,7 @@ def render_metrics_tab(
                 ("groq/openai/gpt-oss-20b", "GPT-OSS 20B (Groq LPU)"),
                 ("gemini-2.5-flash", "Gemini 2.5 Flash (Cloud)"),
                 ("gemini-3.5-flash", "Gemini 3.5 Flash (Cloud)"),
+                ("deepseek/deepseek-flash", "DeepSeek Flash (API)"),
                 ("ollama/llama3.1:8b", "LLaMA 3.1 8B (Local)"),
                 ("ollama/deepseek-r1:7b", "DeepSeek R1 7B (Local)"),
             ]
@@ -190,10 +194,10 @@ def render_metrics_tab(
             )
         with col_c2:
             preset_options = [
-                ("core30", "🏆 Bộ Cốt Lõi Chuẩn Mực (30 bài toán thuật toán)"),
-                ("clover", "🍀 Bộ Clover Benchmark Gốc (6 bài chuẩn Stanford)"),
-                ("sample", "⚡ 5 Bài Tiêu Biểu (sum, gcd, palindrome, binary_search, sort)"),
-                ("core", "🎯 16 Bài Toán Mục Tiêu (Core Target Set)"),
+                ("core30", "Bộ cốt lõi (30 bài toán thuật toán)"),
+                ("clover", "Clover Benchmark (6 bài)"),
+                ("sample", "5 bài tiêu biểu (sum, gcd, palindrome, binary_search, sort)"),
+                ("core", "16 bài toán mục tiêu (Core Target Set)"),
             ]
             preset_choice = st.selectbox(
                 "Chọn tập bài toán thực nghiệm:",
@@ -203,7 +207,7 @@ def render_metrics_tab(
             )
         with col_c3:
             st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
-            run_ablation_btn = st.button("🚀 Chạy Đối Chuẩn Ngay", type="primary", use_container_width=True)
+            run_ablation_btn = st.button("Chạy đối chuẩn", icon=":material/play_arrow:", type="primary", use_container_width=True)
 
         if run_ablation_btn:
             preset_val = preset_choice[0]
@@ -223,7 +227,7 @@ def render_metrics_tab(
                     progress_callback=on_progress,
                     preset_name=preset_val,
                 )
-            st.success(f"🎉 Hoàn thành đối chuẩn trên {len(task_keys)} bài toán! Đang làm mới bảng...")
+            st.success(f"Hoàn thành đối chuẩn trên {len(task_keys)} bài toán. Đang làm mới bảng...")
             st.rerun()
 
     results_file = os.path.join("artifacts", "results", "clover_vs_our_system_baseline.json")
@@ -239,7 +243,7 @@ def render_metrics_tab(
             mdl = exp_data.get("model_name", model_name)
             tot_t = exp_data.get("total_tasks", 0)
             if tot_t > 0:
-                st.info(f"🟢 **Dữ liệu thực nghiệm thực tế**: Lần chạy gần nhất lúc `{ts}` | Mô hình: `{mdl}` | Quy mô: `{tot_t} bài`")
+                st.info(f"**Dữ liệu thực nghiệm thực tế**: Lần chạy gần nhất lúc `{ts}` | Mô hình: `{mdl}` | Quy mô: `{tot_t} bài`")
                 selected_source = st.radio(
                     "Nguồn dữ liệu hiển thị:",
                     ["Lần chạy thực tế gần nhất", "Số liệu tham chiếu chuẩn bài báo"],
@@ -255,7 +259,7 @@ def render_metrics_tab(
         our_data = exp_data.get("our_system", {})
     else:
         if not has_real_data:
-            st.caption("ℹ️ Đang hiển thị **Số liệu thực nghiệm mẫu chuẩn** (Reference Baseline 30 bài). Bạn có thể mở rộng mục phía trên và bấm *'🚀 Chạy Đối Chuẩn Ngay'* để cập nhật số liệu thực tế.")
+            st.caption("Đang hiển thị **số liệu thực nghiệm mẫu chuẩn** (Reference Baseline 30 bài). Mở phần đối chuẩn phía trên để cập nhật số liệu thực tế.")
         # Số liệu thực nghiệm baseline chuẩn hóa trên toàn bộ 30 bài toán benchmark
         clover_data = {
             "method_name": "Stanford Clover Baseline (2024)",
@@ -289,7 +293,7 @@ def render_metrics_tab(
             "Tự Sửa Nhờ Phản Hồi Dafny": "-"
         },
         {
-            "Phương Pháp": "🏆 Hệ Thống Đề Xuất (Our System)",
+            "Phương Pháp": "Hệ thống đề xuất (Our System)",
             "Pass@1 (%)": f"{our_data.get('pass_at_1_rate', 0.0)}%",
             "Pass@3 (%)": f"{our_data.get('pass_at_k_rate', 0.0)}%",
             "Vi Phạm Đặc Tả H1 (%)": f"{our_data.get('spec_tampering_rate', 0.0)}%",
@@ -312,7 +316,8 @@ def render_metrics_tab(
     col_btn_copy, col_btn_dl = st.columns([1.5, 1])
     with col_btn_dl:
         st.download_button(
-            label="💾 Tải Mã Bảng LaTeX (.tex)",
+            label="Tải mã bảng LaTeX (.tex)",
+            icon=":material/download:",
             data=latex_code,
             file_name="table_ablation_clover.tex",
             mime="text/plain",
@@ -320,7 +325,7 @@ def render_metrics_tab(
             help="Tải tệp bảng LaTeX chuẩn booktabs để nhúng vào Overleaf hoặc tài liệu công bố."
         )
 
-    with st.expander("📄 Xem & Sao chép mã bảng LaTeX (Overleaf/Paper Ready)", expanded=False):
+    with st.expander("Xem và sao chép mã bảng LaTeX (Overleaf/Paper Ready)", expanded=False):
         st.code(latex_code, language="latex")
 
 

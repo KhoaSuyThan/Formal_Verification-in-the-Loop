@@ -337,6 +337,7 @@ def save_last_batch_run(
     max_k: int,
     timeout_sec: int,
     batch_history_dict: Optional[dict] = None,
+    workers: int = 1,
 ) -> None:
     """Lưu trữ kiên cố kết quả đợt chạy hàng loạt gần nhất vào artifacts/results/last_batch_run.json và last_batch_details.json."""
     results_dir = PROJECT_ROOT / "artifacts" / "results"
@@ -348,6 +349,7 @@ def save_last_batch_run(
         "model_name": model_name,
         "max_k": max_k,
         "timeout_sec": timeout_sec,
+        "workers": workers,
         "total_batch_time": round(total_batch_time, 2),
         "results_list": results_list,
     }

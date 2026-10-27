@@ -19,6 +19,7 @@ import streamlit as st
 
 from core.cross_model_evaluator import CrossModelEvaluator
 from core.hallucination_classifier import classify_hallucination
+from web_demo.icons import icon_heading, plain_label
 
 
 def render_cross_model_tab(
@@ -29,8 +30,8 @@ def render_cross_model_tab(
     max_k: int,
 ) -> None:
     """Hiển thị toàn bộ nội dung của Tab 4: So sánh đối đầu đa mô hình."""
-    st.markdown("### ⚔️ So Sánh Đối Đầu Mô Hình")
-    st.caption("Đo lường năng lực sinh mã kèm kiểm chứng hình thức giữa Local AI (Ollama) và Cloud AI (Google Gemini).")
+    st.markdown(icon_heading("So sánh đối đầu mô hình", "compare"), unsafe_allow_html=True)
+    st.caption("Đo lường năng lực sinh mã kèm kiểm chứng hình thức giữa mô hình cục bộ và mô hình qua API.")
 
     # Lựa chọn mô hình tham gia thi đấu (Hỗ trợ Local, Gemini và Groq LPU)
     eval_models = [
@@ -41,6 +42,7 @@ def render_cross_model_tab(
         ("gemini-2.5-flash", "Gemini 2.5 Flash (Cloud - Quota cao 1500 req/ngày)"),
         ("gemini-3.5-flash", "Gemini 3.5 Flash (Cloud - Đã kiểm chứng)"),
         ("gemini-3.6-flash", "Gemini 3.6 Flash (Preview - Hạn ngạch 20 req/ngày)"),
+        ("deepseek/deepseek-flash", "DeepSeek Flash (API)"),
         ("ollama/llama3.1:8b", "LLaMA 8B (Local)"),
         ("ollama/deepseek-r1:7b", "DeepSeek 7B (Local)"),
     ]
@@ -71,7 +73,7 @@ def render_cross_model_tab(
         )
 
     # Khuyến nghị tối ưu hóa tài nguyên phần cứng
-    st.caption("💡 **Khuyến nghị:** Mô hình Local (Ollama) & Groq nên đặt **1 - 2 Workers** (để tránh nghẽn VRAM hoặc chạm trần TPM của Groq); Mô hình Cloud (Gemini) có thể đặt **4 - 8 Workers** để khai thác tối đa tốc độ server Google.")
+    st.caption("**Khuyến nghị:** Mô hình Local (Ollama) và Groq nên đặt **1–2 Workers**; mô hình Cloud (Gemini) có thể dùng **4–8 Workers** tùy hạn mức.")
 
     # Đồng bộ trực tiếp danh sách bài toán đã chọn từ Sidebar bên trái (tránh trùng lặp cấu hình)
     if exec_mode == "Hàng loạt" and selected_batch:
@@ -105,28 +107,28 @@ def render_cross_model_tab(
     if has_resumable_checkpoint:
         col_btn_run, col_btn_resume, col_btn_stop, col_btn_load = st.columns([2.5, 3.5, 2, 2])
         with col_btn_run:
-            btn_start_benchmark = st.button("🚀 Chạy Mới Từ Đầu", type="secondary", width="stretch", help="Xóa bỏ checkpoint cũ và bắt đầu chạy lại từ bài đầu tiên")
+            btn_start_benchmark = st.button("Chạy mới từ đầu", icon=":material/restart_alt:", type="secondary", width="stretch", help="Xóa bỏ checkpoint cũ và bắt đầu chạy lại từ bài đầu tiên")
         with col_btn_resume:
-            btn_resume_benchmark = st.button(f"▶️ Tiếp Tục Chạy ({resumable_tasks_count} bài đã xong)", type="primary", width="stretch", help="Nạp lại kết quả cũ và tiếp tục chạy ngay từ bài chưa hoàn thành")
+            btn_resume_benchmark = st.button(f"Tiếp tục ({resumable_tasks_count} bài đã xong)", icon=":material/play_arrow:", type="primary", width="stretch", help="Nạp lại kết quả cũ và tiếp tục chạy ngay từ bài chưa hoàn thành")
         with col_btn_stop:
-            btn_stop_benchmark = st.button("⏹️ Dừng So Sánh", type="secondary", width="stretch", help="Dừng an toàn quá trình so sánh sau bài toán hiện tại")
+            btn_stop_benchmark = st.button("Dừng so sánh", icon=":material/stop:", type="secondary", width="stretch", help="Dừng an toàn quá trình so sánh sau bài toán hiện tại")
         with col_btn_load:
-            btn_load_cached = st.button("📂 Tải Kết Quả Cũ", width="stretch")
+            btn_load_cached = st.button("Tải kết quả cũ", icon=":material/history:", width="stretch")
     else:
         btn_resume_benchmark = False
         col_btn_run, col_btn_stop, col_btn_load = st.columns([3, 2, 2])
         with col_btn_run:
-            btn_start_benchmark = st.button("🚀 Bắt Đầu So Sánh", type="primary", width="stretch")
+            btn_start_benchmark = st.button("Bắt đầu so sánh", icon=":material/play_arrow:", type="primary", width="stretch")
         with col_btn_stop:
-            btn_stop_benchmark = st.button("⏹️ Dừng So Sánh", type="secondary", width="stretch", help="Dừng an toàn quá trình so sánh sau bài toán hiện tại")
+            btn_stop_benchmark = st.button("Dừng so sánh", icon=":material/stop:", type="secondary", width="stretch", help="Dừng an toàn quá trình so sánh sau bài toán hiện tại")
         with col_btn_load:
-            btn_load_cached = st.button("📂 Tải Kết Quả Cũ", width="stretch")
+            btn_load_cached = st.button("Tải kết quả cũ", icon=":material/history:", width="stretch")
 
     cross_stop_flag = os.path.join("artifacts", ".stop_cross_flag")
     if btn_stop_benchmark:
         Path(cross_stop_flag).touch()
-        st.toast("🛑 Đã gửi lệnh dừng! Quá trình so sánh sẽ dừng an toàn sau bài toán hiện tại.", icon="🛑")
-        st.warning("🛑 Đã kích hoạt lệnh dừng. Hệ thống đang hoàn tất bài hiện tại và dừng an toàn...")
+        st.toast("Đã gửi lệnh dừng. Quá trình so sánh sẽ dừng sau bài toán hiện tại.", icon=":material/stop:")
+        st.warning("Đã kích hoạt lệnh dừng. Hệ thống đang hoàn tất bài hiện tại.")
 
     if (btn_start_benchmark or btn_resume_benchmark) and os.path.exists(cross_stop_flag):
         try:
@@ -141,24 +143,24 @@ def render_cross_model_tab(
                 with open(latest_file, "r", encoding="utf-8") as f_cached:
                     st.session_state["cross_model_data"] = json.load(f_cached)
                 st.session_state["currently_loaded_file"] = "Mới nhất (Latest)"
-                st.toast("✅ Đã nạp thành công bản kết quả benchmark gần nhất!", icon="📂")
+                st.toast("Đã nạp bản kết quả benchmark gần nhất.", icon=":material/check_circle:")
                 st.rerun()
             except Exception as err:
-                st.error(f"❌ Không thể đọc file kết quả gần nhất: {err}")
+                st.error(f"Không thể đọc file kết quả gần nhất: {err}")
         else:
-            st.warning("⚠️ Chưa có bản lưu kết quả benchmark nào trong thư mục artifacts/results!")
+            st.warning("Chưa có bản lưu kết quả benchmark nào trong thư mục artifacts/results.")
 
-    st.caption(f"📌 {source_note}")
+    st.caption(source_note)
     if has_resumable_checkpoint:
-        st.info(f"💡 **Phát hiện tiến trình trước đó đã chạy {resumable_tasks_count} bài.** Bấm nút **'▶️ Tiếp Tục Chạy'** màu tím để chạy tiếp từ bài dở dang mà không mất kết quả cũ, hoặc bấm **'🚀 Chạy Mới Từ Đầu'** nếu muốn đo lại từ đầu.")
+        st.info(f"Tiến trình trước đã chạy {resumable_tasks_count} bài. Chọn **Tiếp tục** để chạy các bài còn lại hoặc **Chạy mới từ đầu** để đo lại.")
 
     # Xử lý khi bấm nút chạy mới hoặc tiếp tục chạy dở dang
     is_resuming = bool(btn_resume_benchmark)
     if btn_start_benchmark or btn_resume_benchmark:
         if not selected_eval_models:
-            st.warning("⚠️ Vui lòng chọn ít nhất một mô hình để chạy benchmark!")
+            st.warning("Vui lòng chọn ít nhất một mô hình để chạy benchmark.")
         elif not target_keys:
-            st.warning("⚠️ Chưa có bài toán nào được chọn từ menu bên trái!")
+            st.warning("Chưa có bài toán nào được chọn từ menu bên trái.")
         else:
             dafny_exe_path = os.getenv("DAFNY_PATH")
             evaluator = CrossModelEvaluator(dafny_path=dafny_exe_path)
@@ -196,14 +198,14 @@ def render_cross_model_tab(
                                     "Mô Hình": m_name,
                                     "Bài Toán": t["task_name"],
                                     "Tập": t.get("group", ""),
-                                    "Kết Quả Z3": "✅ PASS" if t["success"] else "❌ FAIL",
+                                    "Kết Quả Z3": "PASS" if t["success"] else "FAIL",
                                     "Lượt Thử": f"Pass@{t['iterations']}" if t["success"] else ">3",
                                     "Thời Gian (s)": t["duration_sec"],
                                 })
                         if all_detailed:
                             df_tasks = pd.DataFrame(all_detailed)
                             with live_detail_placeholder.container():
-                                st.markdown("##### 📝 Nhật Ký Từng Bài Vừa Giải Xong (Mới Nhất Ở Trên):")
+                                st.markdown(icon_heading("Nhật ký từng bài vừa giải xong", "list", level=5), unsafe_allow_html=True)
                                 st.dataframe(df_tasks.iloc[::-1], width="stretch", hide_index=True)
                     except Exception:
                         pass
@@ -227,10 +229,10 @@ def render_cross_model_tab(
                         os.remove(cross_stop_flag)
                     except Exception:
                         pass
-                    status_text.warning("🛑 Quá trình so sánh đã dừng lại theo yêu cầu! Toàn bộ kết quả đã chạy được lưu trữ đầy đủ.")
+                    status_text.warning("Quá trình so sánh đã dừng theo yêu cầu. Kết quả đã chạy được lưu đầy đủ.")
                 else:
                     progress_bar.progress(1.0)
-                    status_text.success("🎉 Đã hoàn thành toàn bộ chu trình đánh giá đối đầu!")
+                    status_text.success("Đã hoàn thành chu trình đánh giá đối đầu.")
                 st.rerun()
 
     # Tự động nạp kết quả đã lưu gần nhất nếu session_state chưa có
@@ -258,14 +260,14 @@ def render_cross_model_tab(
         col_hist1, col_hist2 = st.columns([7, 3])
         with col_hist1:
             selected_hist = st.selectbox(
-                "📂 Xem lại các lần chạy trong lịch sử:",
+                "Xem lại các lần chạy trong lịch sử:",
                 hist_options,
                 key="hist_selector_dropdown",
                 help="Chọn bất kỳ file nào để xem lại kết quả. Bảng và biểu đồ sẽ tự động cập nhật ngay lập tức!",
             )
         with col_hist2:
             st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
-            btn_force_reload = st.button("🔄 Nạp Lại Bản Này", width="stretch")
+            btn_force_reload = st.button("Nạp lại bản này", icon=":material/refresh:", width="stretch")
 
         # Tự động nạp dữ liệu tức thì mỗi khi mục chọn thay đổi hoặc bấm nạp lại
         need_load = (st.session_state.get("currently_loaded_file") != selected_hist) or btn_force_reload
@@ -277,20 +279,20 @@ def render_cross_model_tab(
                     with open(target_path, "r", encoding="utf-8") as f_in:
                         st.session_state["cross_model_data"] = json.load(f_in)
                     st.session_state["currently_loaded_file"] = selected_hist
-                    st.toast(f"✅ Đã tải: {selected_hist}")
+                    st.toast(f"Đã tải: {selected_hist}", icon=":material/check_circle:")
                 except Exception as err:
                     st.error(f"Lỗi khi đọc file {selected_hist}: {err}")
 
         # Hiển thị nhãn rõ ràng để người dùng biết đang xem dữ liệu của file nào
         active_label = st.session_state.get("currently_loaded_file", selected_hist)
-        st.info(f"📊 Đang hiển thị dữ liệu lịch sử từ tệp: **`{active_label}`**")
+        st.info(f"Đang hiển thị dữ liệu lịch sử từ tệp: **`{active_label}`**")
 
     # Hiển thị bảng kết quả và đồ thị khi đã có dữ liệu
     active_data = st.session_state.get("cross_model_data")
     if active_data and "summaries" in active_data and active_data["summaries"]:
         summaries = active_data["summaries"]
         st.markdown("---")
-        st.markdown("#### 📊 Bảng Ma Trận Đối Đầu Khoa Học (Benchmark Matrix)")
+        st.markdown(icon_heading("Ma trận đối đầu khoa học (Benchmark Matrix)", "chart", level=4), unsafe_allow_html=True)
 
         df_summary = pd.DataFrame(summaries)
 
@@ -344,7 +346,7 @@ def render_cross_model_tab(
                     # Ghi nhận chỉ số CoT Reasoning
                     c_tok = t.get("cot_tokens", 0)
                     has_c = t.get("has_cot", False) or c_tok > 0
-                    cot_label = f"🧠 {c_tok:,} tokens" if has_c else "⚡ Trực tiếp"
+                    cot_label = f"{c_tok:,} tokens" if has_c else "Trực tiếp"
                     if has_c:
                         all_cot_records.append({**t, "model_display": m_name})
 
@@ -352,8 +354,8 @@ def render_cross_model_tab(
                         "Mô Hình": m_name,
                         "Bài Toán": t.get("task_name", ""),
                         "Tập": t.get("group", ""),
-                        "Kết Quả Z3": "✅ PASS" if is_pass else "❌ FAIL",
-                        "Phân Loại Ảo Giác (Nature 2024)": h_badge,
+                        "Kết Quả Z3": "PASS" if is_pass else "FAIL",
+                        "Phân Loại Ảo Giác (Nature 2024)": plain_label(h_badge),
                         "Lượt Thử": f"Pass@{t.get('iterations')}" if is_pass else ">3",
                         "Thời Gian (s)": t.get("duration_sec", 0.0),
                     }
@@ -364,7 +366,7 @@ def render_cross_model_tab(
         # --- BỘ 3 BIỂU ĐỒ CHUNG 1 HÀNG NGANG (DASHBOARD TRỰC QUAN GỌN GÀNG) ---
         col_fig1, col_fig2, col_fig3 = st.columns([1, 1, 1.15])
         with col_fig1:
-            st.markdown("##### 🎯 Tỷ Lệ Đạt (Pass Rate)")
+            st.markdown(icon_heading("Tỷ lệ đạt (Pass Rate)", "target", level=5), unsafe_allow_html=True)
             fig_pass = px.bar(
                 df_summary,
                 x="display_name",
@@ -391,7 +393,7 @@ def render_cross_model_tab(
             st.plotly_chart(fig_pass, width="stretch")
 
         with col_fig2:
-            st.markdown("##### ⏱️ Thời Gian TB (Latency)")
+            st.markdown(icon_heading("Thời gian trung bình (Latency)", "clock", level=5), unsafe_allow_html=True)
             fig_time = px.bar(
                 df_summary,
                 x="display_name",
@@ -413,7 +415,7 @@ def render_cross_model_tab(
             st.plotly_chart(fig_time, width="stretch")
 
         with col_fig3:
-            st.markdown("##### 🔬 Phân Bố Ảo Giác (Taxonomy)")
+            st.markdown(icon_heading("Phân bố lỗi (Taxonomy)", "chart", level=5), unsafe_allow_html=True)
             if h_counts_by_model:
                 # Đảm bảo hiển thị đầy đủ 5 tầng bản chất ảo giác H0 -> H4 chuẩn mực Nature 2024
                 ordered_codes = ["H0", "H1", "H2", "H3", "H4"]
@@ -477,26 +479,26 @@ def render_cross_model_tab(
                 st.caption("Chưa có dữ liệu phân loại ảo giác.")
 
         # --- KHUNG PHÂN LOẠI ẢO GIÁC HÌNH THỨC (NATURE 2024 & SMT SOLVER) ---
-        with st.expander("📘 Khung Phân Loại Ảo Giác Mã Nguồn Hình Thức (Căn cứ Nature HSSC 2024 & Z3 SMT Solver)"):
+        with st.expander("Khung phân loại lỗi mã nguồn hình thức (Nature HSSC 2024 & Z3)"):
             st.markdown(
                 """
                 Dựa trên công trình phân loại toàn diện của **Nature (2024)** và đặc thù kiểm định toán học **Dafny + Z3 Solver**, hệ thống phân rã kết quả sinh mã thành 5 tầng bản chất:
-                * **✅ H0 (Verified Code)**: Mã nguồn được Z3 SMT Solver xác minh thành công và thỏa mãn toàn bộ tiền/hậu điều kiện của đặc tả.
-                * **⚠️ H1 (Spec-Tampering)**: Ảo giác can thiệp đặc tả — mô hình tự ý xóa bỏ hoặc nới lỏng tiền/hậu điều kiện (bị chặn bởi băm SHA-256).
-                * **🌀 H2 (Inductive Fallacy)**: Ảo giác ngụy biện quy nạp — bất biến vòng lặp (`invariant`) sai bước cơ sở hoặc không bảo toàn qua bước quy nạp.
-                * **⚡ H3 (Boundary Overflow)**: Ảo giác vi phạm biên — truy xuất chỉ số mảng vượt kích thước (`out of bounds`), chỉ số âm hoặc chia cho 0.
-                * **🌊 H4 (Semantic Drift)**: Trôi dạt ngữ nghĩa — code chạy được ca mẫu nhưng vi phạm hậu điều kiện tổng quát (`ensures`) trong không gian dữ liệu lớn.
+                * **H0 (Verified Code)**: Mã nguồn được Z3 SMT Solver xác minh thành công và thỏa mãn toàn bộ tiền/hậu điều kiện của đặc tả.
+                * **H1 (Spec-Tampering)**: Mô hình tự ý xóa bỏ hoặc nới lỏng tiền/hậu điều kiện (bị chặn bởi băm SHA-256).
+                * **H2 (Inductive Fallacy)**: Bất biến vòng lặp (`invariant`) sai bước cơ sở hoặc không bảo toàn qua bước quy nạp.
+                * **H3 (Boundary Overflow)**: Truy xuất chỉ số mảng vượt kích thước (`out of bounds`), chỉ số âm hoặc chia cho 0.
+                * **H4 (Semantic Drift)**: Code chạy được ca mẫu nhưng vi phạm hậu điều kiện tổng quát (`ensures`) trong không gian dữ liệu lớn.
                 """
             )
 
         if all_detailed:
             st.markdown("---")
-            st.markdown(f"##### 📝 Nhật Ký Chi Tiết Toàn Bộ {len(all_detailed)} Lượt Giải:")
+            st.markdown(icon_heading(f"Nhật ký chi tiết {len(all_detailed)} lượt giải", "list", level=5), unsafe_allow_html=True)
             df_tasks = pd.DataFrame(all_detailed)
             st.dataframe(df_tasks, width="stretch", hide_index=True)
 
         # --- KHUNG PHÂN TÍCH HIỆN TƯỢNG OVERTHINKING & COT REASONING (TRỤC 2) ---
-        with st.expander("🧠 Phân Tích Hiện Tượng 'Overthinking' & Chuỗi Suy Luận CoT (Căn cứ arXiv:2505.12886 & 2505.23646)"):
+        with st.expander("Phân tích Overthinking và chuỗi suy luận CoT (arXiv:2505.12886 & 2505.23646)"):
             if all_cot_records:
                 col_cot1, col_cot2, col_cot3 = st.columns([1, 1, 1.2])
                 pass_cots = [t.get("cot_tokens", 0) for t in all_cot_records if t.get("success")]
@@ -530,7 +532,7 @@ def render_cross_model_tab(
                 # Biểu đồ phân bổ độ dài CoT theo bài toán kèm đường ngưỡng Overthinking (800 tokens)
                 cot_plot_data = []
                 for rec in all_cot_records:
-                    status_lbl = "✅ Đạt Chứng Minh (H0)" if rec.get("success") else f"❌ Vi Phạm ({rec.get('h_code', 'FAIL')})"
+                    status_lbl = "Đạt chứng minh (H0)" if rec.get("success") else f"Vi phạm ({rec.get('h_code', 'FAIL')})"
                     cot_plot_data.append({
                         "Bài Toán": f"{rec.get('task_name', '')}",
                         "Tokens CoT": rec.get("cot_tokens", 0),
@@ -539,11 +541,11 @@ def render_cross_model_tab(
                 if cot_plot_data:
                     df_cot_plot = pd.DataFrame(cot_plot_data)
                     color_map = {
-                        "✅ Đạt Chứng Minh (H0)": "#22c55e",
-                        "❌ Vi Phạm (H1)": "#ef4444",
-                        "❌ Vi Phạm (H2)": "#f97316",
-                        "❌ Vi Phạm (H3)": "#eab308",
-                        "❌ Vi Phạm (H4)": "#06b6d4",
+                        "Đạt chứng minh (H0)": "#22c55e",
+                        "Vi phạm (H1)": "#ef4444",
+                        "Vi phạm (H2)": "#f97316",
+                        "Vi phạm (H3)": "#eab308",
+                        "Vi phạm (H4)": "#06b6d4",
                     }
                     fig_cot = px.bar(
                         df_cot_plot,
@@ -572,9 +574,9 @@ def render_cross_model_tab(
                     st.plotly_chart(fig_cot, width="stretch")
 
                 # Soi chi tiết chuỗi suy luận CoT của từng bài
-                st.markdown("##### 🔬 Kính Soi Chuỗi Suy Luận (CoT Inspector):")
+                st.markdown(icon_heading("Chuỗi suy luận (CoT Inspector)", "search", level=5), unsafe_allow_html=True)
                 cot_options = {
-                    f"[{t.get('model_display')}] {t.get('task_name')} ({'✅ PASS' if t.get('success') else '❌ ' + t.get('h_code', 'FAIL')}) - {t.get('cot_tokens', 0):,} tokens": t
+                    f"[{t.get('model_display')}] {t.get('task_name')} ({'PASS' if t.get('success') else t.get('h_code', 'FAIL')}) - {t.get('cot_tokens', 0):,} tokens": t
                     for t in all_cot_records if t.get("cot_trace")
                 }
                 if cot_options:
@@ -592,19 +594,20 @@ def render_cross_model_tab(
                     )
             else:
                 st.info(
-                    "💡 **Chưa có dữ liệu suy luận CoT trong lượt chạy hiện tại.** "
+                    "**Chưa có dữ liệu suy luận CoT trong lượt chạy hiện tại.** "
                     "Để kích hoạt đo lường và soi chuỗi suy luận Trục 2, hãy chọn mô hình suy luận sâu như **`ollama/deepseek-r1:7b`** tham gia đối đầu."
                 )
 
         # Khung xuất mã bảng LaTeX cho bài báo khoa học
-        with st.expander("📝 Bảng Mã LaTeX Chuẩn Cho Bài Báo Khoa Học (Nhấn để sao chép)"):
+        with st.expander("Bảng mã LaTeX cho bài báo khoa học"):
             st.caption("Sao chép đoạn mã LaTeX sau đây và dán trực tiếp vào tệp .tex của bài báo:")
             latex_code = active_data.get("latex_table", "")
             if not latex_code and summaries:
                 latex_code = CrossModelEvaluator.generate_latex_table(summaries)
             st.code(latex_code, language="latex")
             st.download_button(
-                "📥 Tải File LaTeX (.tex)",
+                "Tải file LaTeX (.tex)",
+                icon=":material/download:",
                 data=latex_code,
                 file_name="cross_model_evaluation_table.tex",
                 mime="text/plain",

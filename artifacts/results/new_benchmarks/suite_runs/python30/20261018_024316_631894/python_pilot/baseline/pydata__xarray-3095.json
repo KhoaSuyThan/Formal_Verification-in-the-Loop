@@ -1,0 +1,170 @@
+{
+  "schema_version": 1,
+  "task_id": "pydata__xarray-3095",
+  "category": "data_logic",
+  "backend": "swebench",
+  "repo_url": "https://github.com/pydata/xarray.git",
+  "base_commit": "1757dffac2fa493d7b9a074b84cf8c830a706688",
+  "source": {
+    "dataset": "princeton-nlp/SWE-bench_Verified",
+    "revision": "c104f840cc67f8b6eec6f759ebc8b2693d585d4a",
+    "split": "test",
+    "instance_id": "pydata__xarray-3095",
+    "difficulty": "15 min - 1 hour"
+  },
+  "formal_review_status": "draft_pending_human_review",
+  "model": "deepseek/deepseek-flash",
+  "max_attempts": 3,
+  "command_timeout_sec": 120,
+  "context_budget_chars": 24000,
+  "python_version": "3.14.8",
+  "setup": [],
+  "attempts": [
+    {
+      "number": 1,
+      "context": [
+        {
+          "path": "xarray/core/dataset.py",
+          "sha256": "878d68d031b88d53cfc37e513c3b7cf4ac98b9573ab525a60eba9682f74b2089",
+          "chars": 4357,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/core/dataarray.py",
+          "sha256": "40e180d89ffeb6bcd41a956a7d9577051e0bb102ddcb72b045d8d799da5ef956",
+          "chars": 4203,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/core/variable.py",
+          "sha256": "c3061ed6832cc78197118c32e6cb647cb11a237afa3fe670d7f00eab70ca3f44",
+          "chars": 4434,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/core/alignment.py",
+          "sha256": "7b9813e5481f31aae91fa88cab9ac8305ab4169ef5d88fb9b9adbddf6f5a0c5d",
+          "chars": 2903,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/core/common.py",
+          "sha256": "7356337591499825791978cf15c57837e19b19e785a1639dfc7c0e33d086bd05",
+          "chars": 4628,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/coding/variables.py",
+          "sha256": "9f565d7838b4d142169344a2473fa40e5d9c06cf0acf1ce6e9191aa94a007a60",
+          "chars": 3248,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        }
+      ],
+      "prompt_sha256": "bcd0180a8fb161e22ceef29b8505dc13968dbf8f2b850da5f94f71eec7b21e22",
+      "prompt_tokens": 7025,
+      "completion_tokens": 8192,
+      "cost_usd": 0.00596895,
+      "resolved_model": "deepseek-flash",
+      "patch_status": "failed",
+      "error": "Response does not contain a git diff"
+    },
+    {
+      "number": 2,
+      "context": [
+        {
+          "path": "xarray/core/dataset.py",
+          "sha256": "878d68d031b88d53cfc37e513c3b7cf4ac98b9573ab525a60eba9682f74b2089",
+          "chars": 4722,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/core/dataarray.py",
+          "sha256": "40e180d89ffeb6bcd41a956a7d9577051e0bb102ddcb72b045d8d799da5ef956",
+          "chars": 4327,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/core/variable.py",
+          "sha256": "c3061ed6832cc78197118c32e6cb647cb11a237afa3fe670d7f00eab70ca3f44",
+          "chars": 4726,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/core/indexing.py",
+          "sha256": "6a6ec850c4b810fe4bba727f540407c1da005d446235d913c48e81835fa87a72",
+          "chars": 4776,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/core/alignment.py",
+          "sha256": "7b9813e5481f31aae91fa88cab9ac8305ab4169ef5d88fb9b9adbddf6f5a0c5d",
+          "chars": 2903,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/core/common.py",
+          "sha256": "7356337591499825791978cf15c57837e19b19e785a1639dfc7c0e33d086bd05",
+          "chars": 2349,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        }
+      ],
+      "prompt_sha256": "6f7eb9e9c46adb009d0f5c939b5491824da2f09bd9a24aca6262a8a78984a2a4",
+      "prompt_tokens": 6929,
+      "completion_tokens": 7476,
+      "cost_usd": 0.005430869999999999,
+      "resolved_model": "deepseek-flash",
+      "changed_paths": [
+        "xarray/core/variable.py"
+      ],
+      "patch_status": "applied",
+      "syntax_check": {
+        "status": "passed",
+        "command": [
+          "ast.parse",
+          "xarray/core/variable.py"
+        ],
+        "exit_code": 0,
+        "output": "Python syntax parsed",
+        "seconds": 0.009246999994502403
+      },
+      "python_tests_status": "pending_swebench_harness",
+      "dafny_verification_status": "not_applicable",
+      "spec_audit_status": "not_applicable"
+    }
+  ],
+  "python_tests": {
+    "status": "pending_swebench_harness",
+    "reason": "Use official Docker harness on exported prediction"
+  },
+  "dafny_verification": {
+    "status": "not_applicable",
+    "command": [],
+    "output": "No Dafny files attached to this task",
+    "return_code": null
+  },
+  "spec_audit": {
+    "status": "not_applicable",
+    "command": [],
+    "output": "No Dafny files attached to this task",
+    "return_code": null
+  },
+  "final_patch": "diff --git a/xarray/core/variable.py b/xarray/core/variable.py\nindex 379be8f5..d608c7f4 100644\n--- a/xarray/core/variable.py\n+++ b/xarray/core/variable.py\n@@ -1947,7 +1947,8 @@ class IndexVariable(Variable):\n                 # point, which doesn't have a copy method, so make a deep copy\n                 # of the underlying `pandas.MultiIndex` and create a new\n                 # `PandasIndexAdapter` instance with it.\n-                data = PandasIndexAdapter(self._data.array.copy(deep=True))\n+                data = PandasIndexAdapter(self._data.array.copy(deep=True),\n+                                          dtype=self.dtype)\n             else:\n                 data = self._data\n         else:\n",
+  "total_prompt_tokens": 13954,
+  "total_completion_tokens": 15668,
+  "total_cost_usd": 0.011399819999999998,
+  "elapsed_seconds": 67.7934522919968,
+  "mode": "baseline",
+  "workers": 1
+}

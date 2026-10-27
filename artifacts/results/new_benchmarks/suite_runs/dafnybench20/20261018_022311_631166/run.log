@@ -1,0 +1,21 @@
+[dafnybench 1/20] CS494-final-project_tmp_tmp7nof55uq_bubblesort_no_hints: invalid_candidate
+[dafnybench 2/20] Dafny-Exercises_tmp_tmpjm75muf__Session3Exercises_ExerciseMaximum_no_hints: invalid_candidate
+[dafnybench 3/20] Dafny-Exercises_tmp_tmpjm75muf__Session9Exercises_ExerciseSeqMaxSum_no_hints: invalid_candidate
+[dafnybench 4/20] DafnyProjects_tmp_tmp2acw_s4s_RawSort_no_hints: invalid_candidate
+[dafnybench 5/20] DafnyProjects_tmp_tmp2acw_s4s_partitionOddEven_no_hints: invalid_candidate
+[dafnybench 6/20] Dafny_tmp_tmp0wu8wmfr_Heimaverkefni 2_BinarySearchDec_no_hints: invalid_candidate
+[dafnybench 7/20] Final-Project-Dafny_tmp_tmpmcywuqox_Attempts_Insertion_Sorted_Standard_no_hints: invalid_candidate
+[dafnybench 8/20] HATRA-2022-Paper_tmp_tmp5texxy8l_copilot_verification_Sort Array_sort_array_no_hints: invalid_candidate
+[dafnybench 9/20] Program-Verification-Dataset_tmp_tmpgbdrlnu__Dafny_advanced examples_MatrixMultiplication_no_hints: invalid_candidate
+[dafnybench 10/20] Program-Verification-Dataset_tmp_tmpgbdrlnu__Dafny_verified algorithms_lol_sort_no_hints: invalid_candidate
+[dafnybench 11/20] Software-Verification_tmp_tmpv4ueky2d_Non-overlapping Intervals_non_overlapping_intervals_no_hints: invalid_candidate
+[dafnybench 12/20] dafl_tmp_tmp_r3_8w3y_dafny_examples_uiowa_binary-search_no_hints: invalid_candidate
+[dafnybench 13/20] Dafny_Verify_tmp_tmphq7j0row_dataset_detailed_examples_SelectionSort_no_hints: invalid_candidate
+[dafnybench 14/20] formal_verication_dafny_tmp_tmpwgl2qz28_Challenges_ex1_no_hints: invalid_candidate
+[dafnybench 15/20] Dafny-Exercises_tmp_tmpjm75muf__Session2Exercises_ExerciseFibonacci_no_hints: invalid_candidate
+[dafnybench 16/20] dafl_tmp_tmp_r3_8w3y_dafny_examples_uiowa_modifying-arrays_no_hints: invalid_candidate
+[dafnybench 17/20] dafny-language-server_tmp_tmpkir0kenl_Test_dafny2_SegmentSum_no_hints: invalid_candidate
+[dafnybench 18/20] AssertivePrograming_tmp_tmpwf43uz0e_MergeSort_no_hints: invalid_candidate
+[dafnybench 19/20] Program-Verification-Dataset_tmp_tmpgbdrlnu__Dafny_algorithms and leetcode_leetcode_validAnagram_no_hints: invalid_candidate
+[dafnybench 20/20] cs245-verification_tmp_tmp0h_nxhqp_power_no_hints: invalid_candidate
+Completed 20 tasks; verified and audited: 0

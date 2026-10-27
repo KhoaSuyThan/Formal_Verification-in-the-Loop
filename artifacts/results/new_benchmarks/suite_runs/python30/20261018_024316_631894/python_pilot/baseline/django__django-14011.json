@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "task_id": "django__django-14011",
+  "category": "boundary",
+  "backend": "swebench",
+  "repo_url": "https://github.com/django/django.git",
+  "base_commit": "e4430f22c8e3d29ce5d9d0263fba57121938d06d",
+  "source": {
+    "dataset": "princeton-nlp/SWE-bench_Verified",
+    "revision": "c104f840cc67f8b6eec6f759ebc8b2693d585d4a",
+    "split": "test",
+    "instance_id": "django__django-14011",
+    "difficulty": "1-4 hours"
+  },
+  "formal_review_status": "not_reviewed",
+  "model": "deepseek/deepseek-flash",
+  "max_attempts": 3,
+  "command_timeout_sec": 120,
+  "context_budget_chars": 24000,
+  "python_version": "3.14.8",
+  "setup": [],
+  "attempts": [
+    {
+      "number": 1,
+      "context": [
+        {
+          "path": "django/test/testcases.py",
+          "sha256": "29471690773fed1a8fe8e0f377224b514210a23fb5379263c63a002497102b8e",
+          "chars": 4650,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/core/servers/basehttp.py",
+          "sha256": "9c0c817fdaafbc400a5e22b95887770aa13705230e5f12ee6b448f1fd144fe65",
+          "chars": 3592,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/query.py",
+          "sha256": "66773bcab15bdeaac4165432e5d88d4b0ef193339d4cee593e9e5f33f5641de7",
+          "chars": 4777,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/utils/autoreload.py",
+          "sha256": "5c2d5d12ba29d3deeb764185889c481f631d6ce40757bdba6f2a48acb8bcb175",
+          "chars": 3355,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/fields/related_descriptors.py",
+          "sha256": "c80ba94b54aa0987fdd1aca4451b1c1266148d2b48d83ceb5c33ec8048d478d7",
+          "chars": 4762,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/core/management/commands/makemigrations.py",
+          "sha256": "23b358aed0711c2ef847861de1a8f2f41bab117a73e5506ae341901183a4b2bc",
+          "chars": 2558,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        }
+      ],
+      "prompt_sha256": "545c747bb8e6978f0e711d790029d048f09f59bf3f5d074c4068474f87255ef4",
+      "prompt_tokens": 6652,
+      "completion_tokens": 8192,
+      "cost_usd": 0.005913,
+      "resolved_model": "deepseek-flash",
+      "patch_status": "failed",
+      "error": "Response does not contain a git diff"
+    },
+    {
+      "number": 2,
+      "context": [
+        {
+          "path": "django/test/testcases.py",
+          "sha256": "29471690773fed1a8fe8e0f377224b514210a23fb5379263c63a002497102b8e",
+          "chars": 4778,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/core/servers/basehttp.py",
+          "sha256": "9c0c817fdaafbc400a5e22b95887770aa13705230e5f12ee6b448f1fd144fe65",
+          "chars": 3592,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/query.py",
+          "sha256": "66773bcab15bdeaac4165432e5d88d4b0ef193339d4cee593e9e5f33f5641de7",
+          "chars": 4736,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/utils/autoreload.py",
+          "sha256": "5c2d5d12ba29d3deeb764185889c481f631d6ce40757bdba6f2a48acb8bcb175",
+          "chars": 3355,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/fields/related_descriptors.py",
+          "sha256": "c80ba94b54aa0987fdd1aca4451b1c1266148d2b48d83ceb5c33ec8048d478d7",
+          "chars": 4762,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/core/management/commands/makemigrations.py",
+          "sha256": "23b358aed0711c2ef847861de1a8f2f41bab117a73e5506ae341901183a4b2bc",
+          "chars": 2475,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        }
+      ],
+      "prompt_sha256": "30545eb91fd1d513ba322548bccdc2fadfcd923811bf7fc1b46f18b36a5559f8",
+      "prompt_tokens": 6635,
+      "completion_tokens": 8192,
+      "cost_usd": 0.005854002,
+      "resolved_model": "deepseek-flash",
+      "patch_status": "failed",
+      "error": "Response does not contain a git diff"
+    },
+    {
+      "number": 3,
+      "context": [
+        {
+          "path": "django/test/testcases.py",
+          "sha256": "29471690773fed1a8fe8e0f377224b514210a23fb5379263c63a002497102b8e",
+          "chars": 4778,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/core/servers/basehttp.py",
+          "sha256": "9c0c817fdaafbc400a5e22b95887770aa13705230e5f12ee6b448f1fd144fe65",
+          "chars": 3592,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/query.py",
+          "sha256": "66773bcab15bdeaac4165432e5d88d4b0ef193339d4cee593e9e5f33f5641de7",
+          "chars": 4736,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/utils/autoreload.py",
+          "sha256": "5c2d5d12ba29d3deeb764185889c481f631d6ce40757bdba6f2a48acb8bcb175",
+          "chars": 3355,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/fields/related_descriptors.py",
+          "sha256": "c80ba94b54aa0987fdd1aca4451b1c1266148d2b48d83ceb5c33ec8048d478d7",
+          "chars": 4762,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/core/management/commands/makemigrations.py",
+          "sha256": "23b358aed0711c2ef847861de1a8f2f41bab117a73e5506ae341901183a4b2bc",
+          "chars": 2475,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        }
+      ],
+      "prompt_sha256": "30545eb91fd1d513ba322548bccdc2fadfcd923811bf7fc1b46f18b36a5559f8",
+      "prompt_tokens": 6635,
+      "completion_tokens": 8192,
+      "cost_usd": 0.00496965,
+      "resolved_model": "deepseek-flash",
+      "patch_status": "failed",
+      "error": "Response does not contain a git diff"
+    }
+  ],
+  "python_tests": {
+    "status": "not_run"
+  },
+  "dafny_verification": {
+    "status": "not_applicable"
+  },
+  "spec_audit": {
+    "status": "not_applicable"
+  },
+  "final_patch": "",
+  "total_prompt_tokens": 19922,
+  "total_completion_tokens": 24576,
+  "total_cost_usd": 0.016736651999999998,
+  "elapsed_seconds": 108.50928920799925,
+  "mode": "baseline",
+  "workers": 1
+}

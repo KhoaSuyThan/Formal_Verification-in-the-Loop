@@ -1,4 +1,6 @@
 # KẾ HOẠCH TRIỂN KHAI TOÀN DIỆN 5 HẠNG MỤC CẢI TIẾN
+
+> Đây là kế hoạch theo mốc trước. Phạm vi hiện hành của v1.7.0 (18/10/2026), gồm 35 bài Dafny hồi quy, pilot Python và chạy benchmark song song, được ghi trong [README](README.md), [CHANGELOG](CHANGELOG.md) và [hướng dẫn bộ thử mới](docs/REAL_WORLD_BENCHMARKS.md).
 **Dự án**: Formal Verification-in-the-Loop (Zero-Hallucination Code Generation)  
 **Thời gian cập nhật**: 05/10/2026  
 **Cơ sở**: Triển khai chi tiết theo Bảng Tóm Tắt 5 Ưu Tiên Hành Động cốt lõi.

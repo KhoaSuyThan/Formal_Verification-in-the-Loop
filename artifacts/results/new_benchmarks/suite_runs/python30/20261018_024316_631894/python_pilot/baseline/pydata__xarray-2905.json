@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "task_id": "pydata__xarray-2905",
+  "category": "boundary",
+  "backend": "swebench",
+  "repo_url": "https://github.com/pydata/xarray.git",
+  "base_commit": "7c4e2ac83f7b4306296ff9b7b51aaf016e5ad614",
+  "source": {
+    "dataset": "princeton-nlp/SWE-bench_Verified",
+    "revision": "c104f840cc67f8b6eec6f759ebc8b2693d585d4a",
+    "split": "test",
+    "instance_id": "pydata__xarray-2905",
+    "difficulty": "15 min - 1 hour"
+  },
+  "formal_review_status": "draft_pending_human_review",
+  "model": "deepseek/deepseek-flash",
+  "max_attempts": 3,
+  "command_timeout_sec": 120,
+  "context_budget_chars": 24000,
+  "python_version": "3.14.8",
+  "setup": [],
+  "attempts": [
+    {
+      "number": 1,
+      "context": [
+        {
+          "path": "xarray/core/dataarray.py",
+          "sha256": "fe41147df9efdadbdd5ededbf26fb2e83a6fc2a7091ce44a66858f741064f3c3",
+          "chars": 4370,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/core/dataset.py",
+          "sha256": "ef3be071f1c63c510800e6ed342c2d5bc54a8c971309393757b21166fd2b3399",
+          "chars": 4035,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/core/variable.py",
+          "sha256": "43c9aea0e95932e3e98648da8f5e55b6819058ffab96f7901fef5295fe114a4f",
+          "chars": 4312,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/core/common.py",
+          "sha256": "d394fb851e5e0e059312f2164ea5d50a743c4cea1f86501fa3bae5e0a973cc24",
+          "chars": 4050,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/conventions.py",
+          "sha256": "6f02a194c4424dbf8f7f6b6a7a5458047b4aa07638dff3dc5b216825db2403d3",
+          "chars": 3372,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/core/alignment.py",
+          "sha256": "b4ce417580830b25dad9fab0eeb89f3b0dc62b9fcb79ce59fad4d35b4b115832",
+          "chars": 3659,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        }
+      ],
+      "prompt_sha256": "ffc4c86b64a5359ee5c4d8defee06a5757dbdf381479905514916cc9fe9066b5",
+      "prompt_tokens": 7213,
+      "completion_tokens": 8192,
+      "cost_usd": 0.00599715,
+      "resolved_model": "deepseek-flash",
+      "patch_status": "failed",
+      "error": "Response does not contain a git diff"
+    },
+    {
+      "number": 2,
+      "context": [
+        {
+          "path": "xarray/core/dataarray.py",
+          "sha256": "fe41147df9efdadbdd5ededbf26fb2e83a6fc2a7091ce44a66858f741064f3c3",
+          "chars": 4782,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/core/dataset.py",
+          "sha256": "ef3be071f1c63c510800e6ed342c2d5bc54a8c971309393757b21166fd2b3399",
+          "chars": 4419,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/core/variable.py",
+          "sha256": "43c9aea0e95932e3e98648da8f5e55b6819058ffab96f7901fef5295fe114a4f",
+          "chars": 4312,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/core/common.py",
+          "sha256": "d394fb851e5e0e059312f2164ea5d50a743c4cea1f86501fa3bae5e0a973cc24",
+          "chars": 4369,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/conventions.py",
+          "sha256": "6f02a194c4424dbf8f7f6b6a7a5458047b4aa07638dff3dc5b216825db2403d3",
+          "chars": 3587,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/core/alignment.py",
+          "sha256": "b4ce417580830b25dad9fab0eeb89f3b0dc62b9fcb79ce59fad4d35b4b115832",
+          "chars": 2302,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        }
+      ],
+      "prompt_sha256": "8dd0a1ed6627504409c12e8752d72088a0ec1516c3db5aa2c7661689605855b3",
+      "prompt_tokens": 7203,
+      "completion_tokens": 8192,
+      "cost_usd": 0.005863938,
+      "resolved_model": "deepseek-flash",
+      "patch_status": "failed",
+      "error": "Response does not contain a git diff"
+    },
+    {
+      "number": 3,
+      "context": [
+        {
+          "path": "xarray/core/dataarray.py",
+          "sha256": "fe41147df9efdadbdd5ededbf26fb2e83a6fc2a7091ce44a66858f741064f3c3",
+          "chars": 4782,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/core/dataset.py",
+          "sha256": "ef3be071f1c63c510800e6ed342c2d5bc54a8c971309393757b21166fd2b3399",
+          "chars": 4419,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/core/variable.py",
+          "sha256": "43c9aea0e95932e3e98648da8f5e55b6819058ffab96f7901fef5295fe114a4f",
+          "chars": 4312,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/core/common.py",
+          "sha256": "d394fb851e5e0e059312f2164ea5d50a743c4cea1f86501fa3bae5e0a973cc24",
+          "chars": 4369,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/conventions.py",
+          "sha256": "6f02a194c4424dbf8f7f6b6a7a5458047b4aa07638dff3dc5b216825db2403d3",
+          "chars": 3587,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "xarray/core/alignment.py",
+          "sha256": "b4ce417580830b25dad9fab0eeb89f3b0dc62b9fcb79ce59fad4d35b4b115832",
+          "chars": 2302,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        }
+      ],
+      "prompt_sha256": "8dd0a1ed6627504409c12e8752d72088a0ec1516c3db5aa2c7661689605855b3",
+      "prompt_tokens": 7203,
+      "completion_tokens": 8192,
+      "cost_usd": 0.00496077,
+      "resolved_model": "deepseek-flash",
+      "patch_status": "failed",
+      "error": "Response does not contain a git diff"
+    }
+  ],
+  "python_tests": {
+    "status": "not_run"
+  },
+  "dafny_verification": {
+    "status": "not_applicable"
+  },
+  "spec_audit": {
+    "status": "not_applicable"
+  },
+  "final_patch": "",
+  "total_prompt_tokens": 21619,
+  "total_completion_tokens": 24576,
+  "total_cost_usd": 0.016821858,
+  "elapsed_seconds": 101.53501895799127,
+  "mode": "baseline",
+  "workers": 1
+}

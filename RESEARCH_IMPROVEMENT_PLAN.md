@@ -1,4 +1,6 @@
 # KẾ HOẠCH NÂNG CẤP & MỞ RỘNG NGHIÊN CỨU KHOA HỌC (RESEARCH ROADMAP)
+
+> Tài liệu này ghi lại lộ trình nghiên cứu ban đầu. Trạng thái triển khai hiện hành tại mốc v1.7.0 (18/10/2026) nằm trong [README](README.md), [CHANGELOG](CHANGELOG.md) và [hướng dẫn pilot Python](docs/REAL_WORLD_BENCHMARKS.md); không đọc các mục kế hoạch bên dưới như trạng thái kiểm thử mới nhất.
 **Dự án**: Formal Verification-in-the-Loop (Zero-Hallucination Code Generation)  
 **Cơ sở lý thuyết**: Tích hợp các nghiên cứu tiên phong từ Nature (2024), Stanford Clover (2024), IEEE/ACM TSE (2026), và arXiv (2025–2026).
 

@@ -1,0 +1,165 @@
+{
+  "suite": "spec_traps_v1",
+  "results": [
+    {
+      "id": "weak_gcd_nonzero",
+      "kind": "weak_spec",
+      "contract_gate": "passed",
+      "contract_issues": [],
+      "dafny_verification": "passed",
+      "dafny_output": "\nDafny program verifier finished with 1 verified, 0 errors\n",
+      "dafny_audit": "passed",
+      "audit_output": "Dafny auditor completed with 0 findings\n\nDafny program verifier did not attempt verification\n",
+      "semantic_review": "required",
+      "semantic_witness": "counterexample_observed",
+      "witness_output": "\nDafny program verifier finished with 2 verified, 0 errors\n[Program halted] /var/folders/vv/8snv5s3n5yz19yc_bh1f6vq40000gp/T/fvil-witness-hfvce_hn/witness.dfy(6,61): GCD(6, 9) must be 3\n",
+      "reason": "A nonzero constant satisfies the contract without computing a greatest common divisor."
+    },
+    {
+      "id": "weak_linear_search_negative_two",
+      "kind": "weak_spec",
+      "contract_gate": "passed",
+      "contract_issues": [],
+      "dafny_verification": "passed",
+      "dafny_output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+      "dafny_audit": "passed",
+      "audit_output": "Dafny auditor completed with 0 findings\n\nDafny program verifier did not attempt verification\n",
+      "semantic_review": "required",
+      "semantic_witness": "counterexample_observed",
+      "witness_output": "\nDafny program verifier finished with 3 verified, 0 errors\n[Program halted] /var/folders/vv/8snv5s3n5yz19yc_bh1f6vq40000gp/T/fvil-witness-u19zvlkv/witness.dfy(6,100): missing item must return -1\n",
+      "reason": "Returning -2 makes both implications vacuously true."
+    },
+    {
+      "id": "weak_sorted_empty",
+      "kind": "weak_spec",
+      "contract_gate": "passed",
+      "contract_issues": [],
+      "dafny_verification": "passed",
+      "dafny_output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+      "dafny_audit": "passed",
+      "audit_output": "Dafny auditor completed with 0 findings\n\nDafny program verifier did not attempt verification\n",
+      "semantic_review": "required",
+      "semantic_witness": "counterexample_observed",
+      "witness_output": "\nDafny program verifier finished with 3 verified, 0 errors\n[Program halted] /var/folders/vv/8snv5s3n5yz19yc_bh1f6vq40000gp/T/fvil-witness-mzql6ces/witness.dfy(6,42): sort must preserve elements\n",
+      "reason": "Sortedness alone does not preserve input elements."
+    },
+    {
+      "id": "requires_strengthened",
+      "kind": "tamper",
+      "contract_gate": "rejected",
+      "contract_issues": [
+        "contract_changed:Increase"
+      ],
+      "dafny_verification": "passed",
+      "dafny_output": "\nDafny program verifier finished with 1 verified, 0 errors\n",
+      "dafny_audit": "passed",
+      "audit_output": "Dafny auditor completed with 0 findings\n\nDafny program verifier did not attempt verification\n",
+      "semantic_review": "not_applicable",
+      "semantic_witness": "not_applicable",
+      "witness_output": "",
+      "reason": ""
+    },
+    {
+      "id": "ensures_removed",
+      "kind": "tamper",
+      "contract_gate": "rejected",
+      "contract_issues": [
+        "contract_changed:Positive"
+      ],
+      "dafny_verification": "passed",
+      "dafny_output": "\nDafny program verifier finished with 1 verified, 0 errors\n",
+      "dafny_audit": "passed",
+      "audit_output": "Dafny auditor completed with 0 findings\n\nDafny program verifier did not attempt verification\n",
+      "semantic_review": "not_applicable",
+      "semantic_witness": "not_applicable",
+      "witness_output": "",
+      "reason": ""
+    },
+    {
+      "id": "frame_widened",
+      "kind": "tamper",
+      "contract_gate": "rejected",
+      "contract_issues": [
+        "contract_changed:Touch"
+      ],
+      "dafny_verification": "passed",
+      "dafny_output": "\nDafny program verifier finished with 2 verified, 0 errors\n",
+      "dafny_audit": "passed",
+      "audit_output": "Dafny auditor completed with 0 findings\n\nDafny program verifier did not attempt verification\n",
+      "semantic_review": "not_applicable",
+      "semantic_witness": "not_applicable",
+      "witness_output": "",
+      "reason": ""
+    },
+    {
+      "id": "predicate_redefined",
+      "kind": "tamper",
+      "contract_gate": "rejected",
+      "contract_issues": [
+        "pure_definition_changed:Positive"
+      ],
+      "dafny_verification": "passed",
+      "dafny_output": "\nDafny program verifier finished with 1 verified, 0 errors\n",
+      "dafny_audit": "passed",
+      "audit_output": "Dafny auditor completed with 0 findings\n\nDafny program verifier did not attempt verification\n",
+      "semantic_review": "not_applicable",
+      "semantic_witness": "not_applicable",
+      "witness_output": "",
+      "reason": ""
+    },
+    {
+      "id": "assume_bypass",
+      "kind": "bypass",
+      "contract_gate": "rejected",
+      "contract_issues": [
+        "unproved_assumption_or_axiom"
+      ],
+      "dafny_verification": "passed",
+      "dafny_output": "/var/folders/vv/8snv5s3n5yz19yc_bh1f6vq40000gp/T/tmp6uhxckey.dfy(3,10): Warning: assume statement has no {:axiom} annotation\n  |\n3 | { y := 0; assume y > 0; }\n  |           ^^^^^^\n\n\nDafny program verifier finished with 1 verified, 0 errors\n",
+      "dafny_audit": "failed",
+      "audit_output": "/var/folders/vv/8snv5s3n5yz19yc_bh1f6vq40000gp/T/fvil-trap-0ej8t862/trap.dfy(3,10): Warning: assume statement has no {:axiom} annotation\n/var/folders/vv/8snv5s3n5yz19yc_bh1f6vq40000gp/T/fvil-trap-0ej8t862/trap.dfy(3,10): Warning: Compute: Definition has `assume` statement in body. Possible mitigation: Replace with `assert` and prove or add `{:axiom}`.\nDafny auditor completed with 1 findings\n\nDafny program verifier did not attempt verification\n",
+      "semantic_review": "not_applicable",
+      "semantic_witness": "not_applicable",
+      "witness_output": "",
+      "reason": ""
+    },
+    {
+      "id": "axiom_bypass",
+      "kind": "bypass",
+      "contract_gate": "rejected",
+      "contract_issues": [
+        "contract_changed:Helper",
+        "pure_definition_changed:Helper",
+        "unproved_assumption_or_axiom"
+      ],
+      "dafny_verification": "failed",
+      "dafny_output": "/var/folders/vv/8snv5s3n5yz19yc_bh1f6vq40000gp/T/tmpd0xacfx0.dfy(3,0): Error: a postcondition could not be proved on this return path\n  |\n3 | {}\n  | ^\n\n/var/folders/vv/8snv5s3n5yz19yc_bh1f6vq40000gp/T/tmpd0xacfx0.dfy(2,10): Related location: this is the postcondition that could not be proved\n  |\n2 |   ensures false\n  |           ^^^^^\n\n\nDafny program verifier finished with 0 verified, 1 error\n",
+      "dafny_audit": "failed",
+      "audit_output": "/var/folders/vv/8snv5s3n5yz19yc_bh1f6vq40000gp/T/fvil-trap-2npnblig/trap.dfy(1,15): Warning: Helper: Declaration has explicit `{:axiom}` attribute. Possible mitigation: Provide a proof or test.\nDafny auditor completed with 1 findings\n\nDafny program verifier did not attempt verification\n",
+      "semantic_review": "not_applicable",
+      "semantic_witness": "not_applicable",
+      "witness_output": "",
+      "reason": ""
+    },
+    {
+      "id": "verify_false_bypass",
+      "kind": "bypass",
+      "contract_gate": "rejected",
+      "contract_issues": [
+        "contract_changed:Compute",
+        "unproved_assumption_or_axiom"
+      ],
+      "dafny_verification": "passed",
+      "dafny_output": "/var/folders/vv/8snv5s3n5yz19yc_bh1f6vq40000gp/T/tmpgsxgiet_.dfy(1,23): Warning: The {:verify false} attribute should only be used during development. Consider using a bodyless method together with the {:axiom} attribute instead\n  |\n1 | method {:verify false} Compute() returns (y: int)\n  |                        ^^^^^^^\n\n\nDafny program verifier finished with 0 verified, 0 errors\n",
+      "dafny_audit": "failed",
+      "audit_output": "/var/folders/vv/8snv5s3n5yz19yc_bh1f6vq40000gp/T/fvil-trap-04nacre0/trap.dfy(1,23): Warning: The {:verify false} attribute should only be used during development. Consider using a bodyless method together with the {:axiom} attribute instead\n/var/folders/vv/8snv5s3n5yz19yc_bh1f6vq40000gp/T/fvil-trap-04nacre0/trap.dfy(1,23): Warning: Compute: Declaration has `{:verify false}` attribute. Possible mitigation: Remove `{:verify false}` attribute and prove if possible.\nDafny auditor completed with 1 findings\n\nDafny program verifier did not attempt verification\n",
+      "semantic_review": "not_applicable",
+      "semantic_witness": "not_applicable",
+      "witness_output": "",
+      "reason": ""
+    }
+  ],
+  "tamper_or_bypass_rejected": 7,
+  "weak_specs_requiring_review": 3,
+  "weak_spec_counterexamples": 3
+}

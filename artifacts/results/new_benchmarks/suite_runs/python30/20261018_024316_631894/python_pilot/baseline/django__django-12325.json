@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "task_id": "django__django-12325",
+  "category": "boundary",
+  "backend": "swebench",
+  "repo_url": "https://github.com/django/django.git",
+  "base_commit": "29c126bb349526b5f1cd78facbe9f25906f18563",
+  "source": {
+    "dataset": "princeton-nlp/SWE-bench_Verified",
+    "revision": "c104f840cc67f8b6eec6f759ebc8b2693d585d4a",
+    "split": "test",
+    "instance_id": "django__django-12325",
+    "difficulty": "1-4 hours"
+  },
+  "formal_review_status": "not_reviewed",
+  "model": "deepseek/deepseek-flash",
+  "max_attempts": 3,
+  "command_timeout_sec": 120,
+  "context_budget_chars": 24000,
+  "python_version": "3.14.8",
+  "setup": [],
+  "attempts": [
+    {
+      "number": 1,
+      "context": [
+        {
+          "path": "django/db/models/base.py",
+          "sha256": "96ac7afbdcca9dde6e22581d79134b86a73e8b86df0e962449407bc22943eaf4",
+          "chars": 3787,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/deletion.py",
+          "sha256": "27644de9870a07649654d8d62276432f60e52eda4ab6d8e7b49bc25353e14d05",
+          "chars": 4374,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/query.py",
+          "sha256": "a16dcfbfdf0e57a7ff1f63e2a468709b62cde188c3bba3eaeb1f9b9c27a97e9c",
+          "chars": 4713,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/forms/models.py",
+          "sha256": "059077e4e22b05b1425ceca7dd27f7ab6ff3e1c7812bd9867ba3238a5e5c2e9b",
+          "chars": 4570,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/fields/related_descriptors.py",
+          "sha256": "5344d21dad07f7c6449b98318546af17c951c7f560582c0eb69136cbf3c7b5b3",
+          "chars": 4475,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/options.py",
+          "sha256": "fd553504f8e84cc31f68de4eb984646a4097a42f24aef3f31170d5b438bae899",
+          "chars": 1781,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        }
+      ],
+      "prompt_sha256": "658929f2ef40facbd79726f96ef248647a1453f88dab8fa5b331a0f87b9d9e62",
+      "prompt_tokens": 6200,
+      "completion_tokens": 8192,
+      "cost_usd": 0.0058452,
+      "resolved_model": "deepseek-flash",
+      "patch_status": "failed",
+      "error": "Response does not contain a git diff"
+    },
+    {
+      "number": 2,
+      "context": [
+        {
+          "path": "django/db/models/base.py",
+          "sha256": "96ac7afbdcca9dde6e22581d79134b86a73e8b86df0e962449407bc22943eaf4",
+          "chars": 4351,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/deletion.py",
+          "sha256": "27644de9870a07649654d8d62276432f60e52eda4ab6d8e7b49bc25353e14d05",
+          "chars": 4757,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/query.py",
+          "sha256": "a16dcfbfdf0e57a7ff1f63e2a468709b62cde188c3bba3eaeb1f9b9c27a97e9c",
+          "chars": 4774,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/forms/models.py",
+          "sha256": "059077e4e22b05b1425ceca7dd27f7ab6ff3e1c7812bd9867ba3238a5e5c2e9b",
+          "chars": 4628,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/fields/related_descriptors.py",
+          "sha256": "5344d21dad07f7c6449b98318546af17c951c7f560582c0eb69136cbf3c7b5b3",
+          "chars": 4209,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/options.py",
+          "sha256": "fd553504f8e84cc31f68de4eb984646a4097a42f24aef3f31170d5b438bae899",
+          "chars": 1046,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        }
+      ],
+      "prompt_sha256": "c6c5d3522836ec3cd43d6ef7593a20be014e73723d702a5a61042491c3d984d3",
+      "prompt_tokens": 6205,
+      "completion_tokens": 8192,
+      "cost_usd": 0.00575187,
+      "resolved_model": "deepseek-flash",
+      "patch_status": "failed",
+      "error": "Response does not contain a git diff"
+    },
+    {
+      "number": 3,
+      "context": [
+        {
+          "path": "django/db/models/base.py",
+          "sha256": "96ac7afbdcca9dde6e22581d79134b86a73e8b86df0e962449407bc22943eaf4",
+          "chars": 4351,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/deletion.py",
+          "sha256": "27644de9870a07649654d8d62276432f60e52eda4ab6d8e7b49bc25353e14d05",
+          "chars": 4757,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/query.py",
+          "sha256": "a16dcfbfdf0e57a7ff1f63e2a468709b62cde188c3bba3eaeb1f9b9c27a97e9c",
+          "chars": 4774,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/forms/models.py",
+          "sha256": "059077e4e22b05b1425ceca7dd27f7ab6ff3e1c7812bd9867ba3238a5e5c2e9b",
+          "chars": 4628,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/fields/related_descriptors.py",
+          "sha256": "5344d21dad07f7c6449b98318546af17c951c7f560582c0eb69136cbf3c7b5b3",
+          "chars": 4209,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        },
+        {
+          "path": "django/db/models/options.py",
+          "sha256": "fd553504f8e84cc31f68de4eb984646a4097a42f24aef3f31170d5b438bae899",
+          "chars": 1046,
+          "truncated": true,
+          "reason": "issue/diagnostic/symbol"
+        }
+      ],
+      "prompt_sha256": "c6c5d3522836ec3cd43d6ef7593a20be014e73723d702a5a61042491c3d984d3",
+      "prompt_tokens": 6205,
+      "completion_tokens": 8192,
+      "cost_usd": 0.004961597999999999,
+      "resolved_model": "deepseek-flash",
+      "patch_status": "failed",
+      "error": "Response does not contain a git diff"
+    }
+  ],
+  "python_tests": {
+    "status": "not_run"
+  },
+  "dafny_verification": {
+    "status": "not_applicable"
+  },
+  "spec_audit": {
+    "status": "not_applicable"
+  },
+  "final_patch": "",
+  "total_prompt_tokens": 18610,
+  "total_completion_tokens": 24576,
+  "total_cost_usd": 0.016558668,
+  "elapsed_seconds": 120.05648170798668,
+  "mode": "baseline",
+  "workers": 1
+}

@@ -1,0 +1,16 @@
+{
+  "state": "running",
+  "suite": "python30",
+  "model": "deepseek/deepseek-flash",
+  "pid": 46162,
+  "grade": false,
+  "max_attempts": 3,
+  "workers": 1,
+  "started_at": "2026-10-17T19:43:16.714351+00:00",
+  "dafny_done": 0,
+  "baseline_done": 13,
+  "framework_done": 0,
+  "total_steps": 60,
+  "result_file": null,
+  "result_dir": "/Users/ProM2/Documents/scientific research/Formal_Verification-in-the-Loop/artifacts/results/new_benchmarks/suite_runs/python30/20261018_024316_631894/python_pilot"
+}

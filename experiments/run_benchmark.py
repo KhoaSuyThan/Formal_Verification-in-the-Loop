@@ -24,6 +24,7 @@ from rich.table import Table
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeElapsedColumn
 
 from core.dafny_engine import DafnyEngine
+from core.batch_execution import iter_completed
 from agents.llm_agent import LLMAgent
 from core.pipeline_controller import PipelineController, PipelineResult
 
@@ -67,6 +68,10 @@ def parse_args():
         default=None,
         help="Danh sách tên/từ khóa bài toán cần chạy, phân tách bằng dấu phẩy (vd: '031,035,052,055')"
     )
+    parser.add_argument(
+        "--workers", type=int, default=1,
+        help="Số bài độc lập chạy song song (1-8; mặc định 1 để giữ cách chạy cũ)",
+    )
     return parser.parse_args()
 
 
@@ -82,6 +87,9 @@ def load_config(config_path: str) -> Dict[str, Any]:
 def main():
     console = Console()
     args = parse_args()
+    if not 1 <= args.workers <= 8:
+        console.print("[bold red][LỖI][/bold red] --workers phải nằm trong khoảng 1-8")
+        return
     config = load_config(args.config)
 
     # Trích xuất tham số ưu tiên theo thứ tự: CLI -> Config YAML -> Mặc định
@@ -133,6 +141,7 @@ def main():
     info_table.add_row("Mô hình LLM", model_name)
     info_table.add_row("Số lượt lặp Pass@K", f"K = {max_k}")
     info_table.add_row("Timeout Solver Z3", f"{timeout_sec} giây/lượt")
+    info_table.add_row("Số bài song song", str(args.workers))
     console.print(info_table)
 
     # Chuẩn bị thư mục xuất kết quả và log vết
@@ -144,7 +153,22 @@ def main():
     logs_dir = Path("artifacts/logs") / f"run_{timestamp_str}"
     logs_dir.mkdir(parents=True, exist_ok=True)
 
-    results_data: List[Dict[str, Any]] = []
+    results_by_index: Dict[int, Dict[str, Any]] = {}
+
+    def run_case(task_file: Path) -> tuple[PipelineResult, float]:
+        active_controller = controller
+        if args.workers > 1:
+            active_controller = PipelineController(
+                agent=LLMAgent(model_name=model_name),
+                engine=DafnyEngine(timeout_sec=timeout_sec),
+                max_k=max_k,
+                verbose=False,
+            )
+        start = time.monotonic()
+        result = active_controller.run_task(
+            raw_spec=task_file.read_text(encoding="utf-8"), task_name=task_file.stem,
+        )
+        return result, round(time.monotonic() - start, 2)
 
     # Tiến hành chạy benchmark với thanh tiến trình trực quan
     console.print("\n[bold green]>>> BẮT ĐẦU CHẠY BENCHMARK TỰ ĐỘNG...[/bold green]")
@@ -158,14 +182,10 @@ def main():
     ) as progress:
         bench_task = progress.add_task("[cyan]Đang kiểm định bài toán...", total=len(task_files))
 
-        for task_file in task_files:
+        for index, task_file, completed in iter_completed(task_files, run_case, workers=args.workers):
             task_name = task_file.stem
-            progress.update(bench_task, description=f"[cyan]Đang xử lý: [bold]{task_name}[/bold]...")
-
-            start_t = time.time()
-            raw_spec = task_file.read_text(encoding="utf-8")
-            res: PipelineResult = controller.run_task(raw_spec=raw_spec, task_name=task_name)
-            elapsed_sec = round(time.time() - start_t, 2)
+            progress.update(bench_task, description=f"[cyan]Hoàn thành: [bold]{task_name}[/bold]...")
+            res, elapsed_sec = completed
 
             # Lưu log vết chi tiết của từng bài toán
             task_log_file = logs_dir / f"{task_name}.log"
@@ -185,7 +205,7 @@ def main():
             pass_at_k = 1 if res.is_success else 0
             last_err_tax = res.history[-1].error_taxonomy if (res.history and not res.is_success) else "None"
 
-            results_data.append({
+            results_by_index[index] = {
                 "task_name": task_name,
                 "model": model_name,
                 "is_success": res.is_success,
@@ -194,12 +214,14 @@ def main():
                 "pass_at_k": pass_at_k,
                 "error_taxonomy": last_err_tax,
                 "execution_time_sec": elapsed_sec,
+                "workers": args.workers,
                 "timestamp": timestamp_str
-            })
+            }
 
             progress.advance(bench_task)
 
     # Ghi toàn bộ kết quả ra file CSV
+    results_data: List[Dict[str, Any]] = [results_by_index[i] for i in sorted(results_by_index)]
     if results_data:
         fieldnames = list(results_data[0].keys())
         with open(csv_file, "w", newline="", encoding="utf-8") as f:

@@ -17,10 +17,12 @@ import pandas as pd
 import streamlit as st
 
 from agents.llm_agent import LLMAgent
+from core.batch_execution import iter_completed
 from core.dafny_engine import DafnyEngine
 from core.pipeline_controller import PipelineController, PipelineResult
 from core.spec_locker import SpecLocker
 from core.topology_detector import TopologyDetector
+from web_demo.icons import icon_heading, icon_svg, plain_label
 from web_demo.helpers import (
     clear_last_batch_run,
     clear_last_single_run,
@@ -61,7 +63,7 @@ def render_pipeline_tab(
             st.markdown(
                 f"""
                 <div class="glass-card">
-                    <div class="glass-card-icon">🧠</div>
+                    <div class="glass-card-icon">{icon_svg('network')}</div>
                     <div>
                         <div class="glass-card-label">Hình Thái Giải Thuật</div>
                         <div class="glass-card-value" style="color: #38bdf8;">{detected_topology.value}</div>
@@ -74,7 +76,7 @@ def render_pipeline_tab(
             st.markdown(
                 f"""
                 <div class="glass-card">
-                    <div class="glass-card-icon">🔒</div>
+                    <div class="glass-card-icon">{icon_svg('lock')}</div>
                     <div>
                         <div class="glass-card-label">Khóa Đặc Tả (Spec-Locking)</div>
                         <div class="glass-card-value" style="color: #a78bfa;">SHA-256: {spec_hash[:8]}...{spec_hash[-4:]}</div>
@@ -87,7 +89,7 @@ def render_pipeline_tab(
             st.markdown(
                 f"""
                 <div class="glass-card">
-                    <div class="glass-card-icon">⚡</div>
+                    <div class="glass-card-icon">{icon_svg('cpu')}</div>
                     <div>
                         <div class="glass-card-label">SMT Solver Backend</div>
                         <div class="glass-card-value" style="color: #4ade80;">Z3 Online ({timeout_sec}s)</div>
@@ -97,10 +99,10 @@ def render_pipeline_tab(
                 unsafe_allow_html=True,
             )
 
-        with st.expander("📄 Xem mã đặc tả gốc của bài toán (Formal Specification)", expanded=False):
+        with st.expander("Xem mã đặc tả gốc của bài toán (Formal Specification)", expanded=False):
             st.code(spec_content, language="dafny")
 
-        start_btn = st.button("🚀 BẮT ĐẦU KIỂM ĐỊNH & TỰ SỬA LỖI KHÉP KÍN", type="primary", width="stretch")
+        start_btn = st.button("Bắt đầu kiểm định và tự sửa lỗi", icon=":material/play_arrow:", type="primary", width="stretch")
 
         if start_btn:
             progress_bar = st.progress(0)
@@ -141,7 +143,7 @@ def render_pipeline_tab(
                     st.markdown(
                         f"""
                         <div class="status-card-pass">
-                            🏆 XÁC MINH THÀNH CÔNG: Mã nguồn đã được Dafny & Z3 Solver chứng minh theo đặc tả!
+                            {icon_svg('check')} XÁC MINH THÀNH CÔNG: Mã nguồn đã được Dafny & Z3 Solver chứng minh theo đặc tả!
                             <br><small>Thời gian thực thi: {elapsed:.2f}s | Đạt chứng nhận tại Lượt {res.total_iterations}/{max_k}</small>
                         </div>
                         """,
@@ -151,7 +153,7 @@ def render_pipeline_tab(
                     st.markdown(
                         f"""
                         <div class="status-card-fail">
-                            ❌ THẤT BẠI: Không thể hội tụ chứng minh sau {res.total_iterations} vòng lặp.
+                            {icon_svg('error')} THẤT BẠI: Không thể hội tụ chứng minh sau {res.total_iterations} vòng lặp.
                             <br><small>Lý do: {res.failure_reason}</small>
                         </div>
                         """,
@@ -159,12 +161,11 @@ def render_pipeline_tab(
                     )
 
                 # Hiển thị chi tiết từng vòng lặp Pass@K
-                st.markdown("### 📋 Lịch Sử Các Lượt Kiểm Định & Tự Sửa Lỗi")
+                st.markdown(icon_heading("Lịch sử các lượt kiểm định và tự sửa lỗi", "list"), unsafe_allow_html=True)
                 for entry in res.history:
-                    icon = "✅" if entry.is_verified else "❌"
                     status_text = "Đã Chứng Minh (Verified)" if entry.is_verified else f"Vi Phạm: {entry.error_taxonomy}"
 
-                    with st.expander(f"Lượt {entry.iteration}: {icon} {status_text}", expanded=True):
+                    with st.expander(f"Lượt {entry.iteration}: {status_text}", expanded=True):
                         col_code, col_diag = st.columns([1.2, 1])
 
                         with col_code:
@@ -174,16 +175,16 @@ def render_pipeline_tab(
                         with col_diag:
                             st.markdown("**Phản hồi từ Z3 Solver & Bộ Chẩn Đoán:**")
                             if entry.is_verified:
-                                st.success("✨ Z3 đã thẩm định thành công tất cả Verification Conditions (VCs). Không có ảo giác!")
+                                st.success("Z3 đã thẩm định thành công tất cả Verification Conditions (VCs).")
                             else:
                                 st.error(f"**Lỗi phát hiện:** `{entry.error_taxonomy}`")
                                 st.markdown(f"**Chi tiết:** {entry.error_message}")
                                 if getattr(entry, "counterexample_desc", None):
-                                    st.warning(f"🎯 **Phản ví dụ Z3 (CEGAR):** `{entry.counterexample_desc}`")
+                                    st.warning(f"**Phản ví dụ Z3 (CEGAR):** `{entry.counterexample_desc}`")
 
                         if getattr(entry, "cot_trace", None):
                             cot_tok = getattr(entry, "cot_tokens", 0)
-                            with st.expander(f"🧠 Chuỗi Suy Luận CoT Lượt {entry.iteration} ({cot_tok:,} tokens)", expanded=False):
+                            with st.expander(f"Chuỗi suy luận CoT lượt {entry.iteration} ({cot_tok:,} tokens)", expanded=False):
                                 st.caption("Nội dung mô hình tự suy luận bên trong thẻ `<think>` trước khi sinh mã:")
                                 st.text_area(
                                     label=f"cot_view_live_{entry.iteration}",
@@ -209,7 +210,7 @@ def render_pipeline_tab(
                     st.markdown(
                         f"""
                         <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 8px; padding: 8px 14px; margin-top: 8px;">
-                            <span style="font-weight: 700; color: #38bdf8;">💾 Lịch Sử Lần Chạy Gần Nhất:</span> 
+                            <span style="font-weight: 700; color: #38bdf8;">{icon_svg('clock')} Lịch sử lần chạy gần nhất:</span>
                             <span style="color: #e2e8f0;">Bài <strong>{saved_meta.get('task_name')}</strong> | Mô hình: <code>{saved_meta.get('model_name')}</code> | Lưu lúc: {saved_meta.get('timestamp')} | Thời gian: {saved_meta.get('elapsed', 0)}s</span>
                         </div>
                         """,
@@ -217,7 +218,7 @@ def render_pipeline_tab(
                     )
                 with col_s_clear:
                     st.markdown("<div style='margin-top: 8px;'></div>", unsafe_allow_html=True)
-                    if st.button("🗑️ Xóa Lịch Sử", key="btn_clear_single_run", width="stretch"):
+                    if st.button("Xóa lịch sử", icon=":material/delete_outline:", key="btn_clear_single_run", width="stretch"):
                         clear_last_single_run()
                         if "last_result" in st.session_state:
                             del st.session_state["last_result"]
@@ -228,7 +229,7 @@ def render_pipeline_tab(
                     st.markdown(
                         f"""
                         <div class="status-card-pass">
-                            🏆 XÁC MINH THÀNH CÔNG (DỮ LIỆU ĐÃ LƯU): Mã nguồn đã được Dafny & Z3 Solver chứng minh theo đặc tả!
+                            {icon_svg('check')} XÁC MINH THÀNH CÔNG (DỮ LIỆU ĐÃ LƯU): Mã nguồn đã được Dafny & Z3 Solver chứng minh theo đặc tả!
                             <br><small>Thời gian thực thi: {saved_meta.get('elapsed', 0)}s | Đạt chứng nhận tại Lượt {saved_res.total_iterations}/{saved_meta.get('max_k', max_k)}</small>
                         </div>
                         """,
@@ -238,7 +239,7 @@ def render_pipeline_tab(
                     st.markdown(
                         f"""
                         <div class="status-card-fail">
-                            ❌ THẤT BẠI (DỮ LIỆU ĐÃ LƯU): Không thể hội tụ chứng minh sau {saved_res.total_iterations} vòng lặp.
+                            {icon_svg('error')} THẤT BẠI (DỮ LIỆU ĐÃ LƯU): Không thể hội tụ chứng minh sau {saved_res.total_iterations} vòng lặp.
                             <br><small>Lý do: {saved_res.failure_reason}</small>
                         </div>
                         """,
@@ -246,12 +247,11 @@ def render_pipeline_tab(
                     )
 
                 # Hiển thị chi tiết từng vòng lặp Pass@K đã lưu
-                st.markdown("### 📋 Lịch Sử Các Lượt Kiểm Định & Tự Sửa Lỗi")
+                st.markdown(icon_heading("Lịch sử các lượt kiểm định và tự sửa lỗi", "list"), unsafe_allow_html=True)
                 for entry in saved_res.history:
-                    icon = "✅" if entry.is_verified else "❌"
                     status_text = "Đã Chứng Minh (Verified)" if entry.is_verified else f"Vi Phạm: {entry.error_taxonomy}"
 
-                    with st.expander(f"Lượt {entry.iteration}: {icon} {status_text}", expanded=False):
+                    with st.expander(f"Lượt {entry.iteration}: {status_text}", expanded=False):
                         col_code, col_diag = st.columns([1.2, 1])
 
                         with col_code:
@@ -264,7 +264,7 @@ def render_pipeline_tab(
                                 st.markdown(
                                     """
                                     <div style="background: rgba(34, 197, 94, 0.12); border: 1px solid rgba(74, 222, 128, 0.3); border-radius: 6px; padding: 10px 12px; color: #86efac; font-size: 0.79rem; line-height: 1.5; text-align: justify;">
-                                        ✨ <strong>Z3 SMT Solver:</strong> Đã thẩm định thành công tất cả Verification Conditions (VCs). Không có ảo giác!
+                                        <strong>Z3 SMT Solver:</strong> Đã thẩm định thành công tất cả Verification Conditions (VCs).
                                     </div>
                                     """,
                                     unsafe_allow_html=True,
@@ -285,7 +285,7 @@ def render_pipeline_tab(
                                     st.markdown(
                                         f"""
                                         <div class="diag-box-text" style="background: rgba(113, 63, 18, 0.25); border: 1px solid rgba(234, 179, 8, 0.35); border-radius: 6px; padding: 8px 12px; color: #fde047; font-size: 0.78rem; line-height: 1.45; text-align: justify;">
-                                            🎯 <strong>Phản ví dụ Z3 (CEGAR):</strong> <code>{entry.counterexample_desc}</code>
+                                            <strong>Phản ví dụ Z3 (CEGAR):</strong> <code>{entry.counterexample_desc}</code>
                                         </div>
                                         """,
                                         unsafe_allow_html=True,
@@ -293,7 +293,7 @@ def render_pipeline_tab(
 
                         if getattr(entry, "cot_trace", None):
                             cot_tok = getattr(entry, "cot_tokens", 0)
-                            with st.expander(f"🧠 Chuỗi Suy Luận CoT Lượt {entry.iteration} ({cot_tok:,} tokens)", expanded=False):
+                            with st.expander(f"Chuỗi suy luận CoT lượt {entry.iteration} ({cot_tok:,} tokens)", expanded=False):
                                 st.caption("Nội dung mô hình tự suy luận bên trong thẻ `<think>` trước khi sinh mã:")
                                 st.text_area(
                                     label=f"cot_view_saved_{entry.iteration}",
@@ -308,14 +308,14 @@ def render_pipeline_tab(
         # CHẾ ĐỘ HÀNG LOẠT (BATCH MULTI-SELECT MODE)
         # ======================================================================
         if not selected_batch:
-            st.warning("⚠️ Chưa có bài toán nào được chọn. Vui lòng bấm các nút **Chọn Nhanh (Presets)** hoặc tick chọn bài toán ở thanh bên trái!")
+            st.warning("Chưa có bài toán nào được chọn. Vui lòng dùng bộ chọn nhanh hoặc chọn bài toán ở thanh bên trái.")
         else:
             col_b1, col_b2, col_b3 = st.columns([1.2, 1.4, 1])
             with col_b1:
                 st.markdown(
                     f"""
                     <div class="glass-card">
-                        <div class="glass-card-icon">📦</div>
+                        <div class="glass-card-icon">{icon_svg('layers')}</div>
                         <div>
                             <div class="glass-card-label">Tổng Bài Cần Chạy</div>
                             <div class="glass-card-value" style="color: #38bdf8;">{len(selected_batch)} Bài Toán</div>
@@ -331,7 +331,7 @@ def render_pipeline_tab(
                 st.markdown(
                     f"""
                     <div class="glass-card">
-                        <div class="glass-card-icon">🏷️</div>
+                        <div class="glass-card-icon">{icon_svg('tag')}</div>
                         <div>
                             <div class="glass-card-label">Cơ Cấu Benchmark</div>
                             <div class="glass-card-value" style="color: #a78bfa; font-size: 0.95rem;">{clover_cnt} Clover • {humaneval_cnt} HumanEval • {advanced_cnt} Mở Rộng</div>
@@ -344,7 +344,7 @@ def render_pipeline_tab(
                 st.markdown(
                     f"""
                     <div class="glass-card">
-                        <div class="glass-card-icon">⚡</div>
+                        <div class="glass-card-icon">{icon_svg('cpu')}</div>
                         <div>
                             <div class="glass-card-label">Cấu Hình Z3 SMT</div>
                             <div class="glass-card-value" style="color: #4ade80;">Max K={max_k} ({timeout_sec}s)</div>
@@ -354,27 +354,36 @@ def render_pipeline_tab(
                     unsafe_allow_html=True,
                 )
 
-            with st.expander(f"📑 Danh mục chi tiết {len(selected_batch)} bài toán đã chọn", expanded=False):
+            with st.expander(f"Danh mục chi tiết {len(selected_batch)} bài toán đã chọn", expanded=False):
                 for idx_item, item_key in enumerate(selected_batch, 1):
                     item_info = flat_registry[item_key]
-                    target_badge = "🎯 [Core Target]" if item_info["is_target"] else "🧪 [Extended]"
+                    target_badge = "[Core Target]" if item_info["is_target"] else "[Extended]"
                     st.markdown(f"**{idx_item}.** `{item_info['short_name']}` ({item_info['group']}) — {target_badge} — *{item_info['rel_path']}*")
+
+            batch_workers = st.slider(
+                "Số bài chạy song song",
+                min_value=1,
+                max_value=4,
+                value=1 if model_name.startswith("ollama/") else 2,
+                help="Mỗi bài dùng một agent và tiến trình Dafny riêng. Chọn 1 để chạy tuần tự; tăng dần nếu hạn mức API cho phép.",
+            )
 
             col_b_run, col_b_stop = st.columns([4, 2])
             with col_b_run:
                 batch_btn = st.button(
-                    f"🚀 BẮT ĐẦU CHẠY KIỂM ĐỊNH HÀNG LOẠT ({len(selected_batch)} BÀI TOÁN)",
+                    f"Bắt đầu kiểm định hàng loạt ({len(selected_batch)} bài toán)",
+                    icon=":material/play_arrow:",
                     type="primary",
                     width="stretch",
                 )
             with col_b_stop:
-                batch_stop_btn = st.button("⏹️ DỪNG TIẾN TRÌNH", type="secondary", width="stretch", help="Dừng an toàn chu trình kiểm định sau khi hoàn thành bài toán hiện tại")
+                batch_stop_btn = st.button("Dừng tiến trình", icon=":material/stop:", type="secondary", width="stretch", help="Dừng an toàn chu trình kiểm định sau khi hoàn thành bài toán hiện tại")
 
             batch_stop_flag = os.path.join("artifacts", ".stop_batch_flag")
             if batch_stop_btn:
                 Path(batch_stop_flag).touch()
-                st.toast("🛑 Đã gửi lệnh dừng! Hệ thống sẽ dừng lại an toàn sau bài toán hiện tại.", icon="🛑")
-                st.warning("🛑 Đã kích hoạt lệnh dừng. Hệ thống đang hoàn tất bài hiện tại và dừng an toàn...")
+                st.toast("Đã gửi lệnh dừng. Hệ thống sẽ dừng sau bài toán hiện tại.", icon=":material/stop:")
+                st.warning("Đã kích hoạt lệnh dừng. Hệ thống đang hoàn tất bài hiện tại.")
 
             if batch_btn and os.path.exists(batch_stop_flag):
                 try:
@@ -408,15 +417,15 @@ def render_pipeline_tab(
                             st.markdown(
                                 f"""
                                 <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 8px; padding: 8px 14px; margin-bottom: 8px;">
-                                    <span style="font-weight: 700; color: #38bdf8;">💾 Lịch Sử Đợt Chạy Gần Nhất:</span> 
-                                    <span style="color: #e2e8f0;">Lưu lúc: {saved_batch.get('timestamp')} | Mô hình: <code>{saved_batch.get('model_name')}</code> | Thời gian: {saved_batch.get('total_batch_time')}s ({len(saved_batch.get('results_list', []))} bài)</span>
+                                    <span style="font-weight: 700; color: #38bdf8;">{icon_svg('clock')} Lịch sử đợt chạy gần nhất:</span>
+                                    <span style="color: #e2e8f0;">Lưu lúc: {saved_batch.get('timestamp')} | Mô hình: <code>{saved_batch.get('model_name')}</code> | Song song: {saved_batch.get('workers', 1)} | Thời gian: {saved_batch.get('total_batch_time')}s ({len(saved_batch.get('results_list', []))} bài)</span>
                                 </div>
                                 """,
                                 unsafe_allow_html=True,
                             )
                         with col_b_clear:
                             st.markdown("<div style='margin-top: 8px;'></div>", unsafe_allow_html=True)
-                            if st.button("🗑️ Xóa Lịch Sử", key="btn_clear_batch_run", width="stretch"):
+                            if st.button("Xóa lịch sử", icon=":material/delete_outline:", key="btn_clear_batch_run", width="stretch"):
                                 clear_last_batch_run()
                                 if "last_batch_results" in st.session_state:
                                     del st.session_state["last_batch_results"]
@@ -425,6 +434,8 @@ def render_pipeline_tab(
                                 st.rerun()
 
                     df_prev = pd.DataFrame(st.session_state["last_batch_results"])
+                    if "Kết Quả Z3" in df_prev:
+                        df_prev["Kết Quả Z3"] = df_prev["Kết Quả Z3"].map(plain_label)
                     batch_table_placeholder.dataframe(df_prev, width="stretch", hide_index=True)
 
             if batch_btn:
@@ -433,31 +444,42 @@ def render_pipeline_tab(
                 total_tasks = len(selected_batch)
 
                 try:
-                    agent = LLMAgent(model_name=model_name, temperature=temperature)
-                    engine = DafnyEngine(timeout_sec=timeout_sec)
-                    controller = PipelineController(agent=agent, engine=engine, max_k=max_k, verbose=False)
+                    serial_controller = None
+                    if batch_workers == 1:
+                        serial_controller = PipelineController(
+                            agent=LLMAgent(model_name=model_name, temperature=temperature),
+                            engine=DafnyEngine(timeout_sec=timeout_sec),
+                            max_k=max_k,
+                            verbose=False,
+                        )
+
+                    def run_case(item_key: str) -> tuple[str, PipelineResult, float]:
+                        task_info = flat_registry[item_key]
+                        spec = load_task_spec(task_info["rel_path"])
+                        controller = serial_controller or PipelineController(
+                            agent=LLMAgent(model_name=model_name, temperature=temperature),
+                            engine=DafnyEngine(timeout_sec=timeout_sec),
+                            max_k=max_k,
+                            verbose=False,
+                        )
+                        start = time.monotonic()
+                        result = controller.run_task(raw_spec=spec, task_name=task_info["short_name"])
+                        return spec, result, time.monotonic() - start
 
                     batch_start_time = time.time()
+                    results_by_index: dict[int, dict[str, Any]] = {}
+                    batch_status.info(f"Đang kiểm định {total_tasks} bài, tối đa {batch_workers} bài song song...")
 
-                    for idx, item_key in enumerate(selected_batch):
-                        if os.path.exists(batch_stop_flag):
-                            batch_status.warning(f"🛑 Đã dừng tiến trình kiểm định hàng loạt theo yêu cầu (đã hoàn thành {idx}/{total_tasks} bài).")
-                            try:
-                                os.remove(batch_stop_flag)
-                            except Exception:
-                                pass
-                            break
-
+                    for idx, item_key, completed in iter_completed(
+                        selected_batch,
+                        run_case,
+                        workers=batch_workers,
+                        stop_requested=lambda: os.path.exists(batch_stop_flag),
+                    ):
                         task_info = flat_registry[item_key]
                         task_name_item = task_info["short_name"]
                         task_group_item = task_info["group"]
-                        spec_item = load_task_spec(task_info["rel_path"])
-
-                        batch_status.info(f"⏳ **[{idx+1}/{total_tasks}] Đang kiểm định:** `{task_name_item}` ({task_group_item})...")
-
-                        t_item_start = time.time()
-                        res_item: PipelineResult = controller.run_task(raw_spec=spec_item, task_name=task_name_item)
-                        duration_item = time.time() - t_item_start
+                        spec_item, res_item, duration_item = completed
 
                         batch_history_dict[task_name_item] = {
                             "result": res_item,
@@ -465,10 +487,10 @@ def render_pipeline_tab(
                             "info": task_info,
                         }
 
-                        status_label = "✅ PASS" if res_item.is_success else "❌ FAIL"
+                        status_label = "PASS" if res_item.is_success else "FAIL"
                         convergence_str = f"Pass@{res_item.total_iterations}" if res_item.is_success else f">{max_k}"
 
-                        results_list.append({
+                        results_by_index[idx] = {
                             "STT": idx + 1,
                             "Bài Toán": task_name_item,
                             "Tập Benchmark": task_group_item,
@@ -476,12 +498,18 @@ def render_pipeline_tab(
                             "Lượt Hội Tụ": convergence_str,
                             "Thời Gian (s)": round(duration_item, 2),
                             "Hình Thái": TopologyDetector.detect(spec_item).value,
-                        })
+                        }
+                        results_list = [results_by_index[i] for i in sorted(results_by_index)]
 
                         # Cập nhật thanh tiến trình và bảng kết quả trực tiếp
-                        batch_progress_bar.progress((idx + 1) / total_tasks)
+                        batch_progress_bar.progress(len(results_by_index) / total_tasks)
+                        batch_status.info(f"Đã hoàn thành {len(results_by_index)}/{total_tasks} bài; gần nhất: `{task_name_item}`.")
                         df_current = pd.DataFrame(results_list)
                         batch_table_placeholder.dataframe(df_current, width="stretch", hide_index=True)
+
+                    if os.path.exists(batch_stop_flag):
+                        batch_status.warning(f"Đã dừng an toàn sau {len(results_list)}/{total_tasks} bài.")
+                        Path(batch_stop_flag).unlink(missing_ok=True)
 
                     total_batch_time = time.time() - batch_start_time
                     st.session_state["last_batch_results"] = results_list
@@ -495,17 +523,19 @@ def render_pipeline_tab(
                         max_k=max_k,
                         timeout_sec=timeout_sec,
                         batch_history_dict=batch_history_dict,
+                        workers=batch_workers,
                     )
 
                     # Đếm số lượng pass
                     passed_count = sum(1 for r in results_list if "PASS" in r["Kết Quả Z3"])
-                    pass_rate = (passed_count / total_tasks) * 100
+                    completed_count = len(results_list)
+                    pass_rate = (passed_count / completed_count * 100) if completed_count else 0.0
 
-                    if passed_count == total_tasks:
+                    if completed_count == total_tasks and passed_count == total_tasks:
                         st.markdown(
                             f"""
                             <div class="status-card-pass">
-                                🏆 HOÀN THÀNH TOÀN BỘ: {passed_count}/{total_tasks} bài toán đã được Dafny & Z3 xác minh theo đặc tả!
+                                {icon_svg('check')} HOÀN THÀNH TOÀN BỘ: {passed_count}/{total_tasks} bài toán đã được Dafny & Z3 xác minh theo đặc tả!
                                 <br><small>Tổng thời gian thực thi: {total_batch_time:.2f}s | Tỷ lệ thành công: 100.0%</small>
                             </div>
                             """,
@@ -515,7 +545,7 @@ def render_pipeline_tab(
                         st.markdown(
                             f"""
                             <div class="status-card-pass" style="border-color: rgba(56, 189, 248, 0.4);">
-                                📊 KẾT QUẢ THỰC NGHIỆM HÀNG LOẠT: Đạt {passed_count}/{total_tasks} bài ({pass_rate:.1f}%)
+                                {icon_svg('chart')} KẾT QUẢ THỰC NGHIỆM HÀNG LOẠT: Đạt {passed_count}/{completed_count} bài đã chạy ({pass_rate:.1f}%)
                                 <br><small>Tổng thời gian: {total_batch_time:.2f}s | Mô hình: {model_name}</small>
                             </div>
                             """,
@@ -531,7 +561,7 @@ def render_pipeline_tab(
 
             if has_history or has_results_list:
                 st.markdown("---")
-                st.markdown("### 📋 Lịch Sử Các Lượt Kiểm Định & Tự Sửa Lỗi Của Từng Bài Toán")
+                st.markdown(icon_heading("Lịch sử kiểm định của từng bài toán", "list"), unsafe_allow_html=True)
 
                 if has_results_list:
                     r_map = {r["Bài Toán"]: r for r in st.session_state["last_batch_results"]}
@@ -543,7 +573,7 @@ def render_pipeline_tab(
                         "Chọn một bài toán trong danh sách để xem chi tiết tiến trình tự sửa lỗi (Lượt 1, 2, 3):",
                         task_keys_list,
                         index=default_idx,
-                        format_func=lambda x: f"[{r_map[x].get('Tập Benchmark', '')}] {x} — {r_map[x].get('Kết Quả Z3', '')} ({r_map[x].get('Lượt Hội Tụ', '')} | {r_map[x].get('Thời Gian (s)', '')}s)",
+                        format_func=lambda x: f"[{r_map[x].get('Tập Benchmark', '')}] {x} — {plain_label(r_map[x].get('Kết Quả Z3', ''))} ({r_map[x].get('Lượt Hội Tụ', '')} | {r_map[x].get('Thời Gian (s)', '')}s)",
                         key="batch_detail_selector",
                     )
                     if chosen_detail and chosen_detail != saved_batch_task:
@@ -578,7 +608,7 @@ def render_pipeline_tab(
                             st.markdown(
                                 f"""
                                 <div class="status-card-pass">
-                                    🏆 XÁC MINH THÀNH CÔNG: Mã nguồn đã được Dafny & Z3 Solver chứng minh theo đặc tả!
+                                    {icon_svg('check')} XÁC MINH THÀNH CÔNG: Mã nguồn đã được Dafny & Z3 Solver chứng minh theo đặc tả!
                                     <br><small>Đạt chứng nhận tại Lượt {detail_res.total_iterations}/{max_k}</small>
                                 </div>
                                 """,
@@ -588,7 +618,7 @@ def render_pipeline_tab(
                             st.markdown(
                                 f"""
                                 <div class="status-card-fail">
-                                    ❌ THẤT BẠI: Không thể hội tụ chứng minh sau {detail_res.total_iterations} vòng lặp.
+                                    {icon_svg('error')} THẤT BẠI: Không thể hội tụ chứng minh sau {detail_res.total_iterations} vòng lặp.
                                     <br><small>Lý do: {detail_res.failure_reason}</small>
                                 </div>
                                 """,
@@ -597,10 +627,9 @@ def render_pipeline_tab(
 
                         # Hiển thị từng lượt 1, 2, 3 với mã nguồn và phản hồi Z3 y như Chế độ Đơn
                         for entry in detail_res.history:
-                            icon = "✅" if entry.is_verified else "❌"
                             status_text = "Đã Chứng Minh (Verified)" if entry.is_verified else f"Vi Phạm: {entry.error_taxonomy}"
 
-                            with st.expander(f"Lượt {entry.iteration}: {icon} {status_text}", expanded=False):
+                            with st.expander(f"Lượt {entry.iteration}: {status_text}", expanded=False):
                                 col_code, col_diag = st.columns([1.2, 1])
 
                                 with col_code:
@@ -613,7 +642,7 @@ def render_pipeline_tab(
                                         st.markdown(
                                             """
                                             <div style="background: rgba(34, 197, 94, 0.12); border: 1px solid rgba(74, 222, 128, 0.3); border-radius: 6px; padding: 10px 12px; color: #86efac; font-size: 0.79rem; line-height: 1.5; text-align: justify;">
-                                                ✨ <strong>Z3 SMT Solver:</strong> Đã thẩm định thành công tất cả Verification Conditions (VCs). Không có ảo giác!
+                                                <strong>Z3 SMT Solver:</strong> Đã thẩm định thành công tất cả Verification Conditions (VCs).
                                             </div>
                                             """,
                                             unsafe_allow_html=True,
@@ -634,7 +663,7 @@ def render_pipeline_tab(
                                             st.markdown(
                                                 f"""
                                                 <div class="diag-box-text" style="background: rgba(113, 63, 18, 0.25); border: 1px solid rgba(234, 179, 8, 0.35); border-radius: 6px; padding: 8px 12px; color: #fde047; font-size: 0.78rem; line-height: 1.45; text-align: justify;">
-                                                    🎯 <strong>Phản ví dụ Z3 (CEGAR):</strong> <code>{entry.counterexample_desc}</code>
+                                                    <strong>Phản ví dụ Z3 (CEGAR):</strong> <code>{entry.counterexample_desc}</code>
                                                 </div>
                                                 """,
                                                 unsafe_allow_html=True,
@@ -642,7 +671,7 @@ def render_pipeline_tab(
 
                                 if getattr(entry, "cot_trace", None):
                                     cot_tok = getattr(entry, "cot_tokens", 0)
-                                    with st.expander(f"🧠 Chuỗi Suy Luận CoT Lượt {entry.iteration} ({cot_tok:,} tokens)", expanded=False):
+                                    with st.expander(f"Chuỗi suy luận CoT lượt {entry.iteration} ({cot_tok:,} tokens)", expanded=False):
                                         st.caption("Nội dung mô hình tự suy luận bên trong thẻ `<think>` trước khi sinh mã:")
                                         st.text_area(
                                             label=f"cot_view_batch_{chosen_detail}_{entry.iteration}",
@@ -659,7 +688,7 @@ def render_pipeline_tab(
 
                         col_inf1, col_inf2, col_inf3, col_inf4 = st.columns(4)
                         with col_inf1:
-                            st.metric("Kết Quả Z3", r_info.get("Kết Quả Z3", "N/A"))
+                            st.metric("Kết Quả Z3", plain_label(r_info.get("Kết Quả Z3", "N/A")))
                         with col_inf2:
                             st.metric("Lượt Hội Tụ", r_info.get("Lượt Hội Tụ", "N/A"))
                         with col_inf3:
@@ -669,10 +698,10 @@ def render_pipeline_tab(
 
                         if meta_match:
                             spec_c = load_task_spec(meta_match["rel_path"])
-                            with st.expander(f"📄 Xem đặc tả bài toán '{chosen_detail}' (.dfy)", expanded=False):
+                            with st.expander(f"Xem đặc tả bài toán '{chosen_detail}' (.dfy)", expanded=False):
                                 st.code(spec_c, language="dafny")
 
-                            if st.button(f"⚡ Trích Xuất & Hiển Thị Các Lượt Chạy 1, 2, 3 Của Bài '{chosen_detail}'", type="primary", use_container_width=True):
+                            if st.button(f"Trích xuất các lượt chạy của bài '{chosen_detail}'", icon=":material/visibility:", type="primary", use_container_width=True):
                                 with st.spinner(f"Đang kiểm định và ghi nhận vết tự sửa lỗi cho '{chosen_detail}'..."):
                                     ag = LLMAgent(model_name=model_name, temperature=temperature)
                                     eng = DafnyEngine(timeout_sec=timeout_sec)
@@ -705,7 +734,7 @@ def render_pipeline_tab(
         # ======================================================================
         # CHẾ ĐỘ SÂN CHƠI TỰ DO (CUSTOM DAFNY PLAYGROUND)
         # ======================================================================
-        st.markdown("### 🛠️ Sân Chơi Tự Do (Custom Dafny Playground)")
+        st.markdown(icon_heading("Sân chơi tự do (Custom Dafny Playground)", "file"), unsafe_allow_html=True)
         st.caption("Tự do thiết kế bài toán đặc tả hình thức (Formally Specified Method), viết tiền/hậu điều kiện và để LLM cùng Z3 Solver tổng hợp & kiểm định mã nguồn.")
 
         # Định nghĩa các mẫu bài toán thực nghiệm
@@ -741,22 +770,22 @@ method BinarySearch(a: array<int>, target: int) returns (index: int)
         if "playground_code" not in st.session_state:
             st.session_state["playground_code"] = SAMPLE_MAX
 
-        st.markdown("##### 💡 Nạp nhanh mẫu bài toán thực nghiệm:")
+        st.markdown(icon_heading("Nạp nhanh mẫu bài toán thực nghiệm", "folder", level=5), unsafe_allow_html=True)
         col_s1, col_s2, col_s3, col_s_clear = st.columns([1, 1, 1, 0.8])
         with col_s1:
-            if st.button("📌 1. Tìm Max (Mảng)", width="stretch"):
+            if st.button("1. Tìm Max (Mảng)", icon=":material/arrow_outward:", width="stretch"):
                 st.session_state["playground_code"] = SAMPLE_MAX
                 st.rerun()
         with col_s2:
-            if st.button("📌 2. Đảo Ngược Mảng", width="stretch"):
+            if st.button("2. Đảo Ngược Mảng", icon=":material/arrow_outward:", width="stretch"):
                 st.session_state["playground_code"] = SAMPLE_REVERSE
                 st.rerun()
         with col_s3:
-            if st.button("📌 3. Tìm Kiếm Nhị Phân", width="stretch"):
+            if st.button("3. Tìm Kiếm Nhị Phân", icon=":material/arrow_outward:", width="stretch"):
                 st.session_state["playground_code"] = SAMPLE_BIN_SEARCH
                 st.rerun()
         with col_s_clear:
-            if st.button("🧹 Xóa Trắng", width="stretch"):
+            if st.button("Xóa trắng", icon=":material/close:", width="stretch"):
                 st.session_state["playground_code"] = "// Nhập mã đặc tả Dafny của bạn tại đây\nmethod CustomTask()\n{\n}\n"
                 st.rerun()
 
@@ -771,19 +800,20 @@ method BinarySearch(a: array<int>, target: int) returns (index: int)
         col_run_pg, col_info_pg = st.columns([1.5, 2.5])
         with col_run_pg:
             run_pg_btn = st.button(
-                "⚡ BẮT ĐẦU KIỂM CHỨNG & TỔNG HỢP MÃ",
+                "Bắt đầu kiểm chứng và tổng hợp mã",
+                icon=":material/play_arrow:",
                 type="primary",
                 width="stretch",
             )
         with col_info_pg:
-            st.caption(f"⚙️ Cấu hình hiện tại: Mô hình **{model_name}** | Số vòng lặp tối đa **K={max_k}** | Timeout Z3: **{timeout_sec}s**")
+            st.caption(f"Cấu hình hiện tại: Mô hình **{model_name}** | Số vòng lặp tối đa **K={max_k}** | Timeout Z3: **{timeout_sec}s**")
 
         if run_pg_btn:
             if not custom_code_input.strip():
-                st.warning("⚠️ Vui lòng nhập mã đặc tả Dafny trước khi bắt đầu!")
+                st.warning("Vui lòng nhập mã đặc tả Dafny trước khi bắt đầu.")
             else:
                 try:
-                    with st.spinner("🤖 Formal Verification Agent đang phân tích đặc tả và suy diễn bất biến..."):
+                    with st.spinner("Agent đang phân tích đặc tả và suy diễn bất biến..."):
                         start_time = time.time()
                         agent = LLMAgent(model_name=model_name, temperature=temperature)
                         engine = DafnyEngine(timeout_sec=timeout_sec)
@@ -802,7 +832,7 @@ method BinarySearch(a: array<int>, target: int) returns (index: int)
                         st.markdown(
                             f"""
                             <div class="status-card-pass">
-                                🏆 XÁC MINH THÀNH CÔNG: Mã nguồn đã được Dafny & Z3 Solver chứng minh theo đặc tả!
+                                {icon_svg('check')} XÁC MINH THÀNH CÔNG: Mã nguồn đã được Dafny & Z3 Solver chứng minh theo đặc tả!
                                 <br><small>Thời gian thực thi: {elapsed_pg:.2f}s | Hội tụ tại Lượt {res_pg.total_iterations}/{max_k}</small>
                             </div>
                             """,
@@ -812,19 +842,18 @@ method BinarySearch(a: array<int>, target: int) returns (index: int)
                         st.markdown(
                             f"""
                             <div class="status-card-fail">
-                                ❌ CHƯA HỘI TỤ CHỨNG MINH: Sau {res_pg.total_iterations} vòng lặp.
+                                {icon_svg('error')} CHƯA HỘI TỤ CHỨNG MINH: Sau {res_pg.total_iterations} vòng lặp.
                                 <br><small>Lý do: {res_pg.failure_reason}</small>
                             </div>
                             """,
                             unsafe_allow_html=True,
                         )
 
-                    st.markdown("### 📋 Lịch Sử Các Vòng Lặp Kiểm Định")
+                    st.markdown(icon_heading("Lịch sử các vòng lặp kiểm định", "list"), unsafe_allow_html=True)
                     for entry in res_pg.history:
-                        icon = "✅" if entry.is_verified else "❌"
                         status_text = "Đã Chứng Minh (Verified)" if entry.is_verified else f"Vi Phạm: {entry.error_taxonomy}"
 
-                        with st.expander(f"Lượt {entry.iteration}: {icon} {status_text}", expanded=True):
+                        with st.expander(f"Lượt {entry.iteration}: {status_text}", expanded=True):
                             col_c1, col_c2 = st.columns([1.2, 1])
                             with col_c1:
                                 st.markdown("**Mã nguồn sinh bởi AI:**")
@@ -832,7 +861,7 @@ method BinarySearch(a: array<int>, target: int) returns (index: int)
                             with col_c2:
                                 st.markdown("**Chẩn đoán Z3 & Lập Luận:**")
                                 if entry.is_verified:
-                                    st.success("✨ Z3 Solver đã thẩm định thành công tất cả Verification Conditions (VCs). Không có lỗi logic!")
+                                    st.success("Z3 Solver đã thẩm định thành công tất cả Verification Conditions (VCs).")
                                 else:
                                     st.error(f"**Lỗi phát hiện:** `{entry.error_taxonomy}`")
                                     st.markdown(f"**Chi tiết:** {entry.error_message}")

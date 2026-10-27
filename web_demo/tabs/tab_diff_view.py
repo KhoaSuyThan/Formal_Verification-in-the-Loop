@@ -7,6 +7,7 @@ và các bất biến quy nạp (Loop Invariants) được Z3 SMT Solver chứng
 from typing import Optional
 # pyrefly: ignore [missing-import]
 import streamlit as st
+from web_demo.icons import icon_heading
 
 from core.pipeline_controller import PipelineResult
 from web_demo.helpers import (
@@ -18,7 +19,7 @@ from web_demo.helpers import (
 
 def render_diff_tab() -> None:
     """Hiển thị toàn bộ nội dung của Tab 2: So sánh mã và phân tích bất biến."""
-    st.markdown("### 🔍 Phân Tích Sự Khác Biệt & Bất Biến Toán Học")
+    st.markdown(icon_heading("Phân tích sự khác biệt và bất biến toán học", "compare"), unsafe_allow_html=True)
 
     # Tự động nạp từ lịch sử kiên cố nếu session_state chưa có
     if "last_result" not in st.session_state or not getattr(st.session_state["last_result"], "history", []):
@@ -27,7 +28,7 @@ def render_diff_tab() -> None:
             res_diff, meta_diff = dict_to_pipeline_result(saved_diff_data)
             st.session_state["last_result"] = res_diff
             st.session_state["spec_content"] = meta_diff.get("spec_content", "")
-            st.caption(f"💾 Đang phân tích kết quả lưu kiên cố của bài: **{meta_diff.get('task_name')}** ({meta_diff.get('timestamp')})")
+            st.caption(f"Đang phân tích kết quả đã lưu của bài: **{meta_diff.get('task_name')}** ({meta_diff.get('timestamp')})")
 
     if "last_result" in st.session_state and st.session_state["last_result"].history:
         res: PipelineResult = st.session_state["last_result"]
@@ -43,11 +44,11 @@ def render_diff_tab() -> None:
             diff_html = generate_code_diff_html(initial_code, final_code)
             st.markdown(diff_html, unsafe_allow_html=True)
 
-            st.markdown("#### 💡 Các bất biến quy nạp toán học đóng vai trò quyết định:")
+            st.markdown(icon_heading("Các bất biến quy nạp quyết định", "network", level=4), unsafe_allow_html=True)
             invariants = [line.strip() for line in final_code.splitlines() if line.strip().startswith("invariant ")]
             if invariants:
                 for inv in invariants:
-                    st.info(f"🔹 `{inv}`")
+                    st.info(f"`{inv}`")
             else:
                 st.caption("Bài toán giải tích trực tiếp không yêu cầu bổ sung loop invariant.")
         else:

@@ -5,6 +5,7 @@ dựa trên kiểm định toán học tất định Dafny 4.x và Z3 SMT Solver
 """
 
 import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -21,6 +22,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from core.token_tracker import get_gemini_token_usage, get_groq_token_usage
+from web_demo.icons import icon_svg, icon_heading
 from web_demo.helpers import (
     get_benchmark_tasks,
     get_flat_task_registry,
@@ -30,7 +32,9 @@ from web_demo.helpers import (
 
 from web_demo.tabs import (
     render_cross_model_tab,
+    render_diff_tab,
     render_metrics_tab,
+    render_new_benchmarks_tab,
     render_pipeline_tab,
 )
 
@@ -41,7 +45,7 @@ from web_demo.tabs import (
 # ==============================================================================
 st.set_page_config(
     page_title="Formal Verification-in-the-Loop | NCKH Studio",
-    page_icon="🛡️",
+    page_icon=":material/verified_user:",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -72,6 +76,26 @@ st.markdown(
     code, pre {
         font-family: 'JetBrains Mono', monospace !important;
     }
+    .fv-icon { display: inline-block; vertical-align: -0.22em; flex: 0 0 auto; }
+    .fv-heading { display: flex; align-items: center; gap: 0.55rem; color: #f1f5f9; letter-spacing: -0.01em; }
+    h3.fv-heading { font-size: 1.4rem; margin: 0.35rem 0 1rem; }
+    h4.fv-heading { font-size: 1.1rem; margin: 0.9rem 0 0.65rem; }
+    h5.fv-heading { font-size: 0.96rem; margin: 0.7rem 0 0.45rem; }
+    .fv-heading .fv-icon { color: #8eaefa; }
+    .glass-card-icon .fv-icon { color: #a5b4fc; }
+    .status-card-pass .fv-icon, .status-card-fail .fv-icon { margin-right: 0.35rem; }
+    .sidebar-brand { display: flex; align-items: center; gap: 11px; margin: 2px 0 16px; padding: 10px 11px;
+        border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 10px; background: rgba(15, 23, 42, 0.35); }
+    .sidebar-brand-icon { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px;
+        color: #a5b4fc; background: rgba(99, 102, 241, 0.14); border-radius: 9px; }
+    .sidebar-brand strong { display: block; font-size: 0.88rem; line-height: 1.1; color: #f8fafc; }
+    .sidebar-brand small { display: block; font-size: 0.7rem; color: #94a3b8; margin-top: 3px; }
+    .glass-card { display: flex; align-items: center; gap: 11px; min-height: 76px; padding: 12px 14px;
+        background: rgba(15, 23, 42, 0.45); border: 1px solid rgba(148, 163, 184, 0.16); border-radius: 11px; }
+    .glass-card-icon { display: flex; align-items: center; justify-content: center; flex: 0 0 auto; width: 36px; height: 36px;
+        background: rgba(99, 102, 241, 0.12); border-radius: 9px; }
+    .glass-card-label { color: #94a3b8; font-size: 0.76rem; line-height: 1.2; }
+    .glass-card-value { color: #f8fafc; font-size: 0.93rem; font-weight: 700; margin-top: 4px; line-height: 1.25; }
 
     /* Tiêu đề Hero Gradient */
     .hero-container {
@@ -319,6 +343,9 @@ st.markdown(
 
     /* Tinh chỉnh 3 mục ở Sidebar: Thu gọn khoảng cách viền và padding */
     .sidebar-section-title {
+        display: flex !important;
+        align-items: center;
+        gap: 7px;
         font-size: 0.86rem !important;
         font-weight: 700 !important;
         color: #f1f5f9 !important;
@@ -394,7 +421,7 @@ components.html(
 flat_registry = get_flat_task_registry()
 
 
-@st.dialog("📋 Lựa Chọn Danh Sách Bài Toán Benchmark", width="large")
+@st.dialog("Lựa chọn danh sách bài toán benchmark", width="large")
 def open_task_selection_dialog():
     """Hộp thoại Modal hiển thị danh sách bài toán cho người dùng tick chọn."""
     st.caption("Tick chọn các bài toán bạn muốn đưa vào vòng lặp kiểm định tự động:")
@@ -405,7 +432,7 @@ def open_task_selection_dialog():
         search_query = st.text_input(
             "Tìm kiếm:",
             value="",
-            placeholder="🔍 Tìm theo tên file (.dfy) hoặc tên bài...",
+            placeholder="Tìm theo tên file (.dfy) hoặc tên bài...",
             key="dialog_task_search_query",
             label_visibility="collapsed",
         )
@@ -444,11 +471,11 @@ def open_task_selection_dialog():
 
     col_c, col_h, col_a, col_i = st.columns(4)
     with col_c:
-        st.markdown(f"**🍀 Clover ({len(clover_filtered)} bài):**")
+        st.markdown(icon_heading(f"Clover ({len(clover_filtered)} bài)", "folder", level=4), unsafe_allow_html=True)
         for _item_key, meta in clover_filtered.items():
             file_name = Path(meta["rel_path"]).name
             vn_desc = meta["label"].split(" - ", 1)[1] if " - " in meta["label"] else meta["short_name"]
-            badge_txt = " 🔥" if meta["is_target"] else ""
+            badge_txt = " · Ưu tiên" if meta["is_target"] else ""
             st.checkbox(
                 f"{vn_desc} ({file_name}){badge_txt}",
                 key=f"chk_task_{meta['short_name']}",
@@ -456,11 +483,11 @@ def open_task_selection_dialog():
             )
 
     with col_h:
-        st.markdown(f"**🧪 HumanEval ({len(humaneval_filtered)} bài):**")
+        st.markdown(icon_heading(f"HumanEval ({len(humaneval_filtered)} bài)", "flask", level=4), unsafe_allow_html=True)
         for _item_key, meta in humaneval_filtered.items():
             file_name = Path(meta["rel_path"]).name
             vn_desc = meta["label"].split(" - ", 1)[1] if " - " in meta["label"] else meta["short_name"]
-            badge_txt = " 🔥" if meta["is_target"] else ""
+            badge_txt = " · Ưu tiên" if meta["is_target"] else ""
             st.checkbox(
                 f"{vn_desc} ({file_name}){badge_txt}",
                 key=f"chk_task_{meta['short_name']}",
@@ -468,11 +495,11 @@ def open_task_selection_dialog():
             )
 
     with col_a:
-        st.markdown(f"**⚡ Mở Rộng ({len(advanced_filtered)} bài):**")
+        st.markdown(icon_heading(f"Mở rộng ({len(advanced_filtered)} bài)", "layers", level=4), unsafe_allow_html=True)
         for _item_key, meta in advanced_filtered.items():
             file_name = Path(meta["rel_path"]).name
             vn_desc = meta["label"].split(" - ", 1)[1] if " - " in meta["label"] else meta["short_name"]
-            badge_txt = " 🚀"
+            badge_txt = " · Mở rộng"
             st.checkbox(
                 f"{vn_desc} ({file_name}){badge_txt}",
                 key=f"chk_task_{meta['short_name']}",
@@ -480,11 +507,11 @@ def open_task_selection_dialog():
             )
 
     with col_i:
-        st.markdown(f"**🌳 Quy Nạp ({len(inductive_filtered)} bài):**")
+        st.markdown(icon_heading(f"Quy nạp ({len(inductive_filtered)} bài)", "network", level=4), unsafe_allow_html=True)
         for _item_key, meta in inductive_filtered.items():
             file_name = Path(meta["rel_path"]).name
             vn_desc = meta["label"].split(" - ", 1)[1] if " - " in meta["label"] else meta["short_name"]
-            badge_txt = " 🌲"
+            badge_txt = " · Quy nạp"
             st.checkbox(
                 f"{vn_desc} ({file_name}){badge_txt}",
                 key=f"chk_task_{meta['short_name']}",
@@ -492,21 +519,22 @@ def open_task_selection_dialog():
             )
 
     st.markdown("<hr style='margin: 10px 0; border: none; border-top: 1px solid rgba(255,255,255,0.08);'>", unsafe_allow_html=True)
-    if st.button("✅ Hoàn Tất Lựa Chọn", type="primary", width="stretch"):
+    if st.button("Hoàn tất lựa chọn", icon=":material/check:", type="primary", width="stretch"):
         st.rerun()
 
 
 with st.sidebar:
-    st.image(
-        "https://img.shields.io/badge/Formal%20Verification-Z3%20SMT%20Solver-2ea44f?style=for-the-badge",
-        width="stretch",
+    st.markdown(
+        f"<div class='sidebar-brand'><span class='sidebar-brand-icon'>{icon_svg('shield', size=22)}</span>"
+        "<span><strong>Formal Verification</strong><small>Dafny · Z3 Studio</small></span></div>",
+        unsafe_allow_html=True,
     )
 
     # ==========================================================================
     # MỤC 1: CHẾ ĐỘ THỰC THI (VIỀN MỎNG)
     # ==========================================================================
     with st.container(border=True):
-        st.markdown("<div class='sidebar-section-title'>⚙️ Chế Độ Thực Thi</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='sidebar-section-title'>{icon_svg('settings')} Chế độ thực thi</div>", unsafe_allow_html=True)
         ui_state = load_ui_state()
         saved_mode = ui_state.get("exec_mode", "Hàng loạt")
         mode_options = ["Đơn", "Hàng loạt", "Tự do"]
@@ -528,7 +556,7 @@ with st.sidebar:
     # ==========================================================================
     with st.container(border=True):
         if exec_mode == "Đơn":
-            st.markdown("<div class='sidebar-section-title'>📁 Chọn Bài Toán Mẫu</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='sidebar-section-title'>{icon_svg('folder')} Chọn bài toán mẫu</div>", unsafe_allow_html=True)
             task_groups = get_benchmark_tasks()
             selected_group = st.selectbox("Tập Benchmark", list(task_groups.keys()))
             task_options = task_groups[selected_group]
@@ -536,7 +564,7 @@ with st.sidebar:
             selected_task_file = task_options[selected_task_label]
             selected_batch = []
         elif exec_mode == "Hàng loạt":
-            st.markdown("<div class='sidebar-section-title'>📁 Danh Mục Benchmark</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='sidebar-section-title'>{icon_svg('list')} Danh mục benchmark</div>", unsafe_allow_html=True)
             # Tính toán ĐỘNG số lượng bài toán theo registry thực tế (không hardcode)
             clover_tasks = {k: v for k, v in flat_registry.items() if v["group"] == "Clover"}
             humaneval_tasks = {k: v for k, v in flat_registry.items() if v["group"] == "HumanEval"}
@@ -554,17 +582,17 @@ with st.sidebar:
 
             preset_options = [
                 "--- Bấm để sổ xuống chọn bộ ---",
-                f"🎯 Bộ Cốt Lõi 30 bài ({core30_total} bài)",
-                f"🔥 Bộ chuẩn 100% ({target_total} bài)",
-                f"🍀 Bộ Clover ({clover_total} bài)",
-                f"🧪 Bộ HumanEval ({humaneval_total} bài)",
-                f"⚡ Bộ Mở Rộng Advanced ({advanced_total} bài)",
-                f"🌳 Bộ Quy Nạp Inductive ({inductive_total} bài)",
-                f"🌐 Toàn bộ {all_total} bài toán ({all_total} bài)",
-                "🧹 Bỏ chọn toàn bộ (0 bài)",
+                f"Bộ Cốt Lõi 30 bài ({core30_total} bài)",
+                f"Bộ chuẩn 100% ({target_total} bài)",
+                f"Bộ Clover ({clover_total} bài)",
+                f"Bộ HumanEval ({humaneval_total} bài)",
+                f"Bộ Mở Rộng Advanced ({advanced_total} bài)",
+                f"Bộ Quy Nạp Inductive ({inductive_total} bài)",
+                f"Toàn bộ {all_total} bài toán ({all_total} bài)",
+                "Bỏ chọn toàn bộ (0 bài)",
             ]
 
-            saved_preset = ui_state.get("preset", f"🎯 Bộ Cốt Lõi 30 bài ({core30_total} bài)")
+            saved_preset = re.sub(r"^[^\w]+", "", ui_state.get("preset", preset_options[1]))
             preset_idx = preset_options.index(saved_preset) if saved_preset in preset_options else 1
 
             # Khởi tạo mặc định các bài tick chọn theo preset đã lưu nếu chưa có
@@ -617,7 +645,7 @@ with st.sidebar:
                 st.rerun()
 
             # Mở hộp thoại Modal Popup khi bấm nút thay vì dùng expander xổ xuống
-            if st.button("📋 Chọn Cụ Thể", width="stretch", help="Bấm để mở"):
+            if st.button("Chọn cụ thể", icon=":material/checklist:", width="stretch", help="Bấm để mở"):
                 open_task_selection_dialog()
 
             # Thu thập danh sách các bài toán được người dùng tick chọn
@@ -629,12 +657,12 @@ with st.sidebar:
             st.markdown(
                 f"<div style='background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.25); "
                 f"border-radius: 8px; padding: 6px 10px; margin-top: 6px; font-size: 0.84rem;'>"
-                f"📊 <strong>Đã tick chọn:</strong> <span style='color: #38bdf8; font-weight: bold;'>{len(selected_batch)}/{all_total} bài</span>",
+                f"{icon_svg('chart')} <strong>Đã chọn:</strong> <span style='color: #38bdf8; font-weight: bold;'>{len(selected_batch)}/{all_total} bài</span>",
                 unsafe_allow_html=True,
             )
         else:
             # Chế độ Sân Chơi Tự Do (Playground)
-            st.markdown("<div class='sidebar-section-title'>🛠️ Sân Chơi Tự Do</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='sidebar-section-title'>{icon_svg('file')} Sân chơi tự do</div>", unsafe_allow_html=True)
             st.markdown(
                 "<div style='font-size: 0.84rem; color: #94a3b8; line-height: 1.45;'>"
                 "Tự do nhập hoặc dán bất kỳ bài toán Dafny 4.x nào. "
@@ -648,7 +676,8 @@ with st.sidebar:
     # MỤC 3: CẤU HÌNH MÔ HÌNH (VIỀN MỎNG)
     # ==========================================================================
     with st.container(border=True):
-        st.markdown("<div class='sidebar-section-title'>🤖 Cấu Hình Mô Hình</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='sidebar-section-title'>{icon_svg('cpu')} Cấu hình mô hình</div>", unsafe_allow_html=True)
+        gemini_key = os.getenv("GEMINI_API_KEY", "")
         model_name = st.selectbox(
             "Mô hình LLM",
             [
@@ -659,11 +688,12 @@ with st.sidebar:
                 "gemini-2.5-flash",
                 "gemini-3.5-flash",
                 "gemini-3.6-flash",
+                "deepseek/deepseek-flash",
                 "ollama/llama3.1:8b",
                 "ollama/deepseek-r1:7b",
             ],
-            index=0,
-            help="Hỗ trợ mô hình Local (Ollama) và Cloud (Google Gemini, Groq LPU qua key trong .env).",
+            index=4 if gemini_key and not gemini_key.startswith("your_") else 0,
+            help="Hỗ trợ Ollama và các API Gemini, Groq, DeepSeek qua key trong .env. deepseek/deepseek-flash dùng DeepSeek API; ollama/deepseek-r1:7b chạy cục bộ.",
         )
         col_cfg1, col_cfg2 = st.columns(2)
         with col_cfg1:
@@ -702,7 +732,7 @@ st.markdown(
     f"""
     <div class="hero-container" style="display: flex; justify-content: space-between; align-items: center; gap: 24px;">
         <div style="flex: 1; min-width: 0;">
-            <div class="hero-badge-top">🛡️ Formal Verification-in-the-Loop • Z3 SMT Powered</div>
+            <div class="hero-badge-top">{icon_svg('shield', size=17)} Formal Verification-in-the-Loop • Z3 SMT Powered</div>
             <div class="hero-title">Formal Verification Studio</div>
             <div class="hero-subtitle">
                 Khung sinh mã nguồn và tự sửa lỗi khép kín loại bỏ hoàn toàn ảo giác (Zero-Hallucination)
@@ -713,7 +743,7 @@ st.markdown(
             <!-- THẺ GEMINI TOKEN -->
             <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 14px 18px; min-width: 195px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px);">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-                    <span style="font-size: 0.8rem; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.05em;">💎 Gemini Token</span>
+                    <span style="font-size: 0.8rem; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.05em;">{icon_svg('database', size=16)} Gemini Token</span>
                     <span style="font-size: 0.72rem; padding: 2px 7px; border-radius: 6px; background: rgba(34, 197, 94, 0.15); color: #86efac; font-weight: 700; border: 1px solid rgba(34, 197, 94, 0.3);">FREE</span>
                 </div>
                 <div style="font-size: 1.5rem; font-weight: 800; color: #ffffff; line-height: 1.15; font-family: 'JetBrains Mono', monospace;">
@@ -729,7 +759,7 @@ st.markdown(
             <!-- THẺ GROQ TOKEN -->
             <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(249, 115, 22, 0.35); border-radius: 14px; padding: 14px 18px; min-width: 195px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px);">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-                    <span style="font-size: 0.8rem; font-weight: 700; color: #fb923c; text-transform: uppercase; letter-spacing: 0.05em;">⚡ Groq Token</span>
+                    <span style="font-size: 0.8rem; font-weight: 700; color: #fb923c; text-transform: uppercase; letter-spacing: 0.05em;">{icon_svg('database', size=16)} Groq Token</span>
                     <span style="font-size: 0.72rem; padding: 2px 7px; border-radius: 6px; background: rgba(249, 115, 22, 0.15); color: #fdba74; font-weight: 700; border: 1px solid rgba(249, 115, 22, 0.3);">LPU</span>
                 </div>
                 <div style="font-size: 1.5rem; font-weight: 800; color: #ffffff; line-height: 1.15; font-family: 'JetBrains Mono', monospace;">
@@ -748,17 +778,19 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Phân bố 3 Tab chức năng mạch lạc, chuyên sâu
-tab_pipeline, tab_metrics, tab_cross_model = st.tabs(
+# Các công cụ kiểm định, so sánh mã và bộ thử nghiệm mới
+tab_pipeline, tab_diff, tab_metrics, tab_cross_model, tab_new_benchmarks = st.tabs(
     [
-        "⚡ Kiểm Định Trực Tiếp",
-        "📊 Báo Cáo NCKH",
-        "⚔️ So Sánh Chéo",
+        "Kiểm định trực tiếp",
+        "So sánh mã",
+        "Báo cáo NCKH",
+        "So sánh chéo",
+        "Bộ thử nghiệm mới",
     ]
 )
 
 # ==============================================================================
-# ĐIỀU PHỐI GIAO DIỆN 3 TABS CHUYÊN BIỆT
+# ĐIỀU PHỐI GIAO DIỆN CÁC TAB CHUYÊN BIỆT
 # ==============================================================================
 with tab_pipeline:
     render_pipeline_tab(
@@ -772,6 +804,9 @@ with tab_pipeline:
         temperature=temperature,
         flat_registry=flat_registry,
     )
+
+with tab_diff:
+    render_diff_tab()
 
 with tab_metrics:
     render_metrics_tab(
@@ -789,4 +824,7 @@ with tab_cross_model:
         max_k=max_k,
     )
 
-# Formal Verification-in-the-Loop Web Demo v1.4.2 - Modular UI Architecture Ready
+with tab_new_benchmarks:
+    render_new_benchmarks_tab()
+
+# Formal Verification-in-the-Loop Web Demo - documentation milestone v1.7.0

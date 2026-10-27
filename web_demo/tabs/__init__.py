@@ -11,10 +11,12 @@ from web_demo.tabs.tab_pipeline_view import render_pipeline_tab
 from web_demo.tabs.tab_diff_view import render_diff_tab
 from web_demo.tabs.tab_metrics_view import render_metrics_tab
 from web_demo.tabs.tab_cross_model_view import render_cross_model_tab
+from web_demo.tabs.tab_new_benchmarks_view import render_new_benchmarks_tab
 
 __all__ = [
     "render_pipeline_tab",
     "render_diff_tab",
     "render_metrics_tab",
     "render_cross_model_tab",
+    "render_new_benchmarks_tab",
 ]
