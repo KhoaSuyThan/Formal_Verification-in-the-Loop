@@ -1,0 +1,19 @@
+task_id,category,rel_path,branch_a_pass1,branch_b_pass_k,branch_b_loops,branch_b_tamper,branch_b_elapsed_sec,branch_c_pass1,branch_c_pass_k,branch_c_loops,branch_c_tamper,branch_c_elapsed_sec
+clover_abs_val,Số học,data/benchmarks/clover/abs_val.dfy,True,True,1,False,72.12,True,True,1,False,19.71
+clover_sum_to_n,Số học,data/benchmarks/clover/sum_to_n.dfy,False,False,3,False,177.01,False,True,2,False,91.72
+humaneval_002_truncate,Số học,data/benchmarks/humaneval_dafny/002-truncate.dfy,False,False,3,False,148.88,True,True,1,False,18.7
+clover_find_min,Mảng & Tìm kiếm,data/benchmarks/clover/find_min.dfy,True,True,1,False,15.85,True,True,1,False,18.46
+clover_linear_search,Mảng & Tìm kiếm,data/benchmarks/clover/linear_search.dfy,False,False,3,False,236.98,True,True,1,False,41.95
+advanced_binary_search,Mảng & Tìm kiếm,data/benchmarks/advanced/binary_search.dfy,False,True,2,True,298.98,True,True,1,False,50.38
+humaneval_010_is_palindrome,Chuỗi & Vòng lặp lồng,data/benchmarks/humaneval_dafny/010-is_palindrome.dfy,False,False,3,False,427.87,True,True,1,False,92.97
+humaneval_000_has_close_elements,Chuỗi & Vòng lặp lồng,data/benchmarks/humaneval_dafny/000-has_close_elements.dfy,False,False,3,False,340.59,True,True,1,False,99.08
+humaneval_013_gcd,Lý thuyết số,data/benchmarks/humaneval_dafny/013-greatest_common_divisor.dfy,False,False,3,False,172.78,True,True,1,False,41.41
+humaneval_031_is_prime,Lý thuyết số,data/benchmarks/humaneval_dafny/031-is-prime.dfy,False,False,3,False,249.67,False,True,2,False,205.83
+humaneval_077_iscube,Lý thuyết số,data/benchmarks/humaneval_dafny/077-iscube.dfy,False,False,3,False,688.59,True,True,1,False,76.61
+humaneval_088_sort_array,Sắp xếp & Đa tập,data/benchmarks/humaneval_dafny/088-sort_array.dfy,False,True,2,True,324.96,True,True,1,False,175.32
+advanced_array_reverse,Sắp xếp & Đa tập,data/benchmarks/advanced/array_reverse.dfy,False,False,3,False,169.19,True,True,1,False,44.66
+advanced_sorted_insert,Sắp xếp & Đa tập,data/benchmarks/advanced/sorted_insert.dfy,False,False,3,False,211.93,False,False,3,False,321.27
+inductive_bst_search,Quy nạp Cấu trúc,data/benchmarks/advanced_inductive/bst_search.dfy,False,False,3,False,466.58,True,True,1,False,39.45
+inductive_bst_insert,Quy nạp Cấu trúc,data/benchmarks/advanced_inductive/bst_insert.dfy,False,False,3,False,638.92,True,True,1,False,61.06
+inductive_tree_size_height,Quy nạp Cấu trúc,data/benchmarks/advanced_inductive/tree_size_height.dfy,False,False,3,False,317.73,True,True,1,False,44.84
+inductive_linked_list_stats,Quy nạp Cấu trúc,data/benchmarks/advanced_inductive/linked_list_stats.dfy,False,False,3,False,319.04,True,True,1,False,37.1
