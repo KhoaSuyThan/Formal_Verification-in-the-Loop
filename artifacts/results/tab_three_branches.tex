@@ -1,0 +1,26 @@
+% Table 1: Ablation Study Comparison across Three Branches
+% Generated automatically from benchmark results
+\begin{table*}[t]
+\centering
+\caption{Comparative performance of Branch A (Zero-shot), Branch B (Raw Verifier Feedback Baseline), and Branch C (Full FVIL Pipeline) on 18 representative benchmarks using \texttt{Qwen2.5-Coder-7B} ($K=3$, timeout=30s).}
+\label{tab:three_branches_ablation}
+\small
+\begin{tabular}{lcccccc}
+\toprule
+\multirow{2}{*}{\textbf{Benchmark Category}} & \multirow{2}{*}{\textbf{Tasks}} & \textbf{Branch A (Zero-shot)} & \multicolumn{2}{c}{\textbf{Branch B (Raw Feedback)}} & \multicolumn{2}{c}{\textbf{Branch C (FVIL Proposed)}} \\
+\cmidrule(lr){3-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7}
+ & & Pass@1 (\%) & Pass@3 (\%) & Tamper (\%) & Pass@1 (\%) & Pass@3 (\%) \\
+\midrule
+Số học (Arithmetic) & 3 & 33.3\% & 33.3\% & 0.0\% & 66.7\% & \textbf{100.0\%} \\
+Mảng \& Tìm kiếm (Array \& Search) & 3 & 33.3\% & 66.7\% & 33.3\% & 100.0\% & \textbf{100.0\%} \\
+Chuỗi \& Vòng lặp lồng (String \& Nested) & 2 & 0.0\% & 0.0\% & 0.0\% & 100.0\% & \textbf{100.0\%} \\
+Lý thuyết số (Number Theory) & 3 & 0.0\% & 0.0\% & 0.0\% & 66.7\% & \textbf{100.0\%} \\
+Sắp xếp \& Đa tập (Sorting \& Multiset) & 3 & 0.0\% & 33.3\% & 33.3\% & 66.7\% & \textbf{66.7\%} \\
+Quy nạp Cấu trúc (Inductive Types) & 4 & 0.0\% & 0.0\% & 0.0\% & 100.0\% & \textbf{100.0\%} \\
+\midrule
+\textbf{Overall Average} & \textbf{18} & \textbf{11.1\%} & \textbf{22.2\%} & \textbf{11.1\%} & \textbf{83.3\%} & \textbf{94.4\%} \\
+Avg. Iteration Loops & -- & 1.00 & 2.67 & -- & 1.00 & \textbf{1.22} \\
+Spec-Tampering Violations & -- & 0.0\% & 11.1\% & -- & 0.0\% & \textbf{0.0\%} \\
+\bottomrule
+\end{tabular}
+\end{table*}

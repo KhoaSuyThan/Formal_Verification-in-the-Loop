@@ -6,6 +6,23 @@ Tất cả các thay đổi đáng chú ý của dự án sẽ được ghi nh�
 
 ---
 
+## [1.8.2-research-artifacts-export] - 2026-11-18: Xuất Bộ Sản Phẩm Nghiên Cứu (LaTeX, Biểu Đồ PNG, Báo Cáo Nghiệm Thu)
+- **Bảng mã nguồn LaTeX ([artifacts/results/tab_three_branches.tex](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/artifacts/results/tab_three_branches.tex))**:
+  + Chuẩn hóa cấu trúc `booktabs` và đa cột `\multicolumn`, `\multirow` theo chuẩn bài báo IEEE/ACM/CYSG 2027.
+  + Phân loại chi tiết tỷ lệ Pass@1, Pass@3, Spec-Tampering (%) theo 6 họ thuật toán và dòng trung bình toàn diện.
+- **Biểu đồ trực quan chất lượng cao ([artifacts/results/figure_three_branches_comparison.png](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/artifacts/results/figure_three_branches_comparison.png))**:
+  + Biểu đồ đôi độ phân giải cao (300 DPI): Phân đoạn (a) thể hiện Pass@1, Pass@3 và Spec-Tampering; Phân đoạn (b) thể hiện số vòng lặp sửa lỗi trung bình (giảm 54.3% từ 2.67 xuống 1.22 vòng/bài).
+- **Báo cáo nghiệm thu khoa học ([docs/BAO_CAO_THUC_NGHIEM_DOI_CHUNG.md](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/docs/BAO_CAO_THUC_NGHIEM_DOI_CHUNG.md))**:
+  + Tổng hợp chi tiết 18 ca thực nghiệm, phân tích định lượng đóng góp của TopologyDetector và SpecLocker, phân tích ca lỗi âm `advanced_sorted_insert` phục vụ viết Section 4 & 5 của bản thảo bài báo.
+
+## [1.8.1-ablation-study-3branches] - 2026-11-18: Hoàn Tất Thực Nghiệm Đối Chứng 3 Nhánh (Table 1 CYSG 2027)
+- **Thực nghiệm đối chứng 3 nhánh khoa học [experiments/run_three_branch_ablation.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/experiments/run_three_branch_ablation.py)**:
+  + Chạy thực nghiệm tự động trên **18 bài toán phân tầng** đại diện cho 6 họ thuật toán lớn bằng mô hình local `ollama/qwen2.5-coder:7b` (100% offline).
+  + **Nhánh A (Zero-shot Baseline, $K=1$)**: Đạt **2/18 bài (11.1%)**, phản ánh năng lực nền khi không có phản hồi hình thức.
+  + **Nhánh B (Raw Verifier Feedback, $K=3$)**: Đạt **4/18 bài (22.2%)**, tỷ lệ vi phạm hợp đồng (Spec Tampering) là **11.1% (2/18)**, số vòng lặp sửa lỗi trung bình là **2.67 vòng**.
+  + **Nhánh C (Hệ thống Đề xuất Full FVIL, $K=3$)**: Đạt **17/18 bài (94.4%)**; tỷ lệ Pass@1 đạt **15/18 (83.3%)**; tỷ lệ vi phạm hợp đồng triệt tiêu về **0.0%** nhờ SpecLocker; số vòng lặp sửa lỗi giảm mạnh xuống **1.22 vòng/bài**.
+  + Xuất toàn diện dữ liệu khoa học thô và bảng phân tích tại [ablation_study_3branches_20261118_194706.json](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/artifacts/results/ablation_study_3branches_20261118_194706.json) và [ablation_study_3branches_20261118_194706.csv](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/artifacts/results/ablation_study_3branches_20261118_194706.csv) sẵn sàng phục vụ Bảng 1 của bài báo CYSG 2027.
+
 ## [1.8.0-benchmark-expansion-115tasks] - 2026-11-18: Mở Rộng Benchmark Vượt Mốc 100 (115 Bài Toán), Vượt Qua Cổng Chất Lượng Sớm Ngày 27
 - **Tích hợp đồng bộ toàn bộ 115 bài toán lên Giao diện Web Demo Streamlit ([app.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/app.py) & [web_demo/helpers.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/web_demo/helpers.py))**:
   + Tự động quét và nạp động 7 nhóm benchmark (`Clover`, `HumanEval`, `Advanced`, `Inductive`, `Clover-Ext`, `DafnyBench-Ext`, `DafnyBench20`) với đầy đủ 115 bài toán vào `get_benchmark_tasks()` và `get_flat_task_registry()`.

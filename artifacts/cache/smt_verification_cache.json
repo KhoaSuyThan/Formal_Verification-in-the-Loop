@@ -1216,5 +1216,137 @@
     "return_code": 2,
     "output": "C:/Users/aaa/AppData/Local/Temp/tmpumvy_n0r.dfy(18,2): Error: rbrace expected\n   |\n18 |   lemma insert_len(x: int, s: seq<int>) {\n   |   ^\n\nC:/Users/aaa/AppData/Local/Temp/tmpumvy_n0r.dfy(19,4): Error: rbrace expected\n   |\n19 |     ensures |s + [x]| == |s| + 1\n   |     ^\n\n2 parse errors detected in tmpumvy_n0r.dfy\n",
     "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "8b6b99d59e567dce5971d0ab74cc28ac8bf47778ab596d8efd7bcfaddb3a5bee": {
+    "is_verified": false,
+    "return_code": 4,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmp_236qvtr.dfy(4,0): Error: a postcondition could not be proved on this return path\n  |\n4 | {\n  | ^\n\nC:/Users/aaa/AppData/Local/Temp/tmp_236qvtr.dfy(3,14): Related location: this is the postcondition that could not be proved\n  |\n3 |     ensures s == n * (n + 1) / 2\n  |               ^^\n\n\nDafny program verifier finished with 1 verified, 1 error\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "496810e31054ac6b0c3651d87a192f290e0325fe44aa8fd4b6be7bf0a65bd7e1": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpcvqi3884.dfy(6,8): Error: Duplicate local-variable name: d\n  |\n6 |     var d := x - (x.Floor as real);\n  |         ^\n\n1 resolution/type errors detected in tmpcvqi3884.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "96798dc757702f2548813744664a7649601b93a59c1d44dc06afdfcbbbf0953f": {
+    "is_verified": false,
+    "return_code": 4,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmplte53kbw.dfy(4,0): Error: a postcondition could not be proved on this return path\n  |\n4 | {\n  | ^\n\nC:/Users/aaa/AppData/Local/Temp/tmplte53kbw.dfy(3,24): Related location: this is the postcondition that could not be proved\n  |\n3 |     ensures r == -1 ==> forall i :: 0 <= i < a.Length ==> a[i] != target\n  |                         ^^^^^^\n\n\nDafny program verifier finished with 1 verified, 1 error\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "5742557505bafffb779ea41a47490eb3c181ad3ddc8377b2daa95f31354f5be9": {
+    "is_verified": false,
+    "return_code": 4,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpjjfq1nem.dfy(10,46): Error: index out of range\n   |\n10 |         invariant forall j :: 0 <= j < i ==> a[j] != target\n   |                                               ^\n\n\nDafny program verifier finished with 1 verified, 1 error\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "2dfc13ea21989b0a9bda6406a004c3f7429fa47dc91259b71ec810534ace7697": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 0 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "3203ca960a6d7214ce314fce7a61ed2fc561cdd1d43ee3d3c0da53af7ee90b94": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpc3zvbvk5.dfy(44,8): Error: Duplicate local-variable name: rev\n   |\n44 |     var rev := \"\";\n   |         ^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpc3zvbvk5.dfy(50,19): Error: type of right argument to + (char) must agree with the result type (seq<char>)\n   |\n50 |         rev := rev + str[n - 1 - i];\n   |                    ^\n\n2 resolution/type errors detected in tmpc3zvbvk5.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "d2c06b6f15ffda3d1dbbf95a7e2eb8033d9dddb1dd7a8e026e5be24feef6434a": {
+    "is_verified": false,
+    "return_code": 4,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmp8ez4rnkj.dfy(5,0): Error: a postcondition could not be proved on this return path\n  |\n5 | {\n  | ^\n\nC:/Users/aaa/AppData/Local/Temp/tmp8ez4rnkj.dfy(3,21): Related location: this is the postcondition that could not be proved\n  |\n3 |   ensures result ==> forall i :: 2 <= i < k ==> k % i != 0\n  |                      ^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmp8ez4rnkj.dfy(10,21): Error: this loop invariant could not be proved on entry\n Related message: loop invariant violation\n   |\n10 |     invariant 2 <= i <= k\n   |                      ^^\n\n\nDafny program verifier finished with 1 verified, 2 errors\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "29f2a1fc800eb1fc757fba122fef9b08e65caa233763635b287383c9fdae8f92": {
+    "is_verified": false,
+    "return_code": 4,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpmy_nut3g.dfy(5,0): Error: a postcondition could not be proved on this return path\n  |\n5 | {\n  | ^\n\nC:/Users/aaa/AppData/Local/Temp/tmpmy_nut3g.dfy(3,21): Related location: this is the postcondition that could not be proved\n  |\n3 |   ensures result ==> forall i :: 2 <= i < k ==> k % i != 0\n  |                      ^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpmy_nut3g.dfy(14,16): Error: variable 'result', which is subject to definite-assignment rules, might be uninitialized here\n   |\n14 |       invariant result ==> forall j :: 2 <= j < i ==> k % j != 0\n   |                 ^^^^^^\n\n\nDafny program verifier finished with 1 verified, 2 errors\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "f9337f44e445eba59eaa1af9acf528a592724bcbe7da0cde358b742ca9f1bee0": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmp9ezairx8.dfy(33,49): Error: this symbol not expected in MethodSpec\n   |\n33 | method iscube_helper(n: int, low: int, high: int): bool\n   |                                                  ^\n\n1 parse errors detected in tmp9ezairx8.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "7784c39e37d7b633c8ad4845da48fc4592b6394b53a7edbe15a64e9e610c98cd": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmp8hddbf4_.dfy(33,49): Error: this symbol not expected in MethodSpec\n   |\n33 | method iscube_helper(n: int, low: int, high: int): bool\n   |                                                  ^\n\n1 parse errors detected in tmp8hddbf4_.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "b6ea494b1994379d7bd453c2e9b5e82e2ed3d02e0a5ea521283004cce76c4630": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmp_z4_lmp6.dfy(39,8): Error: LHS of assignment must denote a mutable variable\n   |\n39 |         t := t.left;\n   |         ^\n\nC:/Users/aaa/AppData/Local/Temp/tmp_z4_lmp6.dfy(42,8): Error: LHS of assignment must denote a mutable variable\n   |\n42 |         t := t.right;\n   |         ^\n\n2 resolution/type errors detected in tmp_z4_lmp6.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "d966bd4cd461a94bf5170cce73eb677f7fed59cad47145c06663406cdbe4220f": {
+    "is_verified": false,
+    "return_code": 4,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpsi0yp05w.dfy(23,0): Error: a postcondition could not be proved on this return path\n   |\n23 | {\n   | ^\n\nC:/Users/aaa/AppData/Local/Temp/tmpsi0yp05w.dfy(22,16): Related location: this is the postcondition that could not be proved\n   |\n22 |   ensures found == tree_contains(t, key)\n   |                 ^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpsi0yp05w.dfy(29,21): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n   |\n29 |     invariant 0 <= i <= n\n   |                      ^^\n\n\nDafny program verifier finished with 2 verified, 2 errors\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "215499cb2056a4d1cd7b8c3d4afb53c3fa9793f059a04ffaabfff9ab76934b5f": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 3 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "4f1b0a56f1b9a6445a53c237eb0efd58ae8314d92010a930044152078f8055e4": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpykdt3qdv.dfy(27,6): Error: Duplicate local-variable name: res\n   |\n27 |   var res := t;\n   |       ^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpykdt3qdv.dfy(36,14): Error: type seq<Tree> does not have a member Length\n   |\n36 |   while stack.Length > 0\n   |               ^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpykdt3qdv.dfy(37,25): Error: type seq<Tree> does not have a member Length\n   |\n37 |     invariant 0 <= stack.Length\n   |                          ^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpykdt3qdv.dfy(38,20): Error: type seq<Tree> does not have a member Length\n   |\n38 |     decreases stack.Length\n   |                     ^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpykdt3qdv.dfy(40,28): Error: type seq<Tree> does not have a member Length\n   |\n40 |     var node := stack[stack.Length - 1];\n   |                             ^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpykdt3qdv.dfy(43,15): Error: LHS of assignment must denote a mutable field\n   |\n43 |         parent.left := Node(Leaf, x, Leaf);\n   |                ^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpykdt3qdv.dfy(45,15): Error: LHS of assignment must denote a mutable field\n   |\n45 |         parent.right := Node(Leaf, x, Leaf);\n   |                ^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpykdt3qdv.dfy(55,30): Error: type seq<Tree> does not have a member Length\n   |\n55 |       stack := stack[0..stack.Length - 1];\n   |                               ^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpykdt3qdv.dfy(59,30): Error: type seq<Tree> does not have a member Length\n   |\n59 |       stack := stack[0..stack.Length - 1];\n   |                               ^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpykdt3qdv.dfy(66,11): Error: LHS of assignment must denote a mutable field\n   |\n66 |     parent.left := Node(Leaf, x, Leaf);\n   |            ^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpykdt3qdv.dfy(68,11): Error: LHS of assignment must denote a mutable field\n   |\n68 |     parent.right := Node(Leaf, x, Leaf);\n   |            ^^^^^\n\n11 resolution/type errors detected in tmpykdt3qdv.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "754785938ae0aa2303962d28b000666e0d0af7fce74f00bd06383167480da59f": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpr58nfbop.dfy(27,6): Error: Duplicate local-variable name: res\n   |\n27 |   var res := t;\n   |       ^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpr58nfbop.dfy(36,14): Error: type seq<Tree> does not have a member Length\n   |\n36 |   while stack.Length > 0\n   |               ^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpr58nfbop.dfy(37,25): Error: type seq<Tree> does not have a member Length\n   |\n37 |     invariant 0 <= stack.Length\n   |                          ^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpr58nfbop.dfy(38,20): Error: type seq<Tree> does not have a member Length\n   |\n38 |     decreases stack.Length\n   |                     ^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpr58nfbop.dfy(40,28): Error: type seq<Tree> does not have a member Length\n   |\n40 |     var node := stack[stack.Length - 1];\n   |                             ^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpr58nfbop.dfy(43,15): Error: LHS of assignment must denote a mutable field\n   |\n43 |         parent.left := Node(Leaf, x, Leaf);\n   |                ^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpr58nfbop.dfy(45,15): Error: LHS of assignment must denote a mutable field\n   |\n45 |         parent.right := Node(Leaf, x, Leaf);\n   |                ^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpr58nfbop.dfy(55,30): Error: type seq<Tree> does not have a member Length\n   |\n55 |       stack := stack[0..stack.Length - 2];\n   |                               ^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpr58nfbop.dfy(59,30): Error: type seq<Tree> does not have a member Length\n   |\n59 |       stack := stack[0..stack.Length - 2];\n   |                               ^^^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpr58nfbop.dfy(66,11): Error: LHS of assignment must denote a mutable field\n   |\n66 |     parent.left := Node(Leaf, x, Leaf);\n   |            ^^^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpr58nfbop.dfy(68,11): Error: LHS of assignment must denote a mutable field\n   |\n68 |     parent.right := Node(Leaf, x, Leaf);\n   |            ^^^^^\n\n11 resolution/type errors detected in tmpr58nfbop.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "999825242e8a47ac88e7a2fd02e30c5ff001caaae24a1501b376f62c4293b4f8": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 3 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "ebe08d90c1cb11adfa70e8523832b861abe44838f85c9c83f2f62adf5edc9d1d": {
+    "is_verified": false,
+    "return_code": 4,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpn8zh6ufp.dfy(35,0): Error: a postcondition could not be proved on this return path\n   |\n35 | {\n   | ^\n\nC:/Users/aaa/AppData/Local/Temp/tmpn8zh6ufp.dfy(34,12): Related location: this is the postcondition that could not be proved\n   |\n34 |   ensures s >= h\n   |             ^^\n\n\nDafny program verifier finished with 3 verified, 1 error\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "ae8b1d16a1f7331e6c14fcadb9c38aafcdbaaeafd08a74b7ad5a847d2e44027c": {
+    "is_verified": false,
+    "return_code": 4,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmp14rgoo08.dfy(34,0): Error: a postcondition could not be proved on this return path\n   |\n34 | {\n   | ^\n\nC:/Users/aaa/AppData/Local/Temp/tmp14rgoo08.dfy(33,12): Related location: this is the postcondition that could not be proved\n   |\n33 |   ensures s >= h\n   |             ^^\n\n\nDafny program verifier finished with 3 verified, 1 error\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "1d3112355c697bedec3052d429f84bbadfa36a640fdb9c8ba7598eedf3aa70f7": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 4 verified, 0 errors\n",
+    "error_summary": ""
+  },
+  "c41229ac2684c4854526f969f02c752bc0deea48af0b12637682fc5f629a5abe": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmprz3ztbn4.dfy(25,24): Error: size operator expects a collection argument (instead got List)\n   |\n25 |     invariant 0 <= i <= |current_list|\n   |                         ^\n\nC:/Users/aaa/AppData/Local/Temp/tmprz3ztbn4.dfy(28,14): Error: size operator expects a collection argument (instead got List)\n   |\n28 |     decreases |current_list|\n   |               ^\n\n2 resolution/type errors detected in tmprz3ztbn4.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "f68cd76111123188f334083fcbc7e652b56523239b34d886a41e15af9f719cc9": {
+    "is_verified": false,
+    "return_code": 2,
+    "output": "C:/Users/aaa/AppData/Local/Temp/tmpb8_furdn.dfy(24,24): Error: size operator expects a collection argument (instead got List)\n   |\n24 |     invariant 0 <= i <= |current_list|\n   |                         ^\n\nC:/Users/aaa/AppData/Local/Temp/tmpb8_furdn.dfy(27,14): Error: size operator expects a collection argument (instead got List)\n   |\n27 |     decreases |current_list|\n   |               ^\n\n2 resolution/type errors detected in tmpb8_furdn.dfy\n",
+    "error_summary": "Lỗi kiểm định logic hoặc cú pháp"
+  },
+  "bf0c9055ff573901c97e0011b69f14c536d896322f4d2b20dd353fca221fe288": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "\nDafny program verifier finished with 3 verified, 0 errors\n",
+    "error_summary": ""
   }
 }
