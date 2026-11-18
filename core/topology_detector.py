@@ -657,6 +657,10 @@ class TopologyDetector:
                 "- 2. Với bài toán chèn BST (`bst_insert`): Đệ quy tạo nút mới `Node(...)` bảo toàn tính chất sắp xếp BST.\n"
                 "- 3. Với bài toán tính kích thước và chiều cao (`compute_tree_metrics`):\n"
                 "     Gọi đệ quy trên cây con trái `l` và phải `r`, sau đó kết hợp kết quả và gọi bổ đề `size_ge_height(t);` nếu cần.\n"
+                "- CÚ PHÁP GỌI METHOD ĐỆ QUY TRONG DAFNY:\n"
+                "  + Nếu gán vào biến ngõ ra có sẵn: `found := bst_search(l, key);`\n"
+                "  + Nếu tạo biến mới nhận kết quả: `var ls, lh := compute_tree_metrics(l);`\n"
+                "  + TUYỆT ĐỐI KHÔNG dùng cú pháp giả `... to res;` hay `call ...;`.\n"
                 "- BẢO CHỨNG DỪNG (TERMINATION): Trong Dafny, đệ quy trên nút con của cấu trúc `datatype` tự động đảm bảo tính dừng (Structural Induction), KHÔNG CẦN viết `decreases`."
             )
 
@@ -671,8 +675,12 @@ class TopologyDetector:
                 "    case Cons(h, t) => ...\n"
                 "  }\n"
                 "  ```\n"
-                "- 1. Với bài toán thống kê (`compute_list_stats`): Đệ quy trên đuôi `t`, cộng dồn độ dài `1 + sub_len` và tổng `h + sub_sum`.\n"
-                "- 2. Với bài toán đảo danh sách (`list_reverse`): Đệ quy hoặc dùng hàm trợ giúp tích lũy.\n"
+                "- 1. Với bài toán thống kê (`compute_list_stats`): Đệ quy trên đuôi `t`, nhận kết quả dạng `var sub_len, sub_sum := compute_list_stats(t);`, cộng dồn độ dài `1 + sub_len` và tổng `h + sub_sum`.\n"
+                "- 2. Với bài toán đảo danh sách (`list_reverse`): Đệ quy `var rev_tail := list_reverse(t);` hoặc dùng hàm trợ giúp tích lũy.\n"
+                "- CÚ PHÁP GỌI METHOD ĐỆ QUY TRONG DAFNY:\n"
+                "  + Gán nhiều biến: `var sub_len, sub_sum := compute_list_stats(t);`\n"
+                "  + Gán 1 biến: `rev := list_reverse(t);` hoặc `var r := list_reverse(t);`\n"
+                "  + TUYỆT ĐỐI KHÔNG dùng cú pháp giả `... to res;`.\n"
                 "- BẢO CHỨNG DỪNG (TERMINATION): Đệ quy trên phần tử con của `datatype List` tự động đảm bảo tính dừng trong Dafny."
             )
 

@@ -1,0 +1,39 @@
+=== BÀI TOÁN: linked_list_stats ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 35.11s
+Kết quả cuối: PASS
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: True
+Error Taxonomy: None
+Error Message: 
+Code:
+datatype List = Nil | Cons(head: int, tail: List)
+
+function list_len(l: List): nat {
+  match l
+  case Nil => 0
+  case Cons(_, t) => 1 + list_len(t)
+}
+
+function list_sum(l: List): int {
+  match l
+  case Nil => 0
+  case Cons(h, t) => h + list_sum(t)
+}
+// pure-end
+
+method compute_list_stats(l: List) returns (len: nat, s: int)
+  ensures len == list_len(l)
+  ensures s == list_sum(l)
+{
+  match l {
+    case Nil => len := 0; s := 0;
+    case Cons(h, t) => {
+      var sub_len, sub_sum := compute_list_stats(t);
+      len := 1 + sub_len;
+      s := h + sub_sum;
+    }
+  }
+}
+

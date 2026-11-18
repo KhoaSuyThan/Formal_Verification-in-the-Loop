@@ -1,0 +1,112 @@
+=== BÀI TOÁN: tree_size_height ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 123.69s
+Kết quả cuối: PASS
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 1, Cột 22: Type or type parameter is not declared in this scope: Tree (did you forget to qualify a name or declare a module import 'opened'?) (note that names in outer modules are not visible in contained modules)
+-> Dòng mã vi phạm: `function tree_size(t: Tree): nat {`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+function tree_size(t: Tree): nat {
+  match t
+  case Leaf => 0
+  case Node(l, _, r) => 1 + tree_size(l) + tree_size(r)
+}
+
+function tree_height(t: Tree): nat {
+  match t
+  case Leaf => 0
+  case Node(l, _, r) =>
+    var hl := tree_height(l);
+    var hr := tree_height(r);
+    1 + if hl > hr then hl else hr
+}
+
+lemma size_ge_height(t: Tree)
+  ensures tree_size(t) >= tree_height(t)
+{
+  match t {
+    case Leaf => {}
+    case Node(l, _, r) => {
+      size_ge_height(l);
+      size_ge_height(r);
+    }
+  }
+}
+// pure-end
+
+method compute_tree_metrics(t: Tree) returns (s: nat, h: nat)
+  ensures s == tree_size(t)
+  ensures h == tree_height(t)
+  ensures s >= h
+{
+  match t {
+    case Leaf => {
+      s := 0;
+      h := 0;
+    }
+    case Node(l, _, r) => {
+      var ls, lh := compute_tree_metrics(l);
+      var rs, rh := compute_tree_metrics(r);
+      s := 1 + ls + rs;
+      h := 1 + if lh > rh then lh else rh;
+    }
+  }
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: True
+Error Taxonomy: None
+Error Message: 
+Code:
+datatype Tree = Leaf | Node(left: Tree, val: int, right: Tree)
+
+function tree_size(t: Tree): nat {
+  match t
+  case Leaf => 0
+  case Node(l, _, r) => 1 + tree_size(l) + tree_size(r)
+}
+
+function tree_height(t: Tree): nat {
+  match t
+  case Leaf => 0
+  case Node(l, _, r) =>
+    var hl := tree_height(l);
+    var hr := tree_height(r);
+    1 + if hl > hr then hl else hr
+}
+
+lemma size_ge_height(t: Tree)
+  ensures tree_size(t) >= tree_height(t)
+{
+  match t {
+    case Leaf => {}
+    case Node(l, _, r) => {
+      size_ge_height(l);
+      size_ge_height(r);
+    }
+  }
+}
+
+method compute_tree_metrics(t: Tree) returns (s: nat, h: nat)
+  ensures s == tree_size(t)
+  ensures h == tree_height(t)
+  ensures s >= h
+{
+  match t {
+    case Leaf => {
+      s := 0;
+      h := 0;
+    }
+    case Node(l, _, r) => {
+      var ls, lh := compute_tree_metrics(l);
+      var rs, rh := compute_tree_metrics(r);
+      s := 1 + ls + rs;
+      h := 1 + if lh > rh then lh else rh;
+    }
+  }
+}
+

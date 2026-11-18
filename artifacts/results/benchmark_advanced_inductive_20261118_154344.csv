@@ -1,0 +1,6 @@
+task_name,model,is_success,total_iterations,pass_at_1,pass_at_k,error_taxonomy,execution_time_sec,workers,timestamp
+bst_insert,ollama/qwen2.5-coder:7b,False,3,0,0,GeneralVerificationFailure,404.58,1,20261118_154344
+bst_search,ollama/qwen2.5-coder:7b,False,3,0,0,GeneralVerificationFailure,298.6,1,20261118_154344
+linked_list_reverse,ollama/qwen2.5-coder:7b,False,3,0,0,PostconditionViolation,255.08,1,20261118_154344
+linked_list_stats,ollama/qwen2.5-coder:7b,False,3,0,0,GeneralVerificationFailure,248.42,1,20261118_154344
+tree_size_height,ollama/qwen2.5-coder:7b,True,2,0,1,None,123.69,1,20261118_154344

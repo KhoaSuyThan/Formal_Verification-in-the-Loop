@@ -1,0 +1,51 @@
+=== BÀI TOÁN: bst_insert ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 103.67s
+Kết quả cuối: PASS
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: True
+Error Taxonomy: None
+Error Message: 
+Code:
+datatype Tree = Leaf | Node(left: Tree, val: int, right: Tree)
+
+predicate tree_contains(t: Tree, x: int) {
+  match t
+  case Leaf => false
+  case Node(l, v, r) => v == x || tree_contains(l, x) || tree_contains(r, x)
+}
+
+// Khai báo ghost predicate cho vị từ bất biến BST có chứa lượng từ forall không bị chặn
+ghost predicate is_bst(t: Tree) {
+  match t
+  case Leaf => true
+  case Node(l, v, r) =>
+    is_bst(l) && is_bst(r) &&
+    (forall x :: tree_contains(l, x) ==> x <= v) &&
+    (forall y :: tree_contains(r, y) ==> y > v)
+}
+// pure-end
+
+method bst_insert(t: Tree, x: int) returns (res: Tree)
+  requires is_bst(t)
+  ensures is_bst(res)
+  ensures tree_contains(res, x)
+  ensures forall k :: tree_contains(t, k) ==> tree_contains(res, k)
+  ensures forall k :: tree_contains(res, k) ==> tree_contains(t, k) || k == x
+{
+  match t {
+    case Leaf => res := Node(Leaf, x, Leaf);
+    case Node(l, v, r) =>
+      if x < v {
+        var nl := bst_insert(l, x);
+        res := Node(nl, v, r);
+      } else if x > v {
+        var nr := bst_insert(r, x);
+        res := Node(l, v, nr);
+      } else {
+        res := t;
+      }
+  }
+}
+

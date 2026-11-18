@@ -15,6 +15,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, List
 
+# Đảm bảo đường dẫn gốc dự án luôn có trong sys.path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 import yaml
 # pyrefly: ignore [missing-import]
 from rich.console import Console

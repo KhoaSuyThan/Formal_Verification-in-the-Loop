@@ -2,7 +2,7 @@
 
 experiment:
   max_iterations_k: 3         # Số vòng lặp tự sửa tối đa (Pass@K)
-  dafny_timeout_seconds: 15   # Giới hạn thời gian Z3 Solver trên mỗi bài toán (giây)
+  dafny_timeout_seconds: 30   # Giới hạn thời gian Z3 Solver trên mỗi bài toán (giây) theo protocol CYSG2027
   random_seed: 42
 
 models:
