@@ -96,7 +96,7 @@ def _run(command: list[str], cwd: Path, timeout_sec: int) -> CommandResult:
 
 def _clone(task: ProjectTask, destination: Path) -> None:
     source = task.repo_url
-    command = ["git", "clone", "--quiet", "--no-checkout"]
+    command = ["git", "-c", "safe.directory=*", "clone", "--quiet", "--no-checkout"]
     if source.startswith("https://"):
         command += ["--filter=blob:none"]
     else:
@@ -104,7 +104,7 @@ def _clone(task: ProjectTask, destination: Path) -> None:
     result = _run(command + [source, str(destination)], destination.parent, 600)
     if result.status != "passed":
         raise RuntimeError(f"Could not clone {source}: {result.output}")
-    checkout = _run(["git", "checkout", "--quiet", "--detach", task.base_commit], destination, 300)
+    checkout = _run(["git", "-c", "safe.directory=*", "checkout", "--quiet", "--detach", task.base_commit], destination, 300)
     if checkout.status != "passed":
         raise RuntimeError(f"Could not checkout {task.base_commit}: {checkout.output}")
 
@@ -178,7 +178,9 @@ def evaluate_task(task: ProjectTask, agent: PatchAgent, *, max_attempts: int = 3
     with tempfile.TemporaryDirectory(prefix="fvil-project-") as scratch:
         repo = Path(scratch) / "repo"
         _clone(task, repo)
-        python = Path(scratch) / "venv" / "bin" / "python"
+        scripts_dir = "Scripts" if sys.platform == "win32" else "bin"
+        exe_name = "python.exe" if sys.platform == "win32" else "python"
+        python = Path(scratch) / "venv" / scripts_dir / exe_name
         setup: list[CommandResult] = []
         if task.backend == "local":
             setup = [_run([sys.executable, "-m", "venv", str(python.parent.parent)], repo, command_timeout_sec)]

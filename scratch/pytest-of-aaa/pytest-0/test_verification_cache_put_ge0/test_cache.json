@@ -1,0 +1,8 @@
+{
+  "ac227a32f658ce5fe820eed103c82501535b5e779adca7a8d46521d7cbf0ceae": {
+    "is_verified": true,
+    "return_code": 0,
+    "output": "Dafny program verifier finished with 1 verified, 0 errors",
+    "error_summary": ""
+  }
+}
