@@ -1,0 +1,146 @@
+{
+  "tree_size_height": {
+    "category": "Recursion & Inductive Structures",
+    "type": "code_synthesis",
+    "status": "failed",
+    "total_iterations": 2,
+    "elapsed_seconds": 64.52,
+    "failure_reason": "SpecTamperingViolation: LLM chèn decreases làm thay đổi hợp đồng gốc, SpecLocker bắt lỗi chính xác"
+  },
+  "dafnybench_power": {
+    "category": "Arithmetic & Number Theory",
+    "type": "proof_hint_restoration",
+    "status": "failed",
+    "attempts_used": 3,
+    "elapsed_seconds": 150.75,
+    "attempts": [
+      {
+        "attempt": 1,
+        "hint_safe": true,
+        "line_safe": true,
+        "contract_issues": [],
+        "dafny_output": "): Warning: deprecated style: a semi-colon is not needed here\n   |\n10 | /*Pre-Condition*/   requires n >= 0 && a >= 0;\n   |                                              ^\n\nC:/Users/aaa/AppData/Local/Temp/tmp8ajayg3i.dfy(11,43): Warning: deprecated style: a semi-colon is not needed here\n   |\n11 | /*Post-Condition*/  ensures s == power(a,n);\n   |                                            ^\n\nC:/Users/aaa/AppData/Local/Temp/tmp8ajayg3i.dfy(14,70): Error: assertion might not hold\n   |\n14 |   /* (| 1 = power(a,0) ^ 0<=n |)          - implied (a) */   assert 1 == power(a,0) && 0<=n;\n   |                                                                       ^^\n\nC:/Users/aaa/AppData/Local/Temp/tmp8ajayg3i.dfy(24,72): Error: assertion might not hold\n   |\n24 |     /* (| s*a = power(a,i+1) ^ i+1<=n |)  - implied (b) */   assert s*a == power(a,i+1) && i+1<=n;\n   |                                                                         ^^\n\n\nDafny program verifier finished with 1 verified, 2 errors\n",
+        "status": "verification_failed"
+      },
+      {
+        "attempt": 2,
+        "hint_safe": true,
+        "line_safe": true,
+        "contract_issues": [],
+        "dafny_output": "        ^\n\nC:/Users/aaa/AppData/Local/Temp/tmpvlxwsk7r.dfy(20,37): Warning: deprecated style: a semi-colon is not needed here\n   |\n20 |     invariant s == power(a,i) && i<=n;\n   |                                      ^\n\nC:/Users/aaa/AppData/Local/Temp/tmpvlxwsk7r.dfy(21,19): Warning: deprecated style: a semi-colon is not needed here\n   |\n21 |     decreases n - i;\n   |                    ^\n\nC:/Users/aaa/AppData/Local/Temp/tmpvlxwsk7r.dfy(14,70): Error: assertion might not hold\n   |\n14 |   /* (| 1 = power(a,0) ^ 0<=n |)          - implied (a) */   assert 1 == power(a,0) && 0<=n;\n   |                                                                       ^^\n\nC:/Users/aaa/AppData/Local/Temp/tmpvlxwsk7r.dfy(24,72): Error: assertion might not hold\n   |\n24 |     /* (| s*a = power(a,i+1) ^ i+1<=n |)  - implied (b) */   assert s*a == power(a,i+1) && i+1<=n;\n   |                                                                         ^^\n\n\nDafny program verifier finished with 1 verified, 2 errors\n",
+        "status": "verification_failed"
+      },
+      {
+        "attempt": 3,
+        "hint_safe": false,
+        "line_safe": false,
+        "contract_issues": [],
+        "status": "invalid_candidate"
+      }
+    ]
+  },
+  "dafnybench_uiowa_binary_search": {
+    "category": "Binary Search",
+    "type": "proof_hint_restoration",
+    "status": "passed",
+    "attempts_used": 1,
+    "elapsed_seconds": 25.12,
+    "attempts": [
+      {
+        "attempt": 1,
+        "hint_safe": true,
+        "line_safe": true,
+        "contract_issues": [],
+        "dafny_output": "\nDafny program verifier finished with 3 verified, 0 errors\n",
+        "status": "verified"
+      }
+    ]
+  },
+  "dafnybench_non_overlapping_intervals": {
+    "category": "Intervals, Strings & Puzzles",
+    "type": "proof_hint_restoration",
+    "status": "failed",
+    "attempts_used": 3,
+    "elapsed_seconds": 95.68,
+    "attempts": [
+      {
+        "attempt": 1,
+        "hint_safe": false,
+        "line_safe": false,
+        "contract_issues": [
+          "contract_changed:bubble_sort",
+          "contract_changed:sorted",
+          "contract_changed:partitioned",
+          "pure_definition_changed:sorted",
+          "pure_definition_changed:partitioned"
+        ],
+        "status": "invalid_candidate"
+      },
+      {
+        "attempt": 2,
+        "hint_safe": false,
+        "line_safe": false,
+        "contract_issues": [
+          "contract_changed:bubble_sort",
+          "contract_changed:sorted",
+          "contract_changed:partitioned",
+          "pure_definition_changed:sorted",
+          "pure_definition_changed:partitioned"
+        ],
+        "status": "invalid_candidate"
+      },
+      {
+        "attempt": 3,
+        "hint_safe": false,
+        "line_safe": false,
+        "contract_issues": [
+          "contract_changed:bubble_sort",
+          "contract_changed:sorted",
+          "contract_changed:partitioned",
+          "pure_definition_changed:sorted",
+          "pure_definition_changed:partitioned"
+        ],
+        "status": "invalid_candidate"
+      }
+    ]
+  },
+  "dafnybench_bubblesort": {
+    "category": "Sorting Algorithms",
+    "type": "proof_hint_restoration",
+    "status": "failed",
+    "attempts_used": 3,
+    "elapsed_seconds": 100.8,
+    "attempts": [
+      {
+        "attempt": 1,
+        "hint_safe": false,
+        "line_safe": false,
+        "contract_issues": [
+          "contract_changed:BubbleSort",
+          "pure_definition_changed:pivot"
+        ],
+        "status": "invalid_candidate"
+      },
+      {
+        "attempt": 2,
+        "hint_safe": false,
+        "line_safe": false,
+        "contract_issues": [
+          "contract_changed:BubbleSort",
+          "pure_definition_changed:pivot"
+        ],
+        "status": "invalid_candidate"
+      },
+      {
+        "attempt": 3,
+        "hint_safe": false,
+        "line_safe": false,
+        "contract_issues": [
+          "contract_changed:BubbleSort",
+          "pure_definition_changed:pivot"
+        ],
+        "status": "invalid_candidate"
+      }
+    ]
+  }
+}

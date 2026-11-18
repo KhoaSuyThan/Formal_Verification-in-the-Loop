@@ -5,7 +5,15 @@ Hỗ trợ mô hình chạy cục bộ (Ollama) và các mô hình trên đám m
 
 import os
 import re
+import sys
 from typing import Optional, Tuple
+
+if sys.platform == "win32":
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+    if hasattr(sys.stderr, "reconfigure"):
+        sys.stderr.reconfigure(encoding="utf-8")
+
 # pyrefly: ignore [missing-import]
 import litellm
 # pyrefly: ignore [missing-import]
@@ -96,26 +104,14 @@ class LLMAgent:
                             self.last_cot_tokens = cot_tokens
                             return clean_code
                 elif res.status_code == 429:
-                    # Trích xuất thời gian chờ chuẩn xác theo yêu cầu từ Google AI Studio
-                    wait_time = 35
-                    try:
-                        err_json = res.json()
-                        details = err_json.get("error", {}).get("details", [])
-                        for d in details:
-                            if "retryDelay" in d:
-                                wait_time = int(d["retryDelay"].rstrip("s")) + 2
-                                break
-                    except Exception:
-                        pass
-                    print(f"[CẢNH BÁO GEMINI 429]: Hạn ngạch Google yêu cầu giãn cách {wait_time}s, đang tự động chờ để thử lại (lần {attempt + 1}/{max_retries})...")
-                    time.sleep(wait_time)
-                    continue
+                    print(f"[CẢNH BÁO GEMINI 429]: API trả về HTTP 429 (Hạn ngạch rate-limit/quota bị giới hạn). Dừng ngay lượt gọi để tránh treo lâu.")
+                    break
                 else:
                     print(f"[CẢNH BÁO GEMINI REST]: HTTP {res.status_code} - {res.text[:200]}")
                     break
             except Exception as e:
                 print(f"[CẢNH BÁO GEMINI REST]: Gặp lỗi kết nối: {e}")
-                time.sleep(3)
+                break
         self.last_cot_trace = ""
         self.last_cot_tokens = 0
         return ""
@@ -187,12 +183,13 @@ class LLMAgent:
             except Exception as e:
                 err_str = str(e).lower()
                 is_rate_limit = "rate limit" in err_str or "rate_limit" in err_str or "429" in err_str or "ratelimit" in type(e).__name__.lower() or "tpm" in err_str or "rpm" in err_str
-                if is_rate_limit and attempt < max_retries - 1:
-                    wait_time = 6
+                is_credit_exhausted = "credit" in err_str or "quota" in err_str or "billing" in err_str or "insufficient_quota" in err_str
+                if is_rate_limit and not is_credit_exhausted and attempt < max_retries - 1:
+                    wait_time = 3
                     match = re.search(r"try again in ([\d\.]+)s", err_str)
                     if match:
                         try:
-                            wait_time = int(float(match.group(1))) + 2
+                            wait_time = int(float(match.group(1))) + 1
                         except Exception:
                             pass
                     print(f"\n[CẢNH BÁO RATE LIMIT]: {self.model} chạm giới hạn tốc độ. Chờ {wait_time}s và thử lại (lần {attempt + 1}/{max_retries})...")

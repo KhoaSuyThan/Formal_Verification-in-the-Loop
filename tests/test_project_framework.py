@@ -33,7 +33,7 @@ diff --git a/pkg/b.py b/pkg/b.py
 +++ b/pkg/b.py
 @@ -1,4 +1,4 @@
  from pkg.a import step
-
+ 
  def total(n):
 -    return step(n)
 +    return step(n) + 1
@@ -60,7 +60,9 @@ class ProjectFrameworkTests(unittest.TestCase):
             (repo / "tests/test_total.py").write_text(
                 "import unittest\nfrom pkg.b import total\nclass TestTotal(unittest.TestCase):\n"
                 "    def test_total(self):\n        self.assertEqual(total(2), 5)\n", encoding="utf-8")
-            for command in (["git", "init", "-q"], ["git", "config", "user.email", "test@example.com"],
+            for command in (["git", "init", "-q"],
+                            ["git", "config", "core.autocrlf", "false"],
+                            ["git", "config", "user.email", "test@example.com"],
                             ["git", "config", "user.name", "Test"], ["git", "add", "."],
                             ["git", "commit", "-qm", "base"]):
                 subprocess.run(command, cwd=repo, check=True)

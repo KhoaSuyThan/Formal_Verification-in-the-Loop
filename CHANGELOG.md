@@ -6,7 +6,62 @@ Tất cả các thay đổi đáng chú ý của dự án sẽ được ghi nh�
 
 ---
 
----
+## [1.7.6-provenance-earlyabort] - 2026-11-18: Đính Chính Kỹ Thuật, Tích Hợp Git Dirty Provenance & Sửa Lỗi Clone Kiểm Thử
+- **Đính chính bản chất kỹ thuật cơ chế Prompt & Lọc Proof Hint ([experiments/run_dafnybench20.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/experiments/run_dafnybench20.py))**:
+  + Làm rõ bản chất: Cơ chế hiện tại là **Full-File Generation with Line-Level Hint Filtering** (sinh lại toàn bộ file kèm bộ lọc diff từng dòng), chưa phải Anchor-Based Patching.
+  + Bộ so khớp `_get_line_violations` sử dụng `line.strip()`, bỏ qua các biến đổi về khoảng trắng thụt lề và dòng trống; tập trung kiểm soát chặt chẽ việc không bị xóa/sửa nội dung dòng gốc và chỉ cho phép chèn các dòng bắt đầu bằng tiền tố proof hint (`invariant`, `decreases`, `assert`, `reveal`, `calc`, `//`, `/*`).
+- **Phân loại lỗi API chuẩn xác & Cơ chế Dừng Sớm (Early Abort)**:
+  + Phản hồi rỗng được phân loại là `empty_response` thông thường (do model từ chối sinh hoặc lọc an toàn), không mặc định quy chụp là fatal quota để tránh dừng suite nhầm.
+  + Tách biệt tường minh các mã lỗi: `api_quota_or_rate_limit` (429/TPM), `api_credit_exhausted` (hết credit/billing), `api_auth_error` (401/403/invalid key) và `api_model_not_found`.
+  + Chuẩn hóa mô tả cơ chế Early Abort: Khi phát hiện lỗi API Fatal, hệ thống **ngừng xếp lịch cho các task mới; các worker đang chạy song song được phép hoàn tất lượt hiện tại trước khi suite dừng hẳn**.
+- **Siêu dữ liệu tái lập (Provenance Metadata) kèm trạng thái Git Working Tree**:
+  + Bổ sung trường `git_dirty` (`bool`) và `git_diff_sha256` (mã băm SHA-256 của `git diff HEAD`) vào JSON kết quả để đảm bảo khả năng đối chiếu chính xác ngay cả khi chạy thực nghiệm từ working tree chưa commit.
+- **Khắc phục triệt để lỗi kiểm thử `test_multi_file_patch_and_separate_evidence` ([core/project_benchmark.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/project_benchmark.py), [tests/test_project_framework.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/tests/test_project_framework.py))**:
+  + Bổ sung cờ `-c safe.directory=*` vào các lệnh `git clone` và `git checkout` trong thư mục tạm trên Windows để loại bỏ lỗi dubious ownership.
+  + Thiết lập `core.autocrlf false` trong repository kiểm thử cục bộ, đảm bảo tính nhất quán line-ending (LF) và giúp `git apply` luôn thành công trên Windows. Test suite đạt chuẩn 125/125 passed (36.01s).
+- **Chuẩn hóa hiện trạng Benchmark ([BENCHMARK_MANIFEST.md](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/BENCHMARK_MANIFEST.md))**:
+  + Tuyên bố rõ ràng: Manifest hiện gồm 30 bài đã kiểm định chuẩn mực (`included_core`) và 25 bài đang ở trạng thái rà soát (`pending_check`), chưa thể xem là 54 bài hợp lệ hoàn toàn.
+  + Phân biệt môi trường thực thi: Dafny Verifier chạy offline nội bộ trên máy, nhưng suy luận bằng Gemini/OpenAI là Cloud API; chỉ khi tích hợp Ollama mới cấu thành hệ thống 100% offline.
+
+## [1.7.5-dafnybench-hardening] - 2026-11-18: Nâng Cấp Bộ Khóa Hợp Đồng & Cơ Chế Fail-Fast Khắc Phục Treo API
+- **Ngăn chặn triệt để LLM sửa hợp đồng và mã gốc ([experiments/run_dafnybench20.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/experiments/run_dafnybench20.py))**:
+  + Bổ sung hàm kiểm tra vi phạm chi tiết `_get_line_violations` và `_only_hints_added`, sử dụng `re` pattern chặt chẽ `^(?:invariant\b|decreases\b|assert\b|reveal\b|calc\b|//|/\*|\*|\*/)` để phân định chính xác giữa proof hint hợp lệ và dòng mã bị can thiệp.
+  + Tích hợp đầy đủ `SpecLocker.validate` vào điều kiện lọc hợp lệ: khi phát hiện vi phạm hợp đồng (`contract_changed`, `pure_definition_changed`, `ensures_changed`) hoặc vi phạm mã gốc, hệ thống lập tức gán trạng thái `invalid_candidate`, ghi lại toàn bộ vi phạm và chuyển thành feedback phản hồi chi tiết cho LLM ở lần thử tiếp theo.
+  + Nâng cấp toàn diện system prompt: bổ sung ràng buộc nghiêm ngặt và ví dụ mẫu few-shot (Sum/while loop) để chỉ dẫn rõ ràng cho LLM chỉ chèn loop invariant và không được sửa bất kỳ dòng mã gốc nào.
+  + Hỗ trợ cờ `--tasks` lọc danh sách bài toán linh hoạt theo từ khóa/alias rút gọn (`binarysearch`, `power`, `bubblesort`).
+- **Cơ chế Fail-Fast chống nghẽn và treo API ([agents/llm_agent.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/agents/llm_agent.py))**:
+  + Phát hiện và khắc phục nguyên nhân gây treo: khi gặp lỗi `HTTP 429` (Rate limit) hoặc tài khoản cạn credit (`no credits remaining`), hệ thống lập tức ngắt gọi và báo cáo ngay thay vì rơi vào vòng lặp `time.sleep(35s)` kéo dài gây nghẽn tiến trình.
+  + Bổ sung cấu hình mã hóa UTF-8 tự động (`sys.stdout.reconfigure(encoding="utf-8")`) trên Windows Console để loại bỏ triệt để lỗi `UnicodeEncodeError: 'charmap' codec (cp1252)`.
+  + Kiểm thử hồi quy tự động hệ thống: `125/125 tests passed 100%` (32.16s).
+
+## [1.7.4-pilot-feasibility] - 2026-11-18: Hoàn Tất Thử Nghiệm Pilot 5 Bài & Dự Báo Khả Thi (Ngày 5 & 6)
+- **Thực nghiệm Pilot 5 bài toán đại diện ngoài Core-30 ([artifacts/results/pilot_5_results.json](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/artifacts/results/pilot_5_results.json))**:
+  + Chạy thành công bài tìm kiếm nhị phân `dafnybench_uiowa_binary_search` đạt **PASSED 100% trong 25.12s ngay tại Lượt 1** với `gemini-2.5-flash` và Dafny 4.11.0.
+  + Ghi nhận bằng chứng học thuật: `SpecLocker` phát hiện và chặn đứng vi phạm Spec-Tampering ở Vòng 2 của bài quy nạp `tree_size_height` khi LLM tự ý chèn `decreases t`.
+  + Ghi nhận các ca biên cần bổ đề suy diễn ở bài toán lũy thừa `dafnybench_power` và bài toán sắp xếp mảng `dafnybench_bubblesort`.
+- **Dự báo khả thi mở rộng 80–100 bài toán**:
+  + Tốc độ xử lý trung bình: 50–70s/bài; ước tính hoàn thành toàn bộ 100 bài trong ~45–55 phút khi bật 2 workers song song (`--workers 2`).
+  + Chi phí API Google Gemini 2.5 Flash: Nằm trọn vẹn trong hạn ngạch Free Tier (1.500 requests/ngày) hoặc dưới 0.10 USD (~2.500 VNĐ).
+  + Khóa 54 bài hợp lệ hiện có, xác định mục tiêu cần thu thập thêm chính xác từ 26–46 bài để đạt mốc 80–100 bài trước hạn nộp CYSG 2027.
+
+- **Rà soát trùng lặp ngữ nghĩa ([BENCHMARK_MANIFEST.md](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/BENCHMARK_MANIFEST.md), [data/benchmarks/benchmark_manifest.csv](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/data/benchmarks/benchmark_manifest.csv))**:
+  + Đối chiếu chi tiết chữ ký hàm và đặc tả toán học giữa Core-30 và DafnyBench20: xác định 2 ca có độ trùng mục tiêu (`semantic_overlap_fibonacci`, `semantic_overlap_maximum`) nhưng bài toán DafnyBench có độ phức tạp cao hơn (multi-method).
+  + Xác định 2 biến thể tìm kiếm nhị phân (`semantic_variant_binary_search`): tìm thành viên Boolean trên Heap Array và tìm điểm phân hoạch trên dãy giảm dần số thực.
+- **Phân tầng giải thuật chuẩn mực (Algorithm Taxonomy)**:
+  + Phân loại toàn bộ 55 bài toán thành 7 nhóm cân bằng: (1) Số học & Lý thuyết số (11 bài), (2) Vòng lặp tuyến tính & Tìm kiếm mảng (17 bài), (3) Tìm kiếm nhị phân (3 bài), (4) Thuật toán sắp xếp (9 bài), (5) Thao tác ma trận (3 bài), (6) Khoảng & Đố vui (3 bài), (7) Đệ quy & Cấu trúc quy nạp (9 bài).
+
+- **Kiểm định tính toàn vẹn DafnyBench20 ([data/benchmarks/dafnybench20/](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/data/benchmarks/dafnybench20/))**:
+  + Xác thực 20/20 tệp khớp 100% mã băm SHA-256 đối chiếu với `index.json` của commit `0cd28fee`.
+  + Thẩm định qua Dafny 4.11.0: 19/20 bài thiếu invariant/decreases đúng theo thiết kế khôi phục chứng minh; phát hiện 1 bài `MatrixMultiplication` gặp lỗi cú pháp parser Dafny 4.x (`invalid AssignStatement`).
+- **Xác định trạng thái 5 bài Advanced Inductive ([data/benchmarks/advanced_inductive/](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/data/benchmarks/advanced_inductive/))**:
+  + Xác nhận cấu trúc tương đồng với Core-30: đặc tả toán học đầy đủ, phần thân hàm để trống giữa `// impl-start` và `// impl-end` để LLM sinh mã.
+  + Cập nhật đồng bộ [BENCHMARK_MANIFEST.md](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/BENCHMARK_MANIFEST.md) và [benchmark_manifest.csv](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/data/benchmarks/benchmark_manifest.csv).
+
+- **Kiểm kê toàn diện 55 bài toán hiện có ([data/benchmarks/benchmark_manifest.csv](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/data/benchmarks/benchmark_manifest.csv), [BENCHMARK_MANIFEST.md](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/BENCHMARK_MANIFEST.md))**:
+  + Xây dựng bảng Master Manifest quản lý thống nhất toàn bộ 55 bài toán hiện có trong repo: Core-30 (30 bài, giữ kết quả mốc 29/30 Pass@3), Advanced Inductive (5 bài cây/danh sách liên kết quy nạp) và DafnyBench20 (20 bài khôi phục gợi ý chứng minh từ DafnyBench commit `0cd28fee`).
+  + Thiết lập 10 trường dữ liệu chuẩn hóa: `task_id`, `source`, `path`, `category`, `duplicate`, `reference_verify`, `spec_review`, `include_status`, `exclusion_reason`, `current_result`.
+  + Phục vụ kế hoạch 75 ngày hoàn thiện nghiên cứu và bài báo tham dự Hội nghị NCKH Người học HUTECH 2027 (CYSG2027), chuẩn bị cho cổng thẩm định 24/11 tiến tới mục tiêu 80–100 bài toán.
+
 
 ## [1.7.0] - 2026-10-18: Thí điểm dự án Python và tăng tốc chạy benchmark
 
