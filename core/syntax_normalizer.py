@@ -1032,6 +1032,33 @@ class SyntaxNormalizer:
         return result
 
     @classmethod
+    def fix_call_to_syntax(cls, code: str) -> str:
+        """Chuẩn hóa cú pháp giả mã gọi hàm/phương thức `call(...) to var1, var2;`
+
+        thành cú pháp gán Dafny chuẩn: `var1, var2 := call(...);`.
+        """
+        if not code or " to " not in code:
+            return code
+
+        # Regex tìm các dòng dạng: [indent]call_expr(...) to var1, var2;?
+        # Loại trừ vòng lặp for (... := ... to ...)
+        pattern = re.compile(
+            r'^([ \t]*)(?!(?:for\b))([a-zA-Z_]\w*\s*\([^;{}\n]*\))\s+to\s+([a-zA-Z0-9_,\s]+?)\s*;?$',
+            re.MULTILINE
+        )
+
+        def replacer(match):
+            indent = match.group(1)
+            call_expr = match.group(2).strip()
+            vars_part = match.group(3).strip()
+            # Bỏ qua nếu vars_part rỗng hoặc chứa từ khóa điều khiển
+            if not vars_part or any(kw in vars_part.split() for kw in ["do", "then", "else", "invariant", "decreases"]):
+                return match.group(0)
+            return f"{indent}{vars_part} := {call_expr};"
+
+        return pattern.sub(replacer, code)
+
+    @classmethod
     def normalize(cls, code: str) -> str:
         """Áp dụng toàn bộ các phép chuẩn hóa cú pháp theo thứ tự an toàn."""
         if not code or not isinstance(code, str) or not code.strip():
@@ -1057,6 +1084,7 @@ class SyntaxNormalizer:
             cls.fix_return_expr,
             cls.fix_seq_assignment,
             cls.fix_missing_out_param_assignment,
+            cls.fix_call_to_syntax,
             cls.fix_missing_var_in_call_assignment,
             cls.fix_sorting_inductive_lemmas,
             cls.fix_available_lemma_invocations,

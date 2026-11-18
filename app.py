@@ -463,12 +463,16 @@ def open_task_selection_dialog():
 
     st.markdown("<hr style='margin: 8px 0; border: none; border-top: 1px solid rgba(255,255,255,0.08);'>", unsafe_allow_html=True)
 
-    # Hiển thị 4 cột bài toán: Clover, HumanEval, Advanced, Inductive
+    # Hiển thị các nhóm bài toán: Core-30, Inductive, Clover Extended, DafnyBench Extended, DafnyBench20
     clover_filtered = {k: v for k, v in filtered_tasks.items() if v["group"] == "Clover"}
     humaneval_filtered = {k: v for k, v in filtered_tasks.items() if v["group"] == "HumanEval"}
     advanced_filtered = {k: v for k, v in filtered_tasks.items() if v["group"] == "Advanced"}
     inductive_filtered = {k: v for k, v in filtered_tasks.items() if v["group"] == "Inductive"}
+    clover_ext_filtered = {k: v for k, v in filtered_tasks.items() if v["group"] == "Clover-Ext"}
+    dafnybench_ext_filtered = {k: v for k, v in filtered_tasks.items() if v["group"] == "DafnyBench-Ext"}
+    dafnybench20_filtered = {k: v for k, v in filtered_tasks.items() if v["group"] == "DafnyBench20"}
 
+    st.markdown("##### 📌 Nhóm 1: Core-30 & Cấu Trúc Quy Nạp (35 bài)")
     col_c, col_h, col_a, col_i = st.columns(4)
     with col_c:
         st.markdown(icon_heading(f"Clover ({len(clover_filtered)} bài)", "folder", level=4), unsafe_allow_html=True)
@@ -517,6 +521,40 @@ def open_task_selection_dialog():
                 key=f"chk_task_{meta['short_name']}",
                 help=f"Mã: {meta['short_name']} | Đường dẫn: {meta['rel_path']}",
             )
+
+    if clover_ext_filtered or dafnybench_ext_filtered or dafnybench20_filtered:
+        st.markdown("<hr style='margin: 8px 0; border: none; border-top: 1px solid rgba(255,255,255,0.08);'>", unsafe_allow_html=True)
+        st.markdown("##### 🚀 Nhóm 2: Benchmark Mở Rộng Ngoài (80 bài mới)")
+        col_ce, col_dbe, col_db20 = st.columns(3)
+        with col_ce:
+            st.markdown(icon_heading(f"Clover Extended ({len(clover_ext_filtered)} bài)", "folder", level=4), unsafe_allow_html=True)
+            for _item_key, meta in clover_ext_filtered.items():
+                file_name = Path(meta["rel_path"]).name
+                st.checkbox(
+                    f"{file_name}",
+                    key=f"chk_task_{meta['short_name']}",
+                    help=f"Mã: {meta['short_name']} | Đường dẫn: {meta['rel_path']}",
+                )
+
+        with col_dbe:
+            st.markdown(icon_heading(f"DafnyBench Proof Hint ({len(dafnybench_ext_filtered)} bài)", "shield", level=4), unsafe_allow_html=True)
+            for _item_key, meta in dafnybench_ext_filtered.items():
+                file_name = Path(meta["rel_path"]).name
+                st.checkbox(
+                    f"{file_name}",
+                    key=f"chk_task_{meta['short_name']}",
+                    help=f"Mã: {meta['short_name']} | Đường dẫn: {meta['rel_path']}",
+                )
+
+        with col_db20:
+            st.markdown(icon_heading(f"DafnyBench20 Gốc ({len(dafnybench20_filtered)} bài)", "check_circle", level=4), unsafe_allow_html=True)
+            for _item_key, meta in dafnybench20_filtered.items():
+                file_name = Path(meta["rel_path"]).name
+                st.checkbox(
+                    f"{file_name}",
+                    key=f"chk_task_{meta['short_name']}",
+                    help=f"Mã: {meta['short_name']} | Đường dẫn: {meta['rel_path']}",
+                )
 
     st.markdown("<hr style='margin: 10px 0; border: none; border-top: 1px solid rgba(255,255,255,0.08);'>", unsafe_allow_html=True)
     if st.button("Hoàn tất lựa chọn", icon=":material/check:", type="primary", width="stretch"):
@@ -570,6 +608,9 @@ with st.sidebar:
             humaneval_tasks = {k: v for k, v in flat_registry.items() if v["group"] == "HumanEval"}
             advanced_tasks = {k: v for k, v in flat_registry.items() if v["group"] == "Advanced"}
             inductive_tasks = {k: v for k, v in flat_registry.items() if v["group"] == "Inductive"}
+            clover_ext_tasks = {k: v for k, v in flat_registry.items() if v["group"] == "Clover-Ext"}
+            dafnybench_ext_tasks = {k: v for k, v in flat_registry.items() if v["group"] == "DafnyBench-Ext"}
+            dafnybench20_tasks = {k: v for k, v in flat_registry.items() if v["group"] == "DafnyBench20"}
             target_tasks = {k: v for k, v in flat_registry.items() if v["is_target"]}
 
             clover_total = len(clover_tasks)
@@ -588,6 +629,9 @@ with st.sidebar:
                 f"Bộ HumanEval ({humaneval_total} bài)",
                 f"Bộ Mở Rộng Advanced ({advanced_total} bài)",
                 f"Bộ Quy Nạp Inductive ({inductive_total} bài)",
+                f"Bộ Clover Mở Rộng ({len(clover_ext_tasks)} bài)",
+                f"Bộ DafnyBench Proof Hint ({len(dafnybench_ext_tasks)} bài)",
+                f"Bộ DafnyBench20 Gốc ({len(dafnybench20_tasks)} bài)",
                 f"Toàn bộ {all_total} bài toán ({all_total} bài)",
                 "Bỏ chọn toàn bộ (0 bài)",
             ]
@@ -636,6 +680,15 @@ with st.sidebar:
                 elif "Bộ Quy Nạp" in preset_choice:
                     for _item_key, meta in flat_registry.items():
                         st.session_state[f"chk_task_{meta['short_name']}"] = (meta["group"] == "Inductive")
+                elif "Clover Mở Rộng" in preset_choice:
+                    for _item_key, meta in flat_registry.items():
+                        st.session_state[f"chk_task_{meta['short_name']}"] = (meta["group"] == "Clover-Ext")
+                elif "DafnyBench Proof Hint" in preset_choice:
+                    for _item_key, meta in flat_registry.items():
+                        st.session_state[f"chk_task_{meta['short_name']}"] = (meta["group"] == "DafnyBench-Ext")
+                elif "DafnyBench20 Gốc" in preset_choice:
+                    for _item_key, meta in flat_registry.items():
+                        st.session_state[f"chk_task_{meta['short_name']}"] = (meta["group"] == "DafnyBench20")
                 elif "Toàn bộ" in preset_choice:
                     for _item_key, meta in flat_registry.items():
                         st.session_state[f"chk_task_{meta['short_name']}"] = True

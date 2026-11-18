@@ -1,0 +1,14 @@
+method CanyonSearch(a: array<int>, b: array<int>) returns (d:nat)
+  // pre-conditions-start
+  requires a.Length !=0 && b.Length!=0
+  requires forall i,j :: 0<=i<j<a.Length ==> a[i]<=a[j]
+  requires forall i,j :: 0<=i<j<b.Length ==> b[i]<=b[j]
+  // pre-conditions-end
+  // post-conditions-start
+  ensures exists i,j:: 0<=i<a.Length && 0<=j<b.Length && d==if a[i] < b[j] then (b[j]-a[i]) else (a[i]-b[j])
+  ensures forall i,j:: 0<=i<a.Length && 0<=j<b.Length ==> d<=if a[i] < b[j] then (b[j]-a[i]) else (a[i]-b[j])
+  // post-conditions-end
+{
+  // impl-start
+  // impl-end
+}

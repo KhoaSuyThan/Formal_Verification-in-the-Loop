@@ -93,7 +93,7 @@ class TestInductiveStructures(unittest.TestCase):
         self.assertEqual(len(tasks["Advanced Inductive Structures (Cây & Danh Sách)"]), 5)
 
         registry = get_flat_task_registry()
-        self.assertEqual(len(registry), 35, "Tổng số bài toán sau Bước 5 phải là 35 bài")
+        self.assertGreaterEqual(len(registry), 35, "Tổng số bài toán sau mở rộng phải đạt từ 35 bài trở lên")
 
         inductive_tasks = [k for k, v in registry.items() if v["group"] == "Inductive"]
         self.assertEqual(len(inductive_tasks), 5, "Nhóm Inductive phải có đúng 5 bài toán")

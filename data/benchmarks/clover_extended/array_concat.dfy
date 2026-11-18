@@ -1,0 +1,10 @@
+method concat(a:array<int>, b:array<int>) returns (c:array<int>)
+  // post-conditions-start
+  ensures c.Length==b.Length+a.Length
+  ensures forall k :: 0 <= k < a.Length ==> c[k] == a[k]
+  ensures forall k :: 0 <= k < b.Length ==> c[k+a.Length] == b[k]
+  // post-conditions-end
+{
+  // impl-start
+  // impl-end
+}

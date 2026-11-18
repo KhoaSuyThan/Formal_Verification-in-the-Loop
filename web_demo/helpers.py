@@ -62,6 +62,37 @@ def get_benchmark_tasks() -> Dict[str, Dict[str, str]]:
             "linked_list_stats - Tính độ dài và tổng danh sách liên kết": "data/benchmarks/advanced_inductive/linked_list_stats.dfy",
         }
     }
+
+    # Tự động nạp các bộ Benchmark mở rộng nếu tồn tại
+    clover_ext_dir = PROJECT_ROOT / "data" / "benchmarks" / "clover_extended"
+    if clover_ext_dir.exists():
+        clover_ext_tasks = {}
+        for f in sorted(clover_ext_dir.glob("*.dfy")):
+            label = f"{f.stem} - Clover Extended"
+            clover_ext_tasks[label] = f"data/benchmarks/clover_extended/{f.name}"
+        if clover_ext_tasks:
+            tasks["Clover Extended (Mở Rộng 35 Bài)"] = clover_ext_tasks
+
+    dafnybench_ext_dir = PROJECT_ROOT / "data" / "benchmarks" / "dafnybench_extended"
+    if dafnybench_ext_dir.exists():
+        dafnybench_ext_tasks = {}
+        for f in sorted(dafnybench_ext_dir.glob("*.dfy")):
+            clean_name = f.stem.replace("_no_hints", "")
+            label = f"{clean_name} - Proof Hint"
+            dafnybench_ext_tasks[label] = f"data/benchmarks/dafnybench_extended/{f.name}"
+        if dafnybench_ext_tasks:
+            tasks["DafnyBench Extended (25 Bài Proof Hint)"] = dafnybench_ext_tasks
+
+    dafnybench20_dir = PROJECT_ROOT / "data" / "benchmarks" / "dafnybench20"
+    if dafnybench20_dir.exists():
+        dafnybench20_tasks = {}
+        for f in sorted(dafnybench20_dir.glob("*.dfy")):
+            clean_name = f.stem.replace("_no_hints", "")
+            label = f"{clean_name} - DafnyBench20"
+            dafnybench20_tasks[label] = f"data/benchmarks/dafnybench20/{f.name}"
+        if dafnybench20_tasks:
+            tasks["DafnyBench20 (Bộ Gốc 20 Bài)"] = dafnybench20_tasks
+
     return tasks
 
 
@@ -101,7 +132,13 @@ def get_flat_task_registry() -> Dict[str, dict]:
     registry = {}
 
     for group_name, tasks in groups.items():
-        if "Clover" in group_name:
+        if "Clover Extended" in group_name:
+            tag = "Clover-Ext"
+        elif "DafnyBench Extended" in group_name:
+            tag = "DafnyBench-Ext"
+        elif "DafnyBench20" in group_name:
+            tag = "DafnyBench20"
+        elif "Clover" in group_name:
             tag = "Clover"
         elif "HumanEval" in group_name:
             tag = "HumanEval"
@@ -148,8 +185,14 @@ def get_preset_labels(preset_type: str = "target_12") -> List[str]:
         return [k for k, v in registry.items() if v["group"] == "Advanced"]
     elif preset_type == "inductive":
         return [k for k, v in registry.items() if v["group"] == "Inductive"]
+    elif preset_type == "clover_ext":
+        return [k for k, v in registry.items() if v["group"] == "Clover-Ext"]
+    elif preset_type == "dafnybench_ext":
+        return [k for k, v in registry.items() if v["group"] == "DafnyBench-Ext"]
+    elif preset_type == "dafnybench20":
+        return [k for k, v in registry.items() if v["group"] == "DafnyBench20"]
     elif preset_type == "core30":
-        return [k for k, v in registry.items() if v["group"] != "Inductive"]
+        return [k for k, v in registry.items() if v["group"] in ("Clover", "HumanEval", "Advanced")]
     elif preset_type == "all":
         return list(registry.keys())
     return []

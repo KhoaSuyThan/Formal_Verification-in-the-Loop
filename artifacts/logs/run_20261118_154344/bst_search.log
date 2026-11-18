@@ -1,0 +1,130 @@
+=== BÀI TOÁN: bst_search ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 298.6s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 28, Cột 8: missing semicolon at end of statement
+-> Dòng mã vi phạm: `bst_search(l, key) to found`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+predicate tree_contains(t: Tree, x: int) {
+  match t
+  case Leaf => false
+  case Node(l, v, r) => v == x || tree_contains(l, x) || tree_contains(r, x)
+}
+
+// Khai báo ghost predicate cho vị từ bất biến BST có chứa lượng từ forall không bị chặn
+ghost predicate is_bst(t: Tree) {
+  match t
+  case Leaf => true
+  case Node(l, v, r) =>
+    is_bst(l) && is_bst(r) &&
+    (forall x :: tree_contains(l, x) ==> x <= v) &&
+    (forall y :: tree_contains(r, y) ==> y > v)
+}
+// pure-end
+
+method bst_search(t: Tree, key: int) returns (found: bool)
+  requires is_bst(t)
+  ensures found == tree_contains(t, key)
+{
+  match t {
+    case Leaf => found := false;
+    case Node(l, v, r) =>
+      if key == v {
+        found := true;
+      } else if key < v {
+        bst_search(l, key) to found
+      } else {
+        bst_search(r, key) to found
+      }
+  }
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 29, Cột 8: missing semicolon at end of statement
+-> Dòng mã vi phạm: `bst_search(l, key) to found;`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+predicate tree_contains(t: Tree, x: int) {
+  match t
+  case Leaf => false
+  case Node(l, v, r) => v == x || tree_contains(l, x) || tree_contains(r, x)
+}
+
+// Khai báo ghost predicate cho vị từ bất biến BST có chứa lượng từ forall không bị chặn
+ghost predicate is_bst(t: Tree) {
+  match t
+  case Leaf => true
+  case Node(l, v, r) =>
+    is_bst(l) && is_bst(r) &&
+    (forall x :: tree_contains(l, x) ==> x <= v) &&
+    (forall y :: tree_contains(r, y) ==> y > v)
+}
+
+// pure-end
+
+method bst_search(t: Tree, key: int) returns (found: bool)
+  requires is_bst(t)
+  ensures found == tree_contains(t, key)
+{
+  match t {
+    case Leaf => found := false;
+    case Node(l, v, r) =>
+      if key == v {
+        found := true;
+      } else if key < v {
+        bst_search(l, key) to found;
+      } else {
+        bst_search(r, key) to found;
+      }
+  }
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 29, Cột 8: missing semicolon at end of statement
+-> Dòng mã vi phạm: `bst_search(l, key) to found;`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+predicate tree_contains(t: Tree, x: int) {
+  match t
+  case Leaf => false
+  case Node(l, v, r) => v == x || tree_contains(l, x) || tree_contains(r, x)
+}
+
+// Khai báo ghost predicate cho vị từ bất biến BST có chứa lượng từ forall không bị chặn
+ghost predicate is_bst(t: Tree) {
+  match t
+  case Leaf => true
+  case Node(l, v, r) =>
+    is_bst(l) && is_bst(r) &&
+    (forall x :: tree_contains(l, x) ==> x <= v) &&
+    (forall y :: tree_contains(r, y) ==> y > v)
+}
+
+// pure-end
+
+method bst_search(t: Tree, key: int) returns (found: bool)
+  requires is_bst(t)
+  ensures found == tree_contains(t, key)
+{
+  match t {
+    case Leaf => found := false;
+    case Node(l, v, r) =>
+      if key == v {
+        found := true;
+      } else if key < v {
+        bst_search(l, key) to found;
+      } else {
+        bst_search(r, key) to found;
+      }
+  }
+}
+

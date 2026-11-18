@@ -58,7 +58,44 @@ lemma cube_of_larger_is_larger()
     print("[OK] Test 077 cube & lemma: PASS")
 
 
+def test_preserve_datatype_and_ghost_predicate():
+    raw_spec = """datatype Tree = Leaf | Node(left: Tree, val: int, right: Tree)
+
+ghost predicate is_bst(t: Tree) {
+  match t
+  case Leaf => true
+  case Node(l, v, r) => is_bst(l) && is_bst(r)
+}
+// pure-end
+
+method bst_insert(t: Tree, x: int) returns (res: Tree)
+  requires is_bst(t)
+  ensures is_bst(res)
+{
+}
+"""
+    # LLM chỉ sinh method mà quên cả datatype Tree và ghost predicate is_bst
+    llm_code = """method bst_insert(t: Tree, x: int) returns (res: Tree)
+  requires is_bst(t)
+  ensures is_bst(res)
+{
+  res := Node(Leaf, x, Leaf);
+}
+"""
+    result = TemplatePreserver.preserve_code(raw_spec, llm_code)
+    assert "datatype Tree" in result
+    assert "ghost predicate is_bst" in result
+    assert "res := Node(Leaf, x, Leaf);" in result
+    # Đảm bảo datatype Tree đứng trước ghost predicate và method
+    pos_data = result.find("datatype Tree")
+    pos_pred = result.find("ghost predicate is_bst")
+    pos_meth = result.find("method bst_insert")
+    assert pos_data < pos_pred < pos_meth
+    print("[OK] Test preserve datatype & ghost predicate: PASS")
+
+
 if __name__ == "__main__":
     test_preserve_000_abs()
     test_preserve_077_cube()
+    test_preserve_datatype_and_ghost_predicate()
     print("All tests passed!")

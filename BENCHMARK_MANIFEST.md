@@ -10,14 +10,16 @@
 
 ## 1. Tổng Quan Cơ Cấu Bài Toán Hiện Có Trong Repository
 
-Toàn bộ kho lưu trữ hiện có tổng cộng **55 bài toán** được chia thành 3 phân nhóm theo 2 Track nghiên cứu tách biệt:
+Toàn bộ kho lưu trữ hiện có tổng cộng **115 bài toán** (114 bài hợp lệ, 1 bài loại trừ) được chia thành 5 phân nhóm theo 2 Track nghiên cứu tách biệt, vượt mốc 100 bài toán quy chuẩn của Kế hoạch 75 ngày:
 
-| Phân nhóm | Track | Số lượng | Nguồn gốc | Trạng thái sau Cổng Kiểm Tra Ngày 10 |
+| Phân nhóm | Track | Số lượng | Nguồn gốc | Trạng thái sau Cổng Kiểm Tra Chất Lượng |
 | :--- | :---: | :---: | :--- | :--- |
 | **🏆 Core-30 Benchmark** | Track 1 (`synthesis`) | **30** | Clover (6), HumanEval-Dafny (10), Advanced (14) | `included_core`: Đã kiểm chứng, kết quả mốc **29/30 (96.7%)**, giữ nguyên không chạy lại. |
-| **🌳 Advanced Inductive** | Track 1 (`synthesis`) | **5** | Tự phát triển (Cây BST & Danh sách liên kết) | `included_ext_inductive`: **5/5 bản tham chiếu đã pass `Dafny.exe verify` (Dafny 4.11.0)**. |
+| **🌳 Advanced Inductive** | Track 1 (`synthesis`) | **5** | Tự phát triển (Cây BST & Danh sách liên kết) | `included_ext_inductive`: **5/5 bản tham chiếu đã pass `Dafny.exe verify` (Dafny 4.11.0)**; Local Qwen 7B đạt 4/5 (80%). |
+| **🚀 Clover Extended** | Track 1 (`synthesis`) | **35** | `ChuyueSun/Clover` (Textbook Algo & MBPP) | `included_extended`: **35/35 bản tham chiếu verified 100% và audit sạch 0 findings** trên Dafny 4.11.0. |
 | **⚡ DafnyBench20** | Track 2 (`hint_restoration`) | **20** | `sun-wendy/DafnyBench` (commit `0cd28fee`) | **19 bài `included_hint_restore`** (hợp lệ cú pháp Dafny 4.x) + **1 bài `excluded`** (`MatrixMultiplication` lỗi parser Dafny 4.x). |
-| **TỔNG CỘNG** | 2 Tracks | **55** | **54 bài hợp lệ** (35 Synthesis + 19 Hint Restore) | Đã khóa giao thức tại [protocol_cysg2027.yaml](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/configs/protocol_cysg2027.yaml). |
+| **🔬 DafnyBench Extended** | Track 2 (`hint_restoration`) | **25** | `sun-wendy/DafnyBench` (commit `0cd28fee`) | `included_extended`: **25/25 bài gỡ hint hợp lệ, gold verified 100%, audit sạch 0 findings** trên Dafny 4.11.0. |
+| **TỔNG CỘNG** | 2 Tracks | **115** | **114 bài hợp lệ** (70 Synthesis + 44 Hint Restore) + 1 Excluded | **Vượt mốc 100 bài toán**, cập nhật đủ 16 cột tại [benchmark_manifest.csv](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/data/benchmarks/benchmark_manifest.csv). |
 
 ---
 

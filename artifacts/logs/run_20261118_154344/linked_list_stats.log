@@ -1,0 +1,114 @@
+=== BÀI TOÁN: linked_list_stats ===
+Mô hình: ollama/qwen2.5-coder:7b
+Thời gian chạy: 248.42s
+Kết quả cuối: FAIL
+
+--- LƯỢT 1 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 22, Cột 6: missing semicolon at end of statement
+-> Dòng mã vi phạm: `compute_list_stats(t) to sub_len, sub_sum;`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+function list_len(l: List): nat {
+  match l
+  case Nil => 0
+  case Cons(_, t) => 1 + list_len(t)
+}
+
+function list_sum(l: List): int {
+  match l
+  case Nil => 0
+  case Cons(h, t) => h + list_sum(t)
+}
+// pure-end
+
+method compute_list_stats(l: List) returns (len: nat, s: int)
+  ensures len == list_len(l)
+  ensures s == list_sum(l)
+{
+  match l {
+    case Nil => len := 0; s := 0;
+    case Cons(h, t) => {
+      var sub_len: nat; var sub_sum: int;
+      compute_list_stats(t) to sub_len, sub_sum;
+      len := 1 + sub_len;
+      s := h + sub_sum;
+    }
+  }
+}
+
+--- LƯỢT 2 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 24, Cột 6: missing semicolon at end of statement
+-> Dòng mã vi phạm: `compute_list_stats(t) to sub_len, sub_sum;`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+datatype List = Nil | Cons(head: int, tail: List)
+
+function list_len(l: List): nat {
+  match l
+  case Nil => 0
+  case Cons(_, t) => 1 + list_len(t)
+}
+
+function list_sum(l: List): int {
+  match l
+  case Nil => 0
+  case Cons(h, t) => h + list_sum(t)
+}
+// pure-end
+
+method compute_list_stats(l: List) returns (len: nat, s: int)
+  ensures len == list_len(l)
+  ensures s == list_sum(l)
+{
+  match l {
+    case Nil => len := 0; s := 0;
+    case Cons(h, t) => {
+      var sub_len: nat; var sub_sum: int;
+      compute_list_stats(t) to sub_len, sub_sum;
+      len := 1 + sub_len;
+      s := h + sub_sum;
+    }
+  }
+}
+
+--- LƯỢT 3 ---
+Spec Valid: True | Verified: False
+Error Taxonomy: GeneralVerificationFailure
+Error Message: [GeneralVerificationFailure] tại Dòng 24, Cột 6: missing semicolon at end of statement
+-> Dòng mã vi phạm: `compute_list_stats(t) to sub_len, sub_sum;`
+-> Hướng dẫn khắc phục: Hãy kiểm tra kỹ thông báo lỗi và đảm bảo mã nguồn tuân thủ chặt chẽ cú pháp và ngữ nghĩa Dafny.
+Code:
+datatype List = Nil | Cons(head: int, tail: List)
+
+function list_len(l: List): nat {
+  match l
+  case Nil => 0
+  case Cons(_, t) => 1 + list_len(t)
+}
+
+function list_sum(l: List): int {
+  match l
+  case Nil => 0
+  case Cons(h, t) => h + list_sum(t)
+}
+// pure-end
+
+method compute_list_stats(l: List) returns (len: nat, s: int)
+  ensures len == list_len(l)
+  ensures s == list_sum(l)
+{
+  match l {
+    case Nil => len := 0; s := 0;
+    case Cons(h, t) => {
+      var sub_len: nat; var sub_sum: int;
+      compute_list_stats(t) to sub_len, sub_sum;
+      len := 1 + sub_len;
+      s := h + sub_sum;
+    }
+  }
+}
+

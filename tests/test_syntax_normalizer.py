@@ -384,6 +384,36 @@ method ComputeFib(n: nat) returns (result: nat)
     print("[OK] Test fix_fib_inductive_step: PASS")
 
 
+def test_fix_call_to_syntax():
+    # Test 1: Trường hợp gán 1 biến kết quả (bst_search)
+    code_single = """match t {
+  case Leaf => found := false;
+  case Node(l, v, r) =>
+    if key < v {
+      bst_search(l, key) to found
+    } else {
+      bst_search(r, key) to found;
+    }
+}"""
+    norm_single = SyntaxNormalizer.normalize(code_single)
+    assert "found := bst_search(l, key);" in norm_single
+    assert "found := bst_search(r, key);" in norm_single
+    assert " to found" not in norm_single
+
+    # Test 2: Trường hợp gán nhiều biến kết quả (linked_list_stats)
+    code_multi = """var sub_len: nat; var sub_sum: int;
+compute_list_stats(t) to sub_len, sub_sum;"""
+    norm_multi = SyntaxNormalizer.normalize(code_multi)
+    assert "sub_len, sub_sum := compute_list_stats(t);" in norm_multi
+    assert " to sub_len" not in norm_multi
+
+    # Test 3: Không can thiệp vào vòng lặp for i := 0 to n
+    for_loop = "for i := 0 to n\n  invariant 0 <= i <= n\n{"
+    norm_for = SyntaxNormalizer.normalize(for_loop)
+    assert "for i := 0 to n" in norm_for
+    print("[OK] Test fix_call_to_syntax: PASS")
+
+
 if __name__ == "__main__":
     test_fix_duplicate_out_param()
     test_fix_return_expr()
@@ -404,6 +434,7 @@ if __name__ == "__main__":
     test_fix_linear_search_result_var()
     test_fix_below_threshold_bool_invariant()
     test_fix_fib_inductive_step()
+    test_fix_call_to_syntax()
     test_normalize_combined()
     print("All SyntaxNormalizer tests passed!")
 
