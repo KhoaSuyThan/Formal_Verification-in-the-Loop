@@ -43,7 +43,7 @@ Task không đạt cổng được lưu trong danh sách loại/treo, không xó
 
 ## 3. Giao thức thực nghiệm cần khóa
 
-Trước lượt chạy chính thức, chốt và ghi vào `protocol.yaml` hoặc tài liệu tương đương:
+Trước lượt chạy chính thức, chốt và ghi vào [configs/protocol_cysg2027.yaml](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/configs/protocol_cysg2027.yaml) (**ĐÃ KHÓA v1.0.0 ngày 18/11/2026**):
 
 - phiên bản model, nhà cung cấp/endpoint, ngày truy cập và tham số sinh;
 - prompt hệ thống, prompt task và phiên bản mã pipeline;
@@ -68,9 +68,9 @@ Giữ model, task, đặc tả, ngân sách và timeout giống nhau trong từn
 
 | Ngày | Khoảng ngày | Trọng tâm | Công việc và đầu ra bắt buộc |
 |---:|---|---|---|
-| 1–3 | 18–20/11 | Khởi động, khóa mục tiêu | Chốt câu hỏi nghiên cứu, tiêu chí benchmark, diện kỷ yếu và người phụ trách. Tải template/hướng dẫn CYSG hiện hành; xác nhận quy trình với Khoa/Viện. Tạo bảng theo dõi task, rủi ro và quyết định. |
-| 4–7 | 21–24/11 | Chuẩn bị dữ liệu | Kiểm kê 35 task đang có; Core-30 và kết quả 29/30 được đánh dấu riêng. Tạo manifest thống nhất với ID, nguồn, nhóm, độ khó, trạng thái Dafny, hash và trạng thái đưa vào tập chính. |
-| 8–10 | 25–27/11 | Chốt protocol | Khóa phiên bản Dafny/Z3, prompt, model chính, timeout, giới hạn sửa và định nghĩa metric. Chạy pilot nhỏ trên 5–8 task mới để ước lượng tốc độ nhập/chạy, không dùng pilot để kết luận. |
+| 1–3 | 18–20/11 | Khởi động, khóa mục tiêu | **[ĐÃ XONG KỸ THUẬT]** Chốt câu hỏi nghiên cứu (tách riêng Track 1 Synthesis và Track 2 Proof Hint Restoration), tiêu chí benchmark. Tạo bảng theo dõi task, rủi ro và quyết định. *(Lưu ý: Xác nhận thêm template/ngày tổ chức với Khoa/GVHD).* |
+| 4–7 | 21–24/11 | Chuẩn bị dữ liệu | **[ĐÃ HOÀN TẤT 18/11]** Kiểm kê toàn bộ 55 task đang có (30 Core-30, 5 Inductive, 20 DafnyBench20); Core-30 và kết quả 29/30 được đánh dấu riêng. Tạo [benchmark_manifest.csv](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/data/benchmarks/benchmark_manifest.csv) đủ 16 cột chuẩn hóa. |
+| 8–10 | 25–27/11 | Chốt protocol | **[ĐÃ HOÀN TẤT 18/11]** Khóa [configs/protocol_cysg2027.yaml](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/configs/protocol_cysg2027.yaml) (Dafny 4.11.0, Z3, `ollama/qwen2.5-coder:7b`, timeout 30s, $K=3$). Hoàn tất pilot kiểm chứng bảo toàn hợp đồng & provenance ([pilot_dafnybench_qwen7b.json](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/artifacts/results/pilot_dafnybench_qwen7b.json)). |
 | 11–17 | 28/11–04/12 | Thu thập benchmark ngoài đợt 1 | Chọn nguồn benchmark công khai; tải/import theo revision cố định; tự động kiểm tra cấu trúc, trùng lặp và xác minh bản tham chiếu. Mục tiêu sàng lọc thêm 25–35 task. |
 | 18–24 | 05–11/12 | Thu thập benchmark ngoài đợt 2 | Bổ sung 25–35 task nữa; phân tầng theo mảng, vòng lặp/invariant, đệ quy, cấu trúc quy nạp và nhiều hàm. Ghi nguyên nhân loại từng task. Mục tiêu cộng dồn: 80–100 task ứng viên tính cả Core-30. |
 | 25–27 | 12–14/12 | Cổng chất lượng benchmark | Chạy kiểm tra nền trên toàn bộ ứng viên. Rà thủ công mẫu theo từng nhóm và tất cả task có cảnh báo. Khóa danh sách task hợp lệ v1; nếu chưa đủ 80, ưu tiên tìm nguồn/nhóm thiếu thay vì nới tiêu chí. |
@@ -86,7 +86,7 @@ Giữ model, task, đặc tả, ngân sách và timeout giống nhau trong từn
 
 ### Các mốc kiểm soát
 
-- **Ngày 10 (27/11):** protocol và pilot đủ rõ để ước lượng năng lực xử lý benchmark.
+- **Ngày 10 (27/11) — [ĐÃ HOÀN TẤT SỚM NGÀY 18/11]:** [configs/protocol_cysg2027.yaml](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/configs/protocol_cysg2027.yaml), [benchmark_manifest.csv](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/data/benchmarks/benchmark_manifest.csv) (16 cột, 55 bài) và pilot local `ollama/qwen2.5-coder:7b` đã hoàn tất, xác nhận pipeline giữ nguyên 100% hợp đồng gốc (`original_code_preserved: true`, `invalid_candidate: 0`).
 - **Ngày 27 (14/12):** danh sách đánh giá chính được khóa; mục tiêu 80–100 task hợp lệ.
 - **Ngày 42 (29/12):** hoàn tất lượt chạy chính hoặc có phương án thu hẹp đã ghi lý do.
 - **Ngày 52 (08/01):** số liệu, bảng kết quả và phân tích thất bại được khóa.
@@ -112,9 +112,9 @@ Giữ model, task, đặc tả, ngân sách và timeout giống nhau trong từn
 
 ## 6. Bảng theo dõi benchmark đề xuất
 
-Mỗi dòng là một task; tối thiểu có các trường:
+Mỗi dòng là một task; có đầy đủ 16 trường tại [data/benchmarks/benchmark_manifest.csv](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/data/benchmarks/benchmark_manifest.csv):
 
-`task_id`, `source`, `source_revision`, `license`, `category`, `difficulty`, `dafny_file`, `reference_status`, `spec_review_status`, `duplicate_group`, `split`, `include_status`, `exclusion_reason`, `sha256`, `run_status`.
+`task_id`, `task_type`, `source`, `source_revision`, `license`, `category`, `difficulty`, `dafny_file`, `reference_status`, `spec_review_status`, `duplicate_group`, `split`, `include_status`, `exclusion_reason`, `sha256`, `run_status`.
 
 Mỗi lượt chạy lưu riêng:
 

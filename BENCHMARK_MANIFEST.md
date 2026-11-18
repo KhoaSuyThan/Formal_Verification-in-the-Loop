@@ -2,21 +2,22 @@
 
 **Dự án:** Formal Verification-in-the-Loop  
 **Mục tiêu:** Kế hoạch 75 ngày hoàn thiện nghiên cứu và bài báo CYSG 2027 (HUTECH 2027)  
-**Mốc cập nhật:** Ngày 1 — 18/11/2026  
-**Dữ liệu máy đọc:** [benchmark_manifest.csv](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/data/benchmarks/benchmark_manifest.csv)
+**Mốc cập nhật:** Hoàn tất sớm tới Mốc Ngày 10 — 18/11/2026  
+**Dữ liệu máy đọc (16 cột chuẩn):** [benchmark_manifest.csv](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/data/benchmarks/benchmark_manifest.csv)  
+**Giao thức thực nghiệm đã khóa:** [protocol_cysg2027.yaml](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/configs/protocol_cysg2027.yaml)
 
 ---
 
 ## 1. Tổng Quan Cơ Cấu Bài Toán Hiện Có Trong Repository
 
-Toàn bộ kho lưu trữ hiện có tổng cộng **55 bài toán** được chia thành 3 phân nhóm chính:
+Toàn bộ kho lưu trữ hiện có tổng cộng **55 bài toán** được chia thành 3 phân nhóm theo 2 Track nghiên cứu tách biệt:
 
-| Phân nhóm | Số lượng | Nguồn gốc | Trạng thái hiện tại |
-| :--- | :---: | :--- | :--- |
-| **🏆 Core-30 Benchmark** | **30** | Clover (6), HumanEval-Dafny (10), Advanced (14) | `included_core`: Đã kiểm chứng, kết quả mốc **29/30 Pass@3 (96.7%)**, giữ nguyên không chạy lại. |
-| **🌳 Advanced Inductive** | **5** | Tự phát triển (Cây BST & Danh sách liên kết) | `pending_check`: Cần kiểm tra bản tham chiếu với Dafny 4.x và rà soát đặc tả. |
-| **⚡ DafnyBench20** | **20** | `sun-wendy/DafnyBench` (commit `0cd28fee`) | `pending_check`: Cần kiểm tra bản tham chiếu (gold), sửa cơ chế chèn hint (restore proof hints). |
-| **TỔNG CỘNG** | **55** | Đã đạt **55%–68%** mục tiêu 80–100 bài | Sẵn sàng cho các cổng kiểm tra tiếp theo trong tuần 18–24/11. |
+| Phân nhóm | Track | Số lượng | Nguồn gốc | Trạng thái sau Cổng Kiểm Tra Ngày 10 |
+| :--- | :---: | :---: | :--- | :--- |
+| **🏆 Core-30 Benchmark** | Track 1 (`synthesis`) | **30** | Clover (6), HumanEval-Dafny (10), Advanced (14) | `included_core`: Đã kiểm chứng, kết quả mốc **29/30 (96.7%)**, giữ nguyên không chạy lại. |
+| **🌳 Advanced Inductive** | Track 1 (`synthesis`) | **5** | Tự phát triển (Cây BST & Danh sách liên kết) | `included_ext_inductive`: **5/5 bản tham chiếu đã pass `Dafny.exe verify` (Dafny 4.11.0)**. |
+| **⚡ DafnyBench20** | Track 2 (`hint_restoration`) | **20** | `sun-wendy/DafnyBench` (commit `0cd28fee`) | **19 bài `included_hint_restore`** (hợp lệ cú pháp Dafny 4.x) + **1 bài `excluded`** (`MatrixMultiplication` lỗi parser Dafny 4.x). |
+| **TỔNG CỘNG** | 2 Tracks | **55** | **54 bài hợp lệ** (35 Synthesis + 19 Hint Restore) | Đã khóa giao thức tại [protocol_cysg2027.yaml](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/configs/protocol_cysg2027.yaml). |
 
 ---
 
@@ -63,13 +64,13 @@ Toàn bộ kho lưu trữ hiện có tổng cộng **55 bài toán** được ch
 ### 2.2. Nhóm 2: Advanced Inductive Structures (5 bài)
 > **Trọng tâm kiểm tra Ngày 2–3:** Rà soát cấu trúc đại số `datatype`, vị từ bảo toàn BST/List và chứng minh quy nạp cấu trúc.
 
-| STT | Task ID | Tệp nguồn (.dfy) | Cấu trúc dữ liệu | Trạng thái hiện tại |
+| STT | Task ID | Tệp nguồn (.dfy) | Cấu trúc dữ liệu | Trạng thái kiểm chứng Dafny 4.11.0 |
 | :---: | :--- | :--- | :--- | :---: |
-| 31 | `inductive_bst_insert` | `data/benchmarks/advanced_inductive/bst_insert.dfy` | Cây nhị phân tìm kiếm (BST) | `pending_check` |
-| 32 | `inductive_bst_search` | `data/benchmarks/advanced_inductive/bst_search.dfy` | Cây nhị phân tìm kiếm (BST) | `pending_check` |
-| 33 | `inductive_linked_list_reverse` | `data/benchmarks/advanced_inductive/linked_list_reverse.dfy` | Danh sách liên kết đại số | `pending_check` |
-| 34 | `inductive_linked_list_stats` | `data/benchmarks/advanced_inductive/linked_list_stats.dfy` | Danh sách liên kết đại số | `pending_check` |
-| 35 | `inductive_tree_size_height` | `data/benchmarks/advanced_inductive/tree_size_height.dfy` | Cây nhị phân | `pending_check` |
+| 31 | `inductive_bst_insert` | `data/benchmarks/advanced_inductive/bst_insert.dfy` | Cây nhị phân tìm kiếm (BST) | `included_ext_inductive` (Ref Verified: 3 verified, 0 errors) |
+| 32 | `inductive_bst_search` | `data/benchmarks/advanced_inductive/bst_search.dfy` | Cây nhị phân tìm kiếm (BST) | `included_ext_inductive` (Ref Verified: 3 verified, 0 errors) |
+| 33 | `inductive_linked_list_reverse` | `data/benchmarks/advanced_inductive/linked_list_reverse.dfy` | Danh sách liên kết đại số | `included_ext_inductive` (Ref Verified: 5 verified, 0 errors) |
+| 34 | `inductive_linked_list_stats` | `data/benchmarks/advanced_inductive/linked_list_stats.dfy` | Danh sách liên kết đại số | `included_ext_inductive` (Ref Verified: 3 verified, 0 errors) |
+| 35 | `inductive_tree_size_height` | `data/benchmarks/advanced_inductive/tree_size_height.dfy` | Cây nhị phân | `included_ext_inductive` (Ref Verified: 4 verified, 0 errors) |
 
 ---
 
@@ -162,23 +163,28 @@ Dữ liệu thô lưu trữ tại: [pilot_5_results.json](file:///c:/Users/aaa/P
 > **Đánh Giá Khách Quan Về Pilot:**
 > Hai ca `uiowa_binary_search` (passed) và `tree_size_height` (failed do vi phạm hợp đồng) chỉ là các ví dụ minh họa cơ chế hoạt động của bộ lọc kiểm định trong giai đoạn pilot nhỏ. Chúng **hoàn toàn chưa đủ để đại diện cho kết quả trên toàn bộ DafnyBench20**. Mở rộng đánh giá toàn tập 20 bài cần đảm bảo bộ khôi phục proof hints chạy độc lập và không để LLM can thiệp vào mã nguồn gốc.
 
+### 5.2. Kết Quả Pilot Kiểm Chứng Sau Khi Nâng Cấp Runner với `ollama/qwen2.5-coder:7b` (Mốc Ngày 8–10)
+Dữ liệu thô kèm siêu dữ liệu truy xuất (`provenance`) lưu tại: [pilot_dafnybench_qwen7b.json](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/artifacts/results/pilot_dafnybench_qwen7b.json).
+
+- **Cấu hình thực thi:** `ollama/qwen2.5-coder:7b` (100% Local Offline trên cổng `11434`), `Dafny 4.11.0`, `max_attempts = 2`, ghi đầy đủ `git_commit`, `git_dirty`, `git_diff_sha256`.
+- **Kết quả kiểm chứng bảo toàn hợp đồng:**
+  - Cả 2 lượt sinh của `qwen2.5-coder:7b` trên bài `uiowa_binary-search` đều đạt **`hint_integrity_valid: true`**, **`original_code_preserved: true`**, **`strict_contract_issues: []`** (`invalid_candidate = 0`).
+  - Hệ thống chuyển ứng viên qua `Dafny.exe verify` và trích xuất thông báo lỗi kiểu dữ liệu thực tế từ Z3/Dafny (`expected array<int>, found seq<int>` tại `invariant isSorted(a[lo..hi])`), chứng minh bộ lọc dòng chuẩn hóa (`_canonical_code_lines`) đã khắc phục triệt để lỗi loại nhầm `invalid_candidate` do khác biệt khoảng trắng/comment.
+
 ---
 
-## 6. Quyết Định & Hướng Đi Tiếp Theo (Cổng Đánh Giá Ngày 7)
+## 6. Quyết Định Cổng Đánh Giá Ngày 7 & Mốc Kiểm Soát Ngày 10
 
-1. **Khóa 55 bài hiện có:**
-   * **30 bài Core-30:** Giữ nguyên kết quả đối chuẩn chuẩn mực (Pass@3: 29/30).
-   * **5 bài Inductive:** Đã có khung đặc tả hoàn chỉnh, cần bổ sung chỉ dẫn cú pháp gọi method đa biến (loại bỏ ngoặc đơn `(sl, hl) :=`).
-   * **19 bài DafnyBench:** 19 bài hợp lệ cú pháp (loại trừ bài `MatrixMultiplication` do lỗi parser Dafny 4.x). Đã minh họa tính khả thi qua bài `uiowa_binary_search`.
-2. **Số lượng bài cần bổ sung thêm để đạt mốc 80–100 bài:**
-   * Hiện tại đã có: **54 bài toán hợp lệ hoàn toàn**.
-   * Số bài toán cần tìm thêm từ nguồn ngoài: **từ 26 đến 46 bài** (ưu tiên lấy thêm từ các bài toán chuẩn của DafnyBench hoặc CloverBench/MBPP-DFY).
-3. **Giới hạn môi trường (Environment Boundary):**
-   * Các tác vụ SWE-bench / Python Project có phụ thuộc vào mạng ngoài khi `git clone` các repository upstream trên GitHub, dễ gặp timeout hoặc giới hạn mạng. Do đó, mảng này được tách riêng làm Future Work và không nằm trên đường găng nộp bài CYSG2027.
-   * Toàn bộ Core-30 và DafnyBench20 chạy **100% offline nội bộ** với Dafny 4.11.0 và Z3 tích hợp sẵn.
-4. **Kế hoạch thực thi tiếp theo:**
-   * Dùng `uiowa_binary_search` làm ví dụ pilot đã được verifier xác nhận. Báo cáo `tree_size_height` riêng như một ca thất bại trong đó `SpecLocker` phát hiện hành vi sửa hợp đồng.
-   * Tiếp tục đánh giá bằng **Ollama** nếu môi trường và model (ghi rõ model/tag cụ thể như `qwen2.5-coder:7b`) sẵn sàng trên máy.
-   * Nếu dùng **API Cloud**, phải bảo đảm hạn ngạch khả dụng và lưu trữ cấu hình môi trường, tham số cùng log đầy đủ cho từng lượt chạy nhằm đảm bảo khả năng tái lập học thuật.
+1. **Hoàn tất kiểm định 55 bài hiện có (54 bài hợp lệ, 1 bài loại trừ):**
+   * **Track 1 — Program Synthesis (`synthesis`, 35 bài hợp lệ):**
+     - **30 bài Core-30 (`included_core`):** Giữ nguyên kết quả đối chuẩn (29/30).
+     - **5 bài Advanced Inductive (`included_ext_inductive`):** Đã sửa `ghost predicate is_bst` và hậu điều kiện bảo toàn tập giá trị của `bst_insert`; cả 5/5 bài đều có lời giải tham chiếu pass 100% qua `Dafny.exe verify` (Dafny 4.11.0).
+   * **Track 2 — Proof Hint Restoration (`hint_restoration`, 19 bài hợp lệ, 1 bài loại):**
+     - **19 bài DafnyBench (`included_hint_restore`):** Hợp lệ cú pháp Dafny 4.11.0, báo cáo thành bảng riêng biệt hoàn toàn với Track 1.
+     - **1 bài loại trừ (`excluded`):** `dafnybench_matrix_multiplication` do lỗi parser Dafny 4.x trên tên biến có dấu nháy đơn `m3[i',j']`.
+2. **Khóa Giao Thức Thực Nghiệm Ngày 10:**
+   * Đã khóa tại [configs/protocol_cysg2027.yaml](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/configs/protocol_cysg2027.yaml) và cập nhật đủ 16 cột chuẩn hóa tại [data/benchmarks/benchmark_manifest.csv](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/data/benchmarks/benchmark_manifest.csv).
+3. **Mục tiêu Giai đoạn tiếp theo (Ngày 11–24: Thu thập Benchmark ngoài Đợt 1 & 2):**
+   * Thu thập và sàng lọc thêm **26–46 bài toán Dafny hợp lệ** từ nguồn công khai (CloverBench / MBPP-DFY / DafnyBench) để đạt tổng cộng **80–100 bài toán hợp lệ** trước Cổng chất lượng Ngày 27 (14/12).
 
 

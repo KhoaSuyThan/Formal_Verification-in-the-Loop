@@ -18,7 +18,7 @@ from core.project_formal import verify_project
 from core.spec_locker import SpecLocker
 from core.swebench_grading import instance_status
 from experiments.evaluate_project_reports import paired_report
-from experiments.run_dafnybench20 import run_one
+from experiments.run_dafnybench20 import _only_hints_added, run_one
 
 
 PATCH = """diff --git a/pkg/a.py b/pkg/a.py
@@ -151,6 +151,41 @@ class ProjectFrameworkTests(unittest.TestCase):
             with patch("experiments.run_dafnybench20._ask_model", return_value=(f"```dafny\n{candidate}```", {})):
                 result = run_one(source, hashlib.sha256(original.encode()).hexdigest(), "fake", 1)
         self.assertEqual(result["status"], "passed", result["attempts"])
+
+    def test_dafny_hint_comment_and_spacing_tolerance(self):
+        original = (
+            "// Header comment\n"
+            "method Max(v: array<int>) returns (i: int)\n"
+            "  requires v.Length > 0; // inline comment\n"
+            "{\n"
+            "  var j:=1; i:=0;\n"
+            "  while(j<v.Length)\n"
+            "  {\n"
+            "    if(v[j] > v[i]){i:=j;}\n"
+            "    j:=j+1; // step\n"
+            "  }\n"
+            "}\n"
+        )
+        valid_reformatted = (
+            "method Max(v: array<int>) returns (i: int)\n"
+            "  requires v.Length > 0\n"
+            "{\n"
+            "  var j := 1;\n"
+            "  i := 0;\n"
+            "  while (j < v.Length)\n"
+            "    invariant 0 <= i < j <= v.Length\n"
+            "    decreases v.Length - j\n"
+            "  {\n"
+            "    if (v[j] > v[i]) {\n"
+            "      i := j;\n"
+            "    }\n"
+            "    j := j + 1;\n"
+            "  }\n"
+            "}\n"
+        )
+        tampered = valid_reformatted.replace("j := j + 1;", "j := j + 2;")
+        self.assertTrue(_only_hints_added(original, valid_reformatted))
+        self.assertFalse(_only_hints_added(original, tampered))
 
     def test_pinned_benchmark_manifests(self):
         root = Path(__file__).resolve().parents[1] / "data/benchmarks"

@@ -6,6 +6,18 @@ Tất cả các thay đổi đáng chú ý của dự án sẽ được ghi nh�
 
 ---
 
+## [1.7.7-day10-milestone-locked] - 2026-11-18: Hoàn Tất Mốc Kiểm Soát Ngày 10, Chuẩn Hóa Manifest 16 Cột & Pilot Local Qwen 7B
+- **Xác minh 100% đặc tả cho 5 bài `advanced_inductive` trên Dafny 4.11.0 ([bst_insert.dfy](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/data/benchmarks/advanced_inductive/bst_insert.dfy), [bst_search.dfy](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/data/benchmarks/advanced_inductive/bst_search.dfy))**:
+  + Chuyển `predicate is_bst` sang `ghost predicate is_bst` (tương thích chuẩn Dafny 4.x đối với vị từ chứa lượng từ không bị chặn `forall`).
+  + Bổ sung hậu điều kiện bảo toàn khung giá trị `ensures forall k :: tree_contains(res, k) ==> tree_contains(t, k) || k == x` cho `bst_insert` để quy nạp chứng minh được `is_bst(res)`. Cả 5/5 bài quy nạp đều có lời giải tham chiếu pass 100% qua `Dafny.exe verify`.
+- **Nâng cấp bộ so khớp chuẩn hóa ngữ nghĩa dòng trong [experiments/run_dafnybench20.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/experiments/run_dafnybench20.py) & [core/spec_locker.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/core/spec_locker.py)**:
+  + Xây dựng hàm `_canonical_code_lines` loại bỏ comment (`//`, `/* */`), tách các câu lệnh/dấu ngoặc viết gộp trên một dòng (`if(a>b){i:=j;}`, `var j:=1; i:=0;`) và chuẩn hóa khoảng trắng quanh toán tử trước khi chạy `SequenceMatcher`.
+  + Cập nhật `SpecLocker`: Cho phép chèn mệnh đề dừng hợp lệ `decreases <expr>` trên hàm đệ quy nhưng chặn chặt `decreases *` qua `_TRUST_ESCAPE`.
+  + Chạy thực nghiệm Pilot Local 100% offline với `ollama/qwen2.5-coder:7b` ([pilot_dafnybench_qwen7b.json](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/artifacts/results/pilot_dafnybench_qwen7b.json)): Đạt `original_code_preserved: true`, `hint_integrity_valid: true`, `strict_contract_issues: []` (`invalid_candidate = 0`), ghi nhận đầy đủ `provenance` (`git_commit`, `git_dirty`, `git_diff_sha256`).
+- **Khóa Giao thức Thực nghiệm & Chuẩn hóa Manifest 16 cột (Mốc Ngày 10)**:
+  + Tạo giao thức chính thức [configs/protocol_cysg2027.yaml](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/configs/protocol_cysg2027.yaml) tách biệt Track 1 (`synthesis`) và Track 2 (`hint_restoration`).
+  + Nâng cấp [data/benchmarks/benchmark_manifest.csv](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/data/benchmarks/benchmark_manifest.csv) đủ 16 cột chuẩn hóa với mã băm SHA-256 thực tế cho toàn bộ 55 bài toán; đồng bộ [BENCHMARK_MANIFEST.md](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/BENCHMARK_MANIFEST.md) và [75_NGAY_PLAN_CYSG2027.md](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/75_NGAY_PLAN_CYSG2027.md).
+
 ## [1.7.6-provenance-earlyabort] - 2026-11-18: Đính Chính Kỹ Thuật, Tích Hợp Git Dirty Provenance & Sửa Lỗi Clone Kiểm Thử
 - **Đính chính bản chất kỹ thuật cơ chế Prompt & Lọc Proof Hint ([experiments/run_dafnybench20.py](file:///c:/Users/aaa/Pictures/SaveCode/Formal_Verification-in-the-Loop/experiments/run_dafnybench20.py))**:
   + Làm rõ bản chất: Cơ chế hiện tại là **Full-File Generation with Line-Level Hint Filtering** (sinh lại toàn bộ file kèm bộ lọc diff từng dòng), chưa phải Anchor-Based Patching.

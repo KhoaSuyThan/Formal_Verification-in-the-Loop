@@ -6,7 +6,8 @@ predicate tree_contains(t: Tree, x: int) {
   case Node(l, v, r) => v == x || tree_contains(l, x) || tree_contains(r, x)
 }
 
-predicate is_bst(t: Tree) {
+// Khai báo ghost predicate cho vị từ bất biến BST có chứa lượng từ forall không bị chặn
+ghost predicate is_bst(t: Tree) {
   match t
   case Leaf => true
   case Node(l, v, r) =>
