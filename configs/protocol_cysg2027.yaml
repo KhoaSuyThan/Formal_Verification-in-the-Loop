@@ -1,0 +1,109 @@
+# Giao Thức Thực Nghiệm Chính Thức — Hội Nghị NCKH CYSG 2027 (HUTECH)
+# Khóa tại Mốc Kiểm Soát Ngày 10 (18/11/2026)
+
+protocol_version: "1.0.0-cysg2027"
+locked_date: "2026-11-18"
+target_conference: "CYSG 2027 - Phân ban Công nghệ thông tin & Trí tuệ nhân tạo (HUTECH)"
+
+environment:
+  os: "Windows 10/11 (x64)"
+  python_version: "3.13.9"
+  dafny_version: "4.11.0"
+  dafny_binary: "tools/dafny/Dafny.exe"
+  smt_solver: "Z3 (bundled with Dafny 4.11.0)"
+  execution_mode: "100% Local Verifier + Local Ollama / Optional Cloud API"
+
+models:
+  primary_local:
+    model_id: "ollama/qwen2.5-coder:7b"
+    provider: "Ollama Local Server"
+    endpoint: "http://localhost:11434"
+    temperature: 0.0
+    max_tokens: 2048
+    timeout_seconds: 180
+  secondary_local_candidates:
+    - "ollama/deepseek-r1:7b"
+    - "ollama/llama3.1:8b"
+  optional_cloud_reference:
+    model_id: "gemini-2.5-flash"
+    provider: "Google AI Studio REST API"
+    temperature: 0.0
+    max_tokens: 8192
+    timeout_seconds: 120
+
+verification_budget:
+  max_attempts_k: 3
+  dafny_verify_timeout_sec: 30
+  dafny_audit_timeout_sec: 45
+  parallel_workers_default: 1
+  retry_policy:
+    on_rate_limit_429: "fail_fast_no_long_sleep"
+    on_credit_or_auth_error: "early_abort_stop_scheduling_new_tasks"
+    on_empty_response: "record_empty_response_and_continue_task_attempts"
+
+evaluation_tracks:
+  track_1_program_synthesis:
+    research_question: "RQ1: Tác động của phản hồi hình thức Dafny/Z3 và cơ chế phân tích lỗi cấu trúc lên khả năng sinh & tự sửa mã Dafny từ đặc tả."
+    task_type: "synthesis"
+    datasets:
+      - name: "Core-30"
+        count: 30
+        status: "included_core (baseline 29/30 preserved)"
+      - name: "Advanced Inductive"
+        count: 5
+        status: "included_ext_inductive (5/5 reference specs verified on Dafny 4.11.0)"
+      - name: "External Expansion (Target Batch 1 & 2)"
+        target_count: "45-65 additional valid synthesis tasks"
+    experimental_arms:
+      arm_A_oneshot:
+        description: "Sinh 1 lần (K=1) từ đặc tả, chạy Dafny verifier, không lặp phản hồi."
+        max_k: 1
+        use_diagnostic_parser: false
+        use_topology_detector: false
+      arm_B_raw_feedback:
+        description: "Sửa tối đa K=3 vòng với thông báo lỗi thô từ Dafny verifier."
+        max_k: 3
+        use_diagnostic_parser: false
+        use_topology_detector: false
+      arm_C_full_pipeline:
+        description: "Pipeline đầy đủ: TopologyDetector + SyntaxNormalizer + DiagnosticParser + SpecLocker (K=3)."
+        max_k: 3
+        use_diagnostic_parser: true
+        use_topology_detector: true
+        use_spec_locker: true
+
+  track_2_proof_hint_restoration:
+    research_question: "RQ2: Khả năng khôi phục bất biến vòng lặp (loop invariants) và biểu thức dừng (decreases) trên mã nguồn đã có sẵn thuật toán mà không vi phạm hợp đồng."
+    task_type: "hint_restoration"
+    datasets:
+      - name: "DafnyBench20"
+        total_imported: 20
+        valid_included: 19
+        excluded: 1
+        exclusion_note: "MatrixMultiplication_no_hints.dfy bị loại do lỗi cú pháp parser Dafny 4.x trên biến có dấu nháy m3[i',j']."
+    integrity_gates:
+      - "SpecLocker.validate: Cấm sửa đổi requires, ensures, modifies, reads và thân hàm pure (function/predicate/lemma)."
+      - "Canonical Line Check (_only_hints_added): Chuẩn hóa khoảng trắng và bỏ qua comment; chỉ cho phép chèn các dòng invariant, decreases, assert, reveal, calc."
+      - "Dafny Audit: Chạy 'Dafny.exe audit' sau khi verify thành công để chống lỗ hổng đặc tả rỗng."
+    separation_rule: "Báo cáo độc lập hoàn toàn với Track 1; tuyệt đối không cộng gộp mẫu số giữa synthesis và hint_restoration."
+
+  track_3_spec_tampering_security:
+    research_question: "RQ3: Hiệu quả của SpecLocker trong việc phát hiện và chặn đứng hành vi tự ý nới lỏng đặc tả hoặc chèn mệnh đề thoát kiểm định (assume, {:axiom}, decreases *)."
+    dataset: "data/benchmarks/spec_traps/cases.json (10 ca bẫy đặc tả chuẩn)"
+
+metrics_definition:
+  verified_at_1: "Tỷ lệ bài toán vượt qua cả 'dafny verify' và 'dafny audit' (không vi phạm SpecLocker) ngay ở lần sinh đầu tiên."
+  repair_at_k: "Tỷ lệ bài toán được chứng minh thành công trong tối đa K=3 vòng lặp có phản hồi từ verifier."
+  invalid_candidate_rate: "Tỷ lệ ứng viên bị từ chối do sửa đổi hợp đồng gốc hoặc sửa đổi dòng lệnh thuật toán gốc."
+  infra_error_rate: "Tỷ lệ lượt chạy bị gián đoạn do lỗi hạ tầng/API (tách riêng, không gộp vào lỗi logic của mô hình)."
+
+provenance_requirements:
+  mandatory_fields:
+    - "timestamp_iso"
+    - "git_commit"
+    - "git_dirty"
+    - "git_diff_sha256"
+    - "dafny_version"
+    - "model"
+    - "max_attempts"
+    - "workers"

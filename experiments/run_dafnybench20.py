@@ -38,14 +38,42 @@ _ALLOWED_HINT_PATTERN = re.compile(
 
 
 def _candidate(raw: str) -> str:
-    match = re.search(r"```dafny\s*\n(.*?)```", raw, re.S | re.I)
+    """Trích xuất mã Dafny từ phản hồi của mô hình (hỗ trợ cả ```dafny, ```dfy và ```)."""
+    match = re.search(r"```(?:dafny|dfy)?\s*\n(.*?)```", raw, re.S | re.I)
     return (match.group(1) if match else raw).strip() + "\n"
+
+
+def _canonical_code_lines(code: str) -> list[str]:
+    """Loại bỏ comment và chuẩn hóa khoảng trắng/dấu ngoặc để so sánh đúng ngữ nghĩa từng dòng."""
+    # 1. Xóa block comment và line comment
+    no_comments = re.sub(r"/\*.*?\*/", "", code, flags=re.S)
+    no_comments = re.sub(r"//[^\n]*", "", no_comments)
+    # 2. Tách dấu { và } dính liền câu lệnh trên cùng một dòng (vd: if(a>b){i:=j;})
+    expanded = re.sub(r"([^\s{}])\s*\{", r"\1\n{", no_comments)
+    expanded = re.sub(r"\{\s*([^\s{}])", r"{\n\1", expanded)
+    expanded = re.sub(r"([^\s{}])\s*\}", r"\1\n}", expanded)
+    # 3. Tách nhiều câu lệnh gán/khai báo viết chung một dòng (vd: var j:=1; i:=0;)
+    expanded = re.sub(r";\s*(?=(?:var\b|[A-Za-z_]\w*\s*:=))", ";\n", expanded)
+
+    lines: list[str] = []
+    for raw_line in expanded.splitlines():
+        s = raw_line.strip()
+        if not s:
+            continue
+        # Chuẩn hóa khoảng trắng nội dòng và quanh toán tử
+        s = re.sub(r"\s+", " ", s)
+        s = re.sub(r"\s*([:=<>!+\-*/(),;\[\]{}|&])\s*", r"\1", s)
+        # Bỏ dấu chấm phẩy tùy chọn ở cuối mệnh đề hợp đồng/hint
+        if re.match(r"^(?:requires|ensures|modifies|reads|invariant|decreases)\b", s, re.I):
+            s = s.rstrip(";")
+        lines.append(s)
+    return lines
 
 
 def _get_line_violations(original: str, candidate: str) -> list[str]:
     """Phát hiện các dòng bị xóa, sửa trái phép hoặc chèn không phải proof hint."""
-    source = [line.strip() for line in original.splitlines() if line.strip()]
-    output = [line.strip() for line in candidate.splitlines() if line.strip()]
+    source = _canonical_code_lines(original)
+    output = _canonical_code_lines(candidate)
     violations = []
     for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(None, source, output, autojunk=False).get_opcodes():
         if tag == "delete":
@@ -114,7 +142,9 @@ def _ask_model(model: str, source: str, feedback: str, max_tokens: int) -> tuple
         "```"
     )
 
-    user_content = f"Source to restore hints for:\n```dafny\n{source}\n```\n"
+    # Lọc bỏ các comment // TODO: gây nhiễu trong source gửi cho LLM nhưng vẫn giữ nguyên cấu trúc code
+    prompt_source = re.sub(r"//\s*TODO:[^\n]*", "", source)
+    user_content = f"Source to restore hints for:\n```dafny\n{prompt_source}\n```\n"
     if feedback.strip():
         user_content += (
             f"\nFeedback from previous attempt:\n{feedback[-4000:]}\n\n"
@@ -151,17 +181,24 @@ def _ask_model(model: str, source: str, feedback: str, max_tokens: int) -> tuple
             return "", {"resolved_model": model, "method": "gemini_rest", "fatal_error": is_fatal,
                         "error_type": err_type, "message": str(exc)}
 
+    import os
     import litellm
+    effective_tokens = min(max_tokens, 2048) if model.lower().startswith("ollama/") else max_tokens
+    kwargs = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_content},
+        ],
+        "temperature": 0.0,
+        "max_tokens": effective_tokens,
+        "timeout": 180,
+    }
+    if model.lower().startswith("ollama/"):
+        kwargs["api_base"] = os.getenv("OLLAMA_API_BASE", "http://localhost:11434")
+
     try:
-        response = litellm.completion(
-            model=model,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_content},
-            ],
-            max_tokens=max_tokens,
-            timeout=180,
-        )
+        response = litellm.completion(**kwargs)
     except Exception as exc:
         err_str = str(exc).lower()
         if any(k in err_str for k in ("credit", "billing", "insufficient_quota")):

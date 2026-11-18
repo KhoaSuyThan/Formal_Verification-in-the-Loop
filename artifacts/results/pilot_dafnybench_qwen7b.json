@@ -1,0 +1,62 @@
+{
+  "suite": "dafnybench20",
+  "provenance": {
+    "timestamp_iso": "2026-11-18T08:13:15Z",
+    "git_commit": "f4e318e82e001394b768a39036f2278bcfd88549",
+    "git_dirty": true,
+    "git_diff_sha256": "b448fc3cb7ae28fc3f1c313c393a95f9302a3af41f6a9d3dcddf0b014c9314c1",
+    "dafny_version": "4.11.0+fcb2042d6d043a2634f0854338c08feeaaaf4ae2",
+    "dafny_bin": "C:\\Users\\aaa\\Pictures\\SaveCode\\Formal_Verification-in-the-Loop\\tools\\dafny\\Dafny.exe",
+    "model": "ollama/qwen2.5-coder:7b",
+    "max_attempts": 2,
+    "workers": 1,
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python_version": "3.13.9"
+  },
+  "suite_aborted": false,
+  "abort_reason": null,
+  "total_tasks_scheduled": 1,
+  "total_tasks_evaluated": 1,
+  "results": [
+    {
+      "task_id": "dafl_tmp_tmp_r3_8w3y_dafny_examples_uiowa_binary-search_no_hints",
+      "suite": "dafnybench20",
+      "model": "ollama/qwen2.5-coder:7b",
+      "status": "verification_failed",
+      "fatal_error": false,
+      "attempts": [
+        {
+          "number": 1,
+          "usage": {
+            "prompt_tokens": 915,
+            "completion_tokens": 299,
+            "cost_usd": 0.0,
+            "resolved_model": "ollama/qwen2.5-coder:7b",
+            "fatal_error": false
+          },
+          "hint_integrity_valid": true,
+          "original_code_preserved": true,
+          "strict_contract_issues": [],
+          "dafny_output": "C:/Users/aaa/AppData/Local/Temp/tmp5dmcve3y.dfy(22,24): Error: incorrect argument type for predicate parameter 'a' (expected array<int>, found seq<int>)\n   |\n22 |     invariant isSorted(a[lo..hi])\n   |                         ^\n\n1 resolution/type errors detected in tmp5dmcve3y.dfy\n",
+          "status": "verification_failed"
+        },
+        {
+          "number": 2,
+          "usage": {
+            "prompt_tokens": 1029,
+            "completion_tokens": 299,
+            "cost_usd": 0.0,
+            "resolved_model": "ollama/qwen2.5-coder:7b",
+            "fatal_error": false
+          },
+          "hint_integrity_valid": true,
+          "original_code_preserved": true,
+          "strict_contract_issues": [],
+          "dafny_output": "C:/Users/aaa/AppData/Local/Temp/tmpl3z8xou2.dfy(22,24): Error: incorrect argument type for predicate parameter 'a' (expected array<int>, found seq<int>)\n   |\n22 |     invariant isSorted(a[lo..hi])\n   |                         ^\n\n1 resolution/type errors detected in tmpl3z8xou2.dfy\n",
+          "status": "verification_failed"
+        }
+      ],
+      "elapsed_seconds": 157.28529690002324
+    }
+  ]
+}

@@ -6,7 +6,8 @@ predicate tree_contains(t: Tree, x: int) {
   case Node(l, v, r) => v == x || tree_contains(l, x) || tree_contains(r, x)
 }
 
-predicate is_bst(t: Tree) {
+// Khai báo ghost predicate cho vị từ bất biến BST có chứa lượng từ forall không bị chặn
+ghost predicate is_bst(t: Tree) {
   match t
   case Leaf => true
   case Node(l, v, r) =>
@@ -24,6 +25,7 @@ method bst_insert(t: Tree, x: int) returns (res: Tree)
   ensures is_bst(res)
   ensures tree_contains(res, x)
   ensures forall k :: tree_contains(t, k) ==> tree_contains(res, k)
+  ensures forall k :: tree_contains(res, k) ==> tree_contains(t, k) || k == x
   // post-conditions-end
 {
   // impl-start

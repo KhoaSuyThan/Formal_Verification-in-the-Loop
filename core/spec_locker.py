@@ -16,8 +16,9 @@ class SpecAuditResult:
 
 
 _DECLARATION = re.compile(r"(?m)^\s*(?:(?:ghost|static|opaque)\s+)*(method|function|predicate|lemma)\s+([A-Za-z_]\w*)\b")
-_CLAUSE = re.compile(r"(?m)^\s*(requires|ensures|modifies|reads|decreases)\s+([^\n{;]+)")
-_TRUST_ESCAPE = re.compile(r"\bassume\b|\{:\s*(?:axiom|verify\s+false|extern)\b", re.I)
+_HEADER_CLAUSE = re.compile(r"(?m)^\s*(requires|ensures|modifies|reads|decreases)\s+([^\n{;]+)")
+_CLAUSE = re.compile(r"(?m)^\s*(requires|ensures|modifies|reads)\s+([^\n{;]+)")
+_TRUST_ESCAPE = re.compile(r"\bassume\b|\bdecreases\s*\*|\{:\s*(?:axiom|verify\s+false|extern)\b", re.I)
 
 
 class SpecLocker:
@@ -74,7 +75,7 @@ class SpecLocker:
             next_decl = next((m.start() - match.end() for m in matches if m.start() > match.start()), len(rest))
             header = rest[:min(body_start if body_start >= 0 else next_decl, next_decl)]
             clauses = tuple((kind, re.sub(r"\s+", "", value)) for kind, value in _CLAUSE.findall(header))
-            signature = re.sub(r"\s+", "", _CLAUSE.split(header, maxsplit=1)[0].rstrip(";"))
+            signature = re.sub(r"\s+", "", _HEADER_CLAUSE.split(header, maxsplit=1)[0].rstrip(";"))
             contracts[match.group(2)] = (match.group(1) + signature, clauses)
         return contracts
 
